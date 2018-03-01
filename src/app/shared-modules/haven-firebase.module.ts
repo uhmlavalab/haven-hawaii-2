@@ -18,4 +18,4 @@ import { environment } from '../../environments/environment';
   ],
   declarations: []
 })
-export class FirebaseModuleModule { }
+export class HavenFirebaseModule { }

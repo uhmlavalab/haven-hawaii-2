@@ -3,12 +3,16 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
-import { FirebaseModuleModule } from './firebase-module/firebase-module.module';
+import { HavenFirebaseModule } from './shared-modules/haven-firebase.module';
+import { HavenMaterialModule } from './shared-modules/haven-material.module';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   imports: [
     BrowserModule,
-    FirebaseModuleModule,
+    FlexLayoutModule,
+    HavenFirebaseModule,
+    HavenMaterialModule,
   ],
   providers: [],
   declarations: [

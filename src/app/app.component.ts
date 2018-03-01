@@ -7,4 +7,17 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'HAVEN';
+  showFiller = false;
+
+  buttonNames = [
+    {
+      name: 'Solar',
+    },
+    {
+      name: 'Oil',
+    },
+    {
+      name: 'Wind',
+    }
+  ];
 }
