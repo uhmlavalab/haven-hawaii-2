@@ -1,0 +1,37 @@
+<div class="window" #windowDiv style="width: 400px; position:absolute;">
+  <mat-toolbar #titleDiv class="window-header" color="primary" appHavenWindowDrag (mousedownHaven)="dragbarClick($event)" (mousemoveHaven)="dragbarMove($event)"
+    (mouseupHaven)="dragbarRelease($event)">
+    <mat-toolbar-row>
+      <span>{{ havenWindow.header }} </span>
+      <span class="example-spacer"></span>
+      <mat-icon class="example-icon">open_in_new</mat-icon>
+      <mat-icon class="example-icon">close</mat-icon>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <mat-drawer-container class="example-container" autosize>
+    <mat-drawer #drawer class="app-sidenav" mode="side">
+      <button mat-raised-button color="primary">Button 1</button>
+      <button mat-raised-button color="primary">Button 2</button>
+      <button mat-raised-button color="primary">Button 3</button>
+    </mat-drawer>
+
+    <div class="example-sidenav-content">
+      <button mat-icon-button class="drawer-toggle" (click)="drawer.toggle(); drawerToggle();" color="primary">
+        <mat-icon *ngIf="!drawerOpen">keyboard_arrow_right</mat-icon>
+        <mat-icon *ngIf="drawerOpen">keyboard_arrow_left</mat-icon>
+      </button>
+    </div>
+
+  </mat-drawer-container>
+
+  <mat-toolbar class="window-footer" color="primary" style="min-height: 20px; height: 20px;">
+    <mat-toolbar-row>
+      <span style="font-size: 12px"> {{ havenWindow.footer }} </span>
+      <span class="example-spacer"></span>
+      <mat-icon class="example-resize" appHavenWindowResize (mousedownHaven)="resizeClick($event)" (mousemoveHaven)="resizeMove($event)"
+        (mouseupHaven)="resizeRelease($event)">reorder</mat-icon>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+</div>

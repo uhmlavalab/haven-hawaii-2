@@ -6,18 +6,4 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'HAVEN';
-  showFiller = false;
-
-  buttonNames = [
-    {
-      name: 'Solar',
-    },
-    {
-      name: 'Oil',
-    },
-    {
-      name: 'Wind',
-    }
-  ];
 }

@@ -1,0 +1,57 @@
+<img class="logo" src="./assets/logo/havenlogo.png"> 
+
+<mat-toolbar color="primary" [style.height]="toolbarHeight + 'px'">
+  <span> {{ title }} </span>
+</mat-toolbar>
+
+<mat-drawer-container class="app-container" [style.height]="mainHeight">
+
+  <mat-drawer #drawer class="app-sidenav" mode="side" [style.width]="sidebarWidth + 'px'">
+
+    <div class="button-row">
+      <button mat-icon-button [color]="accountColor" (click)="sidebarChange('account')">
+        <mat-icon>person</mat-icon>
+      </button>
+      <button mat-icon-button [color]="chartColor" (click)="sidebarChange('chart')">
+        <mat-icon>timeline</mat-icon>
+      </button>
+      <button mat-icon-button [color]="mapColor" (click)="sidebarChange('map')">
+        <mat-icon>map</mat-icon>
+      </button>
+    </div>
+
+    <mat-divider style="margin-top: 8px"></mat-divider>
+
+    <!-- Account Sidenav -->
+    <div *ngIf="selectedDrawer === 'account'" class='account-drawer'>
+      <app-haven-sidebar-account></app-haven-sidebar-account>
+    </div>
+
+    <!-- Chart Sidenav -->
+    <div *ngIf="selectedDrawer === 'chart'">
+      <app-haven-sidebar-charts></app-haven-sidebar-charts>
+    </div>
+
+    <!-- Map Sidenav -->
+    <div *ngIf="selectedDrawer === 'map'">
+      <app-haven-sidebar-maps></app-haven-sidebar-maps>
+    </div>
+
+  </mat-drawer>
+
+  <div class="app-sidenav-content" [style.height]="mainHeight">
+
+    <button mat-icon-button class="drawer-toggle" (click)="drawer.toggle(); drawerToggle();" color="primary">
+      <mat-icon *ngIf="!drawerOpen">keyboard_arrow_right</mat-icon>
+      <mat-icon *ngIf="drawerOpen">keyboard_arrow_left</mat-icon>
+    </button>
+
+    <app-haven-window></app-haven-window>
+
+  </div>
+
+</mat-drawer-container>
+
+<mat-toolbar color="primary">
+ 
+</mat-toolbar>

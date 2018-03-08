@@ -1,0 +1,38 @@
+<mat-grid-list cols="3" rows="1">
+  <mat-grid-tile>
+    <img src="./assets/mapthumbnails/street.png" class="map-thumbnail">
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <img src="./assets/mapthumbnails/satellite.png" style="border-color:#28608d;" class="map-thumbnail">
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <img src="./assets/mapthumbnails/terrain.png" class="map-thumbnail">
+  </mat-grid-tile>
+</mat-grid-list>
+
+<button mat-raised-button color="primary">Add New Layer</button>
+
+<mat-grid-list cols="1" rows="4" rowHeight="40px">
+  <mat-grid-tile>
+    <mat-checkbox color="primary" style="width: 80%">Layer 1
+    </mat-checkbox>
+    <input type="color" id="html5colorpicker" value="#66c2a5" style="width:20%;">
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-checkbox color="primary" style="width: 80%">Layer 2
+    </mat-checkbox>
+    <input type="color" id="html5colorpicker" value="#fc8d62" style="width:20%;">
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-checkbox color="primary" style="width: 80%">Layer 3
+    </mat-checkbox>
+    <input type="color" id="html5colorpicker" value="#8da0cb" style="width:20%;">
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-checkbox color="primary" style="width: 80%">Layer 4
+    </mat-checkbox>
+    <input type="color" id="html5colorpicker" value="#e78ac3" style="width:20%;">
+  </mat-grid-tile>
+</mat-grid-list>
+
+<button mat-raised-button color="primary">Create Map</button>

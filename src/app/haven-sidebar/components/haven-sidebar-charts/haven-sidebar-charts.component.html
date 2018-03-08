@@ -1,0 +1,78 @@
+<button mat-raised-button color="accent" disableRipple>Renewable Energy {{ reValue }}%</button>
+
+<mat-slider min="0" max="100" step="1" [value]="reValue" (input)="reSliderChange($event)" color="primary">
+</mat-slider>
+
+<mat-form-field>
+  <mat-select placeholder="Scenario">
+    <mat-option *ngFor="let scenario of scenarios" [value]="scenario.value">
+      {{ scenario.viewValue }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-select placeholder="Scope">
+    <mat-option *ngFor="let scope of scopes" [value]="scope.value">
+      {{ scope.viewValue }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-select placeholder="Value">
+    <mat-option *ngFor="let valuetype of valueTypes" [value]="valuetype.value">
+      {{ valuetype.viewValue }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-grid-list cols="3" rows="3">
+  <mat-grid-tile>
+    <button mat-icon-button color="accent">
+      <mat-icon>insert_chart</mat-icon>
+    </button>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-icon-button color="accent">
+      <mat-icon>show_chart</mat-icon>
+    </button>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-icon-button color="accent">
+      <mat-icon>pie_chart</mat-icon>
+    </button>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-icon-button color="primary">
+      <mat-icon>bubble_chart</mat-icon>
+    </button>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-icon-button color="accent">
+      <mat-icon>insert_chart</mat-icon>
+    </button>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-icon-button color="warn">
+      <mat-icon>show_chart</mat-icon>
+    </button>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-icon-button color="warn">
+      <mat-icon>pie_chart</mat-icon>
+    </button>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-icon-button color="accent">
+      <mat-icon>bubble_chart</mat-icon>
+    </button>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <button mat-icon-button color="warn">
+      <mat-icon>show_chart</mat-icon>
+    </button>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<button mat-raised-button color="primary">Create Chart</button>

@@ -1,0 +1,25 @@
+<button mat-raised-button color="primary">New Portfolio</button>
+
+<mat-form-field>
+  <mat-select placeholder="Portfolio">
+    <mat-option *ngFor="let portfolio of portfolios" [value]="portfolio.value">
+      {{ portfolio.viewValue }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<button mat-raised-button color="primary">Load Portfolio</button>
+
+<mat-form-field>
+  <mat-select placeholder="Session">
+    <mat-option *ngFor="let session of sessions" [value]="session.value">
+      {{ session.viewValue }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<button mat-raised-button color="primary">Load Session</button>
+
+<mat-divider style="margin-top: 8px"></mat-divider>
+
+<button mat-raised-button color="warn">Logout</button>
