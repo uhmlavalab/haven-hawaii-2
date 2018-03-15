@@ -1,0 +1,13 @@
+<div *ngIf="!loaded" class="image">
+  <img class="loading-image" src="./assets/logo/haven-animation.gif">
+</div>
+
+<div
+  #child 
+  #mapDiv 
+  style="height: 100%; width: 100%; position:absolute;" 
+  leaflet 
+  [leafletOptions]="options" 
+  (leafletMapReady)="setMap($event)"
+  [leafletLayersControl]="layersControl">
+</div>

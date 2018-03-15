@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { HavenMaterialModule } from '../haven-modules/haven-material.module';
-import { HavenDialogComponent } from '../haven-dialog/component/haven-dialog.component';
-import { HavenDialogService } from '../haven-dialog/service/haven-dialog.service';
+import { HavenDialogComponent } from './component/haven-dialog.component';
+import { HavenDialogService } from './service/haven-dialog.service';
 
 @NgModule({
   imports: [

@@ -77,22 +77,4 @@ export class HavenLayerUploadService {
       });
   }
 
-  getData(fileUrl: string, fileType: string, fileName: string) {
-    if (fileType === 'image') {
-      return {
-        fileUrl: fileUrl,
-        fileName: fileName,
-        appType: fileType,
-      };
-    } else if (fileType === 'video') {
-      return {
-        fileUrl: fileUrl,
-        fileName: fileName,
-        appType: fileType,
-        paused: true,
-        currentTime: 0.0,
-      };
-    }
-  }
-
 }

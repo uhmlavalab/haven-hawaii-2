@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HavenWindow } from '../haven-window';
+import { HavenWindow } from '../shared/haven-window';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';

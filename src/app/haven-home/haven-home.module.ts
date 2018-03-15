@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { HavenHomeComponent } from '../haven-home/component/haven-home.component';
+import { HavenHomeComponent } from './component/haven-home.component';
+
 import { HavenMaterialModule } from '../haven-modules/haven-material.module';
-import { HavenSidebarModule } from './haven-sidebar.module';
-import { HavenWindowModule } from '../haven-modules/haven-window.module';
+import { HavenSidebarModule } from '../haven-sidebar/haven-sidebar.module';
+import { HavenWindowModule } from '../haven-window/haven-window.module';
 
 @NgModule({
   imports: [

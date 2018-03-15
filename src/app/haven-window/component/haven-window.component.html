@@ -1,0 +1,39 @@
+<div #windowDiv class="window" style="position:absolute;" appHavenWindowBringforward [havenWindow]="havenWindow">
+
+  <mat-toolbar appHavenWindowDrag [havenWindow]="havenWindow" [windowDiv]="windowDiv" class="window-header" color="primary">
+    <mat-toolbar-row>
+      <span>{{ havenWindow.header }} </span>
+      <span class="example-spacer"></span>
+      <mat-icon class="example-icon" appHavenWindowMaximize [havenWindow]="havenWindow" [windowDiv]="windowDiv" [appRef]="appRef">open_in_new</mat-icon>
+      <mat-icon class="example-icon" (click)="removeWindow()">close</mat-icon>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <mat-drawer-container class="example-container" autosize>
+    <mat-drawer #drawer class="app-sidenav" mode="side">
+      <button mat-raised-button color="primary">Button 1</button>
+      <button mat-raised-button color="primary">Button 2</button>
+      <button mat-raised-button color="primary">Button 3</button>
+    </mat-drawer>
+
+  <div class="example-sidenav-content">
+    <app-haven-apps-factory #appRef [windowId]="havenWindow.id"></app-haven-apps-factory>
+
+    <button mat-mini-fab class="drawer-toggle" (click)="drawer.toggle(); drawerToggle();" color="accent">
+      <mat-icon *ngIf="!drawerOpen">keyboard_arrow_right</mat-icon>
+      <mat-icon *ngIf="drawerOpen">keyboard_arrow_left</mat-icon>
+    </button>
+
+  </div>
+
+  </mat-drawer-container>
+
+  <mat-toolbar class="window-footer" color="primary" style="min-height: 20px; height: 20px;">
+    <mat-toolbar-row>
+      <span style="font-size: 12px"> {{ havenWindow.footer }} </span>
+      <span class="example-spacer"></span>
+      <mat-icon class="example-resize" appHavenWindowResize [havenWindow]="havenWindow" [windowDiv]="windowDiv" [appRef]="appRef">reorder</mat-icon>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+</div>

@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, ComponentFactoryResolver, ComponentRef } from '@angular/core';
 
-import { HavenWindowHostDirective } from '../haven-window-host.directive';
+import { HavenWindowHostDirective } from '../directives/haven-window-host.directive';
 
-import { HavenWindowService } from '../haven-window-service/haven-window.service';
-import { HavenWindowComponent } from '../haven-window-component/haven-window.component';
-import { HavenWindow } from '../haven-window';
+import { HavenWindowService } from '../services/haven-window.service';
+import { HavenWindowComponent } from '../component/haven-window.component';
+import { HavenWindow } from '../shared/haven-window';
 
 @Component({
   selector: 'app-haven-window-factory',

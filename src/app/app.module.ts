@@ -12,10 +12,11 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from './auth-guard.service';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
-import { HavenLoginModule } from './haven-modules/haven-login.module';
-import { HavenWindowModule } from './haven-modules/haven-window.module';
-import { HavenHomeModule } from './haven-modules/haven-home.module';
-import { HavenDialogModule } from './haven-modules/haven-dialog.module';
+import { HavenAppsModule } from './haven-apps/haven-apps.module';
+import { HavenDialogModule } from './haven-dialog/haven-dialog.module';
+import { HavenHomeModule } from './haven-home/haven-home.module';
+import { HavenLoginModule } from './haven-login/haven-login.module';
+import { HavenWindowModule } from './haven-window/haven-window.module';
 
 import { Globals } from './globals';
 
@@ -30,6 +31,7 @@ import { Globals } from './globals';
     HavenMaterialModule,
     HavenHomeModule,
     HavenLoginModule,
+    HavenAppsModule,
     HavenWindowModule,
     HavenDialogModule,
   ],
