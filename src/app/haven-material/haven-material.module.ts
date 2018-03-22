@@ -22,6 +22,7 @@ import {
   MatSortModule,
   MatStepperModule,
   MatToolbarModule,
+  MatTooltipModule,
   MatPaginatorModule,
 } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
@@ -49,6 +50,7 @@ import { MatTableModule } from '@angular/material/table';
     MatStepperModule,
     MatPaginatorModule,
     MatToolbarModule,
+    MatTooltipModule,
     MatTableModule
   ],
   exports: [
@@ -72,6 +74,7 @@ import { MatTableModule } from '@angular/material/table';
     MatStepperModule,
     MatPaginatorModule,
     MatToolbarModule,
+    MatTooltipModule,
     MatTableModule
   ],
 })

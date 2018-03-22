@@ -16,4 +16,8 @@ export class HavenDialogComponent {
     this.dialogRef.close();
   }
 
+  public updateMessage(message: string) {
+    this.data.message = message;
+  }
+
 }

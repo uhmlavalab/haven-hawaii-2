@@ -11,16 +11,16 @@ export class AuthService {
   constructor(private router: Router, private afAuth: AngularFireAuth) { }
 
   signinUser(email: string, password: string) {
-    this.token = 'cat';
-    this.router.navigate(['/home']);
-    // this.afAuth.auth.signInWithEmailAndPassword(email, password).then(response => {
-    //   firebase.auth().currentUser.getIdToken().then((token: string) => {
-    //     this.token = token;
-    //     if (this.token) {
-    //       this.router.navigate(['/home']);
-    //     }
-    //   });
-    // }, error => alert(error.message)).catch(error => alert(error));
+    // this.token = 'cat';
+    // this.router.navigate(['/home']);
+    this.afAuth.auth.signInWithEmailAndPassword(email, password).then(response => {
+      firebase.auth().currentUser.getIdToken().then((token: string) => {
+        this.token = token;
+        if (this.token) {
+          this.router.navigate(['/home']);
+        }
+      });
+    }, error => alert(error.message)).catch(error => alert(error));
   }
 
   signOut(): void {

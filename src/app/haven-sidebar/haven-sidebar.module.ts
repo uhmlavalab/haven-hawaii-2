@@ -1,33 +1,28 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { HavenMaterialModule } from '../haven-modules/haven-material.module';
+import { HavenMaterialModule } from '../haven-material/haven-material.module';
 
-import { HavenSidebarAccountComponent } from './components/haven-sidebar-account/haven-sidebar-account.component';
-import { HavenSidebarChartsComponent } from './components/haven-sidebar-charts/haven-sidebar-charts.component';
-import { HavenSidebarMapsComponent } from './components/haven-sidebar-maps/haven-sidebar-maps.component';
-
-import { HavenLayerFileDropDirective } from './directives/haven-sidebar-charts/haven-layer-filedrop';
-import { HavenLayerUploadService } from './services/haven-sidebar-charts/haven-layer-upload.service';
+import { HavenSidebarAccountModule } from './haven-sidebar-account/haven-sidebar-account.module';
+import { HavenSidebarChartsModule } from './haven-sidebar-charts/haven-sidebar-charts.module';
+import { HavenSidebarMapsModule } from './haven-sidebar-maps/haven-sidebar-maps.module';
 
 @NgModule({
   imports: [
     CommonModule,
     HavenMaterialModule,
+    HavenSidebarAccountModule,
+    HavenSidebarChartsModule,
+    HavenSidebarMapsModule
   ],
   declarations: [
-    HavenSidebarAccountComponent,
-    HavenSidebarChartsComponent,
-    HavenSidebarMapsComponent,
-    HavenLayerFileDropDirective,
   ],
   exports: [
-    HavenSidebarAccountComponent,
-    HavenSidebarChartsComponent,
-    HavenSidebarMapsComponent,
+    HavenSidebarAccountModule,
+    HavenSidebarChartsModule,
+    HavenSidebarMapsModule
   ],
   providers: [
-    HavenLayerUploadService,
   ]
 })
 export class HavenSidebarModule { }

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { HavenMaterialModule } from '../haven-modules/haven-material.module';
+import { HavenMaterialModule } from '../haven-material/haven-material.module';
 import { HavenDialogComponent } from './component/haven-dialog.component';
 import { HavenDialogService } from './service/haven-dialog.service';
 

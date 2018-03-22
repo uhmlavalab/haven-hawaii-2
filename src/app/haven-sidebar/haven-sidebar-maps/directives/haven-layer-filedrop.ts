@@ -1,12 +1,12 @@
 import { Directive, HostListener, Output, EventEmitter } from '@angular/core';
-import { HavenLayerUploadService } from '../../services/haven-sidebar-charts/haven-layer-upload.service';
+import { LayerUploadService } from '../../../haven-apps/leaflet/services/layer-upload.service';
 
 @Directive({
   selector: '[appHavenLayerFileDrop]'
 })
 export class HavenLayerFileDropDirective {
 
-  constructor(private layerUploadService: HavenLayerUploadService) { }
+  constructor(private layerUploadService: LayerUploadService) { }
 
   @HostListener('drop', ['$event']) onDrop(event) {
     event.preventDefault();

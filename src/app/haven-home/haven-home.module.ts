@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { HavenHomeComponent } from './component/haven-home.component';
 
-import { HavenMaterialModule } from '../haven-modules/haven-material.module';
+import { HavenMaterialModule } from '../haven-material/haven-material.module';
 import { HavenSidebarModule } from '../haven-sidebar/haven-sidebar.module';
 import { HavenWindowModule } from '../haven-window/haven-window.module';
 

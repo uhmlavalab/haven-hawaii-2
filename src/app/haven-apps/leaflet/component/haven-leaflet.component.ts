@@ -6,6 +6,16 @@ import { HavenWindow } from '../../../haven-window/shared/haven-window';
 import * as L from 'leaflet';
 import { GeoJsonObject } from 'geojson';
 
+import { AngularFireAuth } from 'angularfire2/auth';
+import { LayerDownloadService } from '../services/layer-download.service';
+
+import * as firebase from 'firebase';
+import { AngularFireStorage } from 'angularfire2/storage';
+import { LayerColorsService } from '../services/layer-colors.service';
+import { MapStateService } from '../services/map-state.service';
+import { Subscription } from 'rxjs/Subscription';
+import { isUndefined } from 'util';
+
 @Component({
   selector: 'app-haven-leaflet',
   templateUrl: './haven-leaflet.component.html',
@@ -19,11 +29,10 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
   havenWindow: HavenWindow;
   havenApp: HavenApp;
 
-  mapState = {
-    latitude: 21.480066,
-    longitude: -157.96,
-    zoom: 11,
-  };
+  mapStateSub = Subscription;
+
+  layers = [];
+  colorSubs = {};
 
   layersControl = {
     baseLayers: {
@@ -48,6 +57,8 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
           attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
         })
     },
+    overlays: {
+    }
   };
 
   options = {
@@ -62,42 +73,70 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
     center: L.latLng([21.480066, -157.96])
   };
 
-  constructor() { }
+  constructor(private afAuth: AngularFireAuth,
+    private storage: AngularFireStorage,
+    private layerDownloadService: LayerDownloadService,
+    private layerColorsService: LayerColorsService,
+    private mapStateService: MapStateService) {
+    this.mapStateService.mapStateSub.subscribe((state) => {
+      this.mapStateCheck(state);
+    });
+
+  }
 
   ngOnInit() {
+    this.havenApp.appInfo.selectedLayers.forEach(el => {
+      this.layerDownloadService.getLayer(el.name).then((layer) => {
+        if (layer) {
+          const geojsonFeature: GeoJSON.FeatureCollection<any> = {
+            'type': 'FeatureCollection',
+            'features': []
+          };
+          const features = layer.features;
+          features.forEach(element => {
+            geojsonFeature.features.push(element);
+          });
+          const newLayer = L.geoJSON(geojsonFeature, {
+            style: (feature) => ({
+              color: this.layerColorsService.getLayerColor(el.name),
+            }),
+          });
+          this.layersControl.overlays[el.name] = newLayer;
+          this.colorSubs[el.name] = this.layerColorsService.layerColorsSub[el.name].subscribe((value) => {
+            this.layersControl.overlays[el.name].setStyle({ color: value });
+          });
+        }
+      });
+    });
+    this.loaded = true;
   }
 
   setMap(map: L.Map) {
     this.map = map;
-    this.map.on('zoomend', () => this.zoomEnd());
-    this.map.on('moveend', () => this.moveEnd());
-    this.mapStateCheck();
-    this.loaded = true;
+    this.map.on('zoomend', () => this.stateUpdate());
+    this.map.on('moveend', () => this.stateUpdate());
   }
 
-  zoomEnd() {
-    this.mapState.zoom = this.map.getZoom();
+  stateUpdate() {
+    const zoom = this.map.getZoom();
+    const latitude = this.map.getCenter().lat;
+    const longitude = this.map.getCenter().lng;
+    this.mapStateService.setState(zoom, L.latLng(latitude, longitude));
   }
 
-  moveEnd() {
-    this.mapState.latitude = this.map.getCenter().lat;
-    this.mapState.longitude = this.map.getCenter().lng;
+  mapStateCheck(state: Object) {
+    if (!isUndefined(this.map)) {
+      this.options.zoom = state['zoom'];
+      this.options.center = state['center'];
+      this.map.setView(this.options.center, this.options.zoom);
+      console.log('state update');
+    }
   }
 
   resize() {
     if (this.loaded) {
       this.map.invalidateSize();
     }
-  }
-
-  mapStateCheck() {
-    if (this.havenApp.appInfo.mapState === undefined) {
-      this.havenApp.appInfo.mapState = this.mapState;
-    } else {
-      this.mapState = this.havenApp.appInfo.mapState;
-    }
-    this.options.zoom = this.mapState.zoom;
-    this.options.center = L.latLng([this.mapState.latitude, this.mapState.longitude]);
   }
 
 }

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { HavenLoginComponent } from './component/haven-login.component';
 
-import { HavenMaterialModule } from '../haven-modules/haven-material.module';
+import { HavenMaterialModule } from '../haven-material/haven-material.module';
 
 @NgModule({
   imports: [

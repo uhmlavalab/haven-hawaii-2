@@ -6,16 +6,16 @@ import { routes } from './app.routes';
 
 import { AppComponent } from './app.component';
 
-import { HavenFirebaseModule } from './haven-modules/haven-firebase.module';
-import { HavenMaterialModule } from './haven-modules/haven-material.module';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth-guard.service';
-import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { HavenAppsModule } from './haven-apps/haven-apps.module';
 import { HavenDialogModule } from './haven-dialog/haven-dialog.module';
+import { HavenFirebaseModule } from './haven-firebase/haven-firebase.module';
 import { HavenHomeModule } from './haven-home/haven-home.module';
 import { HavenLoginModule } from './haven-login/haven-login.module';
+import { HavenMaterialModule } from './haven-material/haven-material.module';
+import { HavenSidebarModule } from './haven-sidebar/haven-sidebar.module';
 import { HavenWindowModule } from './haven-window/haven-window.module';
 
 import { Globals } from './globals';
@@ -26,7 +26,6 @@ import { Globals } from './globals';
     BrowserAnimationsModule,
     HttpModule,
     routes,
-    FlexLayoutModule,
     HavenFirebaseModule,
     HavenMaterialModule,
     HavenHomeModule,
@@ -34,6 +33,7 @@ import { Globals } from './globals';
     HavenAppsModule,
     HavenWindowModule,
     HavenDialogModule,
+    HavenSidebarModule,
   ],
   providers: [
     AuthService,
