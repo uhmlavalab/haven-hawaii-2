@@ -7,27 +7,32 @@ import * as L from 'leaflet';
 @Injectable()
 export class MapStateService {
 
-  mapState = {
-    center: L.latLng([21.480066, -157.96]),
-    zoom: 11,
-  };
-
-  lastUpdateId = 0;
-
-  mapStateSub: Subject<object>;
+  mapStates = [];
+  mapStateSubs = [new Subject<object>(), new Subject<object>(), new Subject<object>(), new Subject<object>()];
 
   constructor() {
-    this.mapStateSub = new Subject<object>();
-    this.mapStateSub.next(this.mapState);
+
+    for (let i = 0; i < 4; i++) {
+      this.mapStates.push({
+        center: L.latLng([21.480066, -157.96]),
+        zoom: 11,
+      });
+    }
+
+    let index = 0;
+    this.mapStateSubs.forEach(sub => {
+      sub = new Subject<object>();
+      sub.next(this.mapStates[index]);
+      index++;
+    });
+
   }
 
-  setState(zoom: number, center: L.LatLng) {
-    if (zoom !== this.mapState.zoom ||
-        !center.equals(this.mapState.center, 0.0005)) {
-      this.mapState.center = center;
-      this.mapState.zoom = zoom;
-      this.mapStateSub.next(this.mapState);
-
+  setState(index: number, zoom: number, center: L.LatLng) {
+    if (zoom !== this.mapStates[index].zoom || !center.equals(this.mapStates[index].center, 0.0005)) {
+      this.mapStates[index].center = center;
+      this.mapStates[index].zoom = zoom;
+      this.mapStateSubs[index].next(this.mapStates[index]);
     }
   }
 

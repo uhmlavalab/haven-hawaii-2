@@ -12,9 +12,11 @@ export class HavenWindow {
   savePosition: Position;
   saveSize: Size;
 
+  sidebar: boolean;
+
   app: HavenApp;
 
-  constructor(header: string, footer: string, left: number, top: number, width: number, height: number) {
+  constructor(header: string, footer: string, left: number, top: number, width: number, height: number, sidebar: boolean) {
     this.header = header;
     this.footer = footer;
     this.position = new Position(left, top);

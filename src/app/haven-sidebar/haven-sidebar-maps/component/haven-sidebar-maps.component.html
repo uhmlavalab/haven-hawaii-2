@@ -1,12 +1,6 @@
 <mat-grid-list cols="3" rows="1">
-  <mat-grid-tile>
-    <img src="./assets/mapthumbnails/street.png" class="map-thumbnail">
-  </mat-grid-tile>
-  <mat-grid-tile>
-    <img src="./assets/mapthumbnails/satellite.png" style="border-color:#28608d;" class="map-thumbnail">
-  </mat-grid-tile>
-  <mat-grid-tile>
-    <img src="./assets/mapthumbnails/terrain.png" class="map-thumbnail">
+  <mat-grid-tile *ngFor="let style of mapStyles" (click)="setMapStyle(style.name)">
+    <img src="{{ style.url }}" class="map-thumbnail" [class.isActive]="style.name == selectedMapStyle">
   </mat-grid-tile>
 </mat-grid-list>
 
