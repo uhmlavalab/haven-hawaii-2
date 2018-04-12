@@ -1,0 +1,35 @@
+<div mat-dialog-content>
+  <form class="example-form">
+    <mat-form-field style="width: 100%;">
+      <input matInput placeholder="New Portfolio Name">
+    </mat-form-field>
+  </form>
+  <div class="circle">
+    <mat-progress-spinner mode="determinate" [value]="progressValue" [diameter]="264" [strokeWidth]="6" color="accent"></mat-progress-spinner>
+    <button mat-fab class="key-button" [color]="keyIn ? 'primary' : 'accent'" (click)="keyInput.click()" matTooltip="{{ keyToolTip }}">
+      <mat-icon>vpn_key</mat-icon>
+      <input #keyInput type="file" accept=".csv" (change)="onKeyInput($event)" style="display:none;" />
+    </button>
+    <button mat-fab class="cap-button" [color]="capIn ? 'primary' : 'accent'" (click)="capInput.click()" [disabled]="(progressValue < 25) ? true : false"
+      matTooltip="{{ capacityToolTip }}">
+      <mat-icon>storage</mat-icon>
+      <input #capInput type="file" (change)="onCapInput($event)" style="display:none;" />
+    </button>
+    <button mat-fab class="load-button" [color]="loadIn ? 'primary' : 'accent'" (click)="loadInput.click()" [disabled]="(progressValue < 50) ? true : false"
+      matTooltip="{{ loadToolTip }}">
+      <mat-icon>power</mat-icon>
+      <input #loadInput type="file" (change)="onLoadInput($event)" style="display:none;" />
+    </button>
+    <button mat-fab class="supply-button" [color]="profileIn ? 'primary' : 'accent'" (click)="profileInput.click()" [disabled]="(progressValue < 75) ? true : false"
+      matTooltip="{{ supplyToolTip }}">
+      <mat-icon>lightbulb_outline</mat-icon>
+      <input #profileInput type="file" (change)="onProfileInput($event)" style="display:none;" />
+    </button>
+  </div>
+</div>
+<hr>
+<div mat-dialog-actions>
+  <button mat-raised-button color="primary" [disabled]="allFilesUploaded ? false : true" (click)="onCloseClick()">Upload</button>
+  <hr>
+  <button mat-raised-button color="warn" (click)="onCloseClick()">Cancel</button>
+</div>

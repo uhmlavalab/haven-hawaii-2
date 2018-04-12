@@ -1,0 +1,42 @@
+.circle {
+  height: 240px;
+  width: 240px;
+  margin: 30px;
+  background-color: transparent;
+  border-width: 12px;
+  border-style: solid;
+  border-color: #a9b6bc30;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.key-button {
+  position: absolute;
+  transform: translate(calc(120px - 30px), -36px);
+}
+
+.cap-button {
+  position: absolute;
+  transform: translate(calc(240px - 24px), calc(120px - 30px));
+}
+
+.load-button {
+  position: absolute;
+  transform: translate(calc(120px - 30px), calc(240px - 24px));
+}
+
+.supply-button {
+  position: absolute;
+  transform: translate(-36px, calc(120px - 30px));
+}
+.mat-raised-button {
+  width: 100%;
+}
+
+.mat-progress-spinner {
+  position: absolute;
+  transform: translate(-12px, -12px);
+}
+.mat-progress-spinner > svg > circle {
+  stroke-width: 6% !important;
+}

@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, Inject } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { NewPortfolioComponent } from '../new-portfolio/new-portfolio.component';
 @Component({
   selector: 'app-haven-sidebar-account',
   templateUrl: './haven-sidebar-account.component.html',
   styleUrls: ['./haven-sidebar-account.component.css']
 })
-export class HavenSidebarAccountComponent implements OnInit {
+export class HavenSidebarAccountComponent {
 
   portfolios = [
     { value: 'Hawaii-0', viewValue: 'Hawaii' },
@@ -19,9 +20,18 @@ export class HavenSidebarAccountComponent implements OnInit {
     { value: 'Session-2', viewValue: 'Session C' }
   ];
 
-  constructor() { }
+  newPortfolioData: any;
 
-  ngOnInit() {
+  constructor(public dialog: MatDialog) { }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(NewPortfolioComponent, { width: '372px' });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.newPortfolioData = result;
+      console.log(result);
+    });
   }
+
 
 }

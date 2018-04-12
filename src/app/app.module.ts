@@ -13,6 +13,7 @@ import { HavenAppsModule } from './haven-apps/haven-apps.module';
 import { HavenDialogModule } from './haven-dialog/haven-dialog.module';
 import { HavenFirebaseModule } from './haven-firebase/haven-firebase.module';
 import { HavenHomeModule } from './haven-home/haven-home.module';
+import { PapaParseModule } from 'ngx-papaparse';
 import { HavenLoginModule } from './haven-login/haven-login.module';
 import { HavenMaterialModule } from './haven-material/haven-material.module';
 import { HavenSidebarModule } from './haven-sidebar/haven-sidebar.module';
@@ -28,6 +29,7 @@ import { Globals } from './globals';
     routes,
     HavenFirebaseModule,
     HavenMaterialModule,
+    PapaParseModule,
     HavenHomeModule,
     HavenLoginModule,
     HavenAppsModule,
