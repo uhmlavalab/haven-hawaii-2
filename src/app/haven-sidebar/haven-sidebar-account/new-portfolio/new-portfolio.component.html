@@ -5,7 +5,9 @@
     </mat-form-field>
   </form>
   <div class="circle">
-    <mat-progress-spinner mode="determinate" [value]="progressValue" [diameter]="264" [strokeWidth]="6" color="accent"></mat-progress-spinner>
+    <mat-progress-spinner mode="determinate" [value]="progressValue" [diameter]="264" [strokeWidth]="7" color="accent"></mat-progress-spinner>
+    <div *ngIf="!allFilesUploaded" class="upload-circle" [class.mat-elevation-z8]="true"><mat-icon>cloud_upload</mat-icon></div>
+    <div *ngIf="allFilesUploaded" class="upload-circle" style="background-color: #28608d;" [class.mat-elevation-z8]="true"><mat-icon>cloud_upload</mat-icon></div>
     <button mat-fab class="key-button" [color]="keyIn ? 'primary' : 'accent'" (click)="keyInput.click()" matTooltip="{{ keyToolTip }}">
       <mat-icon>vpn_key</mat-icon>
       <input #keyInput type="file" accept=".csv" (change)="onKeyInput($event)" style="display:none;" />
@@ -29,7 +31,6 @@
 </div>
 <hr>
 <div mat-dialog-actions>
-  <button mat-raised-button color="primary" [disabled]="allFilesUploaded ? false : true" (click)="onCloseClick()">Upload</button>
   <hr>
   <button mat-raised-button color="warn" (click)="onCloseClick()">Cancel</button>
 </div>

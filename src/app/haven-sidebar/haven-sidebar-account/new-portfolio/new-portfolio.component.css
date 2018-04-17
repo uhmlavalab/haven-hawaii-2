@@ -10,6 +10,27 @@
   display: inline-block;
 }
 
+.upload-circle {
+  height: 120px;
+  width: 120px;
+  position: absolute;
+  transform: translate(50%, 50%);
+  background-color: #e0e0e0;
+  border-radius: 50%;
+}
+
+.upload-circle > mat-icon {
+  font-size: 48px;
+  left: 50%;
+  top: 50%;
+  height: 48px;
+  width: 48px;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  color:white;
+}
+
+
 .key-button {
   position: absolute;
   transform: translate(calc(120px - 30px), -36px);

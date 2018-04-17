@@ -23,6 +23,7 @@ export class HavenWindow {
     this.size = new Size(width, height);
     this.savePosition = new Position(left, top);
     this.saveSize = new Size(width, height);
+    this.sidebar = sidebar;
   }
 
 }
