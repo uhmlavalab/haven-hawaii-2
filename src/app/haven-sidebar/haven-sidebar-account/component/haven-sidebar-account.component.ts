@@ -29,7 +29,6 @@ export class HavenSidebarAccountComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       this.newPortfolioData = result;
-      console.log(result);
     });
   }
 

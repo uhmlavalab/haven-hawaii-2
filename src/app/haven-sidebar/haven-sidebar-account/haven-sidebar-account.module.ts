@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { HavenMaterialModule } from '../../haven-material/haven-material.module';
 
@@ -9,7 +10,8 @@ import { NewPortfolioComponent } from './new-portfolio/new-portfolio.component';
 @NgModule({
   imports: [
     CommonModule,
-    HavenMaterialModule
+    HavenMaterialModule,
+    FormsModule,
   ],
   declarations: [
     HavenSidebarAccountComponent,

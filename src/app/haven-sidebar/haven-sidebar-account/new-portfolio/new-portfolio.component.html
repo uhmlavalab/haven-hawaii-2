@@ -1,13 +1,13 @@
 <div mat-dialog-content>
   <form class="example-form">
     <mat-form-field style="width: 100%;">
-      <input matInput placeholder="New Portfolio Name">
+      <input matInput placeholder="New Portfolio Name" [(ngModel)]="portfolioName" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
   </form>
   <div class="circle">
     <mat-progress-spinner mode="determinate" [value]="progressValue" [diameter]="264" [strokeWidth]="7" color="accent"></mat-progress-spinner>
-    <div *ngIf="!allFilesUploaded" class="upload-circle" [class.mat-elevation-z8]="true"><mat-icon>cloud_upload</mat-icon></div>
-    <div *ngIf="allFilesUploaded" class="upload-circle" style="background-color: #28608d;" [class.mat-elevation-z8]="true"><mat-icon>cloud_upload</mat-icon></div>
+    <div *ngIf="!allFilesUploaded" class="upload-circle" [class.mat-elevation-z8]="true"><mat-icon class="upload-circle-icon">cloud_upload</mat-icon></div>
+    <div *ngIf="allFilesUploaded" class="upload-circle-finished" [class.mat-elevation-z8]="true" (click)="uploadFiles()"><mat-icon class="upload-circle-icon">cloud_upload</mat-icon></div>
     <button mat-fab class="key-button" [color]="keyIn ? 'primary' : 'accent'" (click)="keyInput.click()" matTooltip="{{ keyToolTip }}">
       <mat-icon>vpn_key</mat-icon>
       <input #keyInput type="file" accept=".csv" (change)="onKeyInput($event)" style="display:none;" />
