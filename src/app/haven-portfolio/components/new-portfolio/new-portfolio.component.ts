@@ -6,6 +6,8 @@ import { PapaParseService } from 'ngx-papaparse';
 import * as firebase from 'firebase';
 
 
+import { NewPortfolioUploadService } from '../../../haven-sidebar/haven-sidebar-account/services/new-portfolio-upload.service';
+
 @Component({
   selector: 'app-new-portfolio',
   templateUrl: './new-portfolio.component.html',
@@ -46,8 +48,9 @@ export class NewPortfolioComponent {
   constructor(
     public dialogRef: MatDialogRef<NewPortfolioComponent>,
     private papa: PapaParseService,
+    private portUploadService: NewPortfolioUploadService,
     @Inject(MAT_DIALOG_DATA) public data: any, private afAuth: AngularFireAuth) {
-    this.database = firebase.firestore().collection(`${this.afAuth.auth.currentUser.uid}`);
+    this.database = firebase.firestore().collection(`${this.afAuth.auth.currentUser.uid}`).doc('portfolios').collection('data');
   }
 
   onCloseClick(): void {
@@ -190,14 +193,20 @@ export class NewPortfolioComponent {
   }
 
   uploadFiles() {
-    if (this.portfolioName !== '') {
-      this.numTotalDocs = this.keyData.length + this.capData.length + this.loadData.length + this.profileData.length;
-      this.numOfDocs = 0;
-      this.uploadKeyData(this.keyData);
-      this.uploadCapacityData(this.capData);
-      this.uploadLoadData(this.loadData);
-      this.uploadProfileData(this.profileData);
-    }
+    const profile = this.profileFileInput.nativeElement.files[0];
+    const load = this.loadFileInput.nativeElement.files[0];
+    const cap = this.capFileInput.nativeElement.files[0];
+    const key = this.keyFileInput.nativeElement.files[0];
+    this.portUploadService.uploadCSVFiles(key, cap, load, profile, this.portfolioName);
+    // if (this.portfolioName !== '') {
+    //   this.numTotalDocs = this.keyData.length + this.capData.length + this.loadData.length + this.profileData.length;
+    //   this.numOfDocs = 0;
+    //   this.uploadKeyData(this.keyData);
+    //   this.uploadCapacityData(this.capData);
+    //   this.uploadLoadData(this.loadData);
+    //   this.uploadProfileData(this.profileData);
+    //   firebase.firestore().collection(`${this.afAuth.auth.currentUser.uid}`).doc('portfolios').collection('names').doc(this.portfolioName).set({ name: this.portfolioName }, { merge: true });
+    // }
   }
 
   uploadKeyData(keyData: any) {

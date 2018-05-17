@@ -1,14 +1,14 @@
 <button mat-raised-button color="primary" (click)="openDialog()">New Portfolio</button>
 
 <mat-form-field>
-  <mat-select placeholder="Portfolio">
-    <mat-option *ngFor="let portfolio of portfolios" [value]="portfolio.value">
-      {{ portfolio.viewValue }}
+  <mat-select placeholder="Portfolio" [(value)]="selectedPortfolio">
+    <mat-option *ngFor="let portfolio of portfolios | async" [value]="portfolio.name">
+      {{ portfolio.name }}
     </mat-option>
   </mat-select>
 </mat-form-field>
 
-<button mat-raised-button color="primary">Load Portfolio</button>
+<button mat-raised-button color="primary" (click)="loadPortfolio()">Load Portfolio</button>
 
 <mat-form-field>
   <mat-select placeholder="Session">

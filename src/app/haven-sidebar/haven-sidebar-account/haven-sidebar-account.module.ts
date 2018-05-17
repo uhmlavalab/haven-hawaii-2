@@ -5,7 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { HavenMaterialModule } from '../../haven-material/haven-material.module';
 
 import { HavenSidebarAccountComponent } from './component/haven-sidebar-account.component';
-import { NewPortfolioComponent } from './new-portfolio/new-portfolio.component';
+
+import { NewPortfolioUploadService } from './services/new-portfolio-upload.service';
 
 @NgModule({
   imports: [
@@ -15,13 +16,12 @@ import { NewPortfolioComponent } from './new-portfolio/new-portfolio.component';
   ],
   declarations: [
     HavenSidebarAccountComponent,
-    NewPortfolioComponent,
   ],
   exports: [
     HavenSidebarAccountComponent,
   ],
-  entryComponents: [
-    NewPortfolioComponent,
+  providers: [
+    NewPortfolioUploadService
   ]
 })
 export class HavenSidebarAccountModule { }

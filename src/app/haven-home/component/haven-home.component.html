@@ -1,7 +1,7 @@
 <img class="logo" src="./assets/logo/havenlogo.png"> 
 
 <mat-toolbar color="primary" [style.height]="toolbarHeight + 'px'">
-  <span> {{ title }} </span>
+  <span> {{ title }} - {{ loadedPortfolioService.selectedPortfolio }} </span>
 </mat-toolbar>
 
 <mat-drawer-container class="app-container" [style.height]="mainHeight">

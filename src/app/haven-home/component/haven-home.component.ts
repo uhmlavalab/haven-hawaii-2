@@ -3,6 +3,8 @@ import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { Globals } from '../../globals';
 
+import { LoadedPortfolioService } from '../../haven-portfolio/services/loaded-portfolio.service';
+
 @Component({
   selector: 'app-haven-home',
   templateUrl: './haven-home.component.html',
@@ -23,7 +25,7 @@ export class HavenHomeComponent {
   toolbarHeight: number;
   drawerOpen: boolean;
 
-  constructor (private globals: Globals, private sanitizer: DomSanitizer) {
+  constructor (private globals: Globals, private sanitizer: DomSanitizer, public loadedPortfolioService: LoadedPortfolioService) {
     this.sidebarWidth = globals.sidebarWidth;
     this.toolbarHeight = globals.toolbarHeight;
     this.drawerOpen = globals.drawerOpen;

@@ -18,6 +18,7 @@ import { HavenLoginModule } from './haven-login/haven-login.module';
 import { HavenMaterialModule } from './haven-material/haven-material.module';
 import { HavenSidebarModule } from './haven-sidebar/haven-sidebar.module';
 import { HavenWindowModule } from './haven-window/haven-window.module';
+import { HavenPortfolioModule } from './haven-portfolio/haven-portfolio.module';
 
 import { Globals } from './globals';
 
@@ -36,6 +37,7 @@ import { Globals } from './globals';
     HavenWindowModule,
     HavenDialogModule,
     HavenSidebarModule,
+    HavenPortfolioModule,
   ],
   providers: [
     AuthService,

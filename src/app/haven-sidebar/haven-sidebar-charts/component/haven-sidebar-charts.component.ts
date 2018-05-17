@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
+import { HavenWindowService } from '../../../haven-window/services/haven-window.service';
+import { HavenWindow } from '../../../haven-window/shared/haven-window';
+import { HavenApp } from '../../../haven-apps/shared/haven-app';
+
+import { PlotlyAppInfo } from '../../../haven-apps/plotly/shared/plotly-app-info';
+
 @Component({
   selector: 'app-haven-sidebar-charts',
   templateUrl: './haven-sidebar-charts.component.html',
@@ -27,13 +33,24 @@ export class HavenSidebarChartsComponent implements OnInit {
     {value: 'Supply-2', viewValue: 'Supply'}
   ];
 
-  constructor() { }
+  constructor(private windowService: HavenWindowService) { }
 
   ngOnInit() {
   }
 
   reSliderChange(event) {
     this.reValue = event.value;
+  }
+
+  createChartWindow() {
+    const havenWindow = new HavenWindow('Plotly', '', 100, 100, 400, 400, false);
+    const startDate = new Date(2022, 0, 1);
+    const endDate = new Date(2022, 1, 1);
+    const value = 'load';
+    const appInfo = new PlotlyAppInfo(startDate, endDate, value);
+    const newApp = new HavenApp('plotly-scatter', appInfo);
+    havenWindow.app = newApp;
+    this.windowService.addWindow(havenWindow);
   }
 
 }
