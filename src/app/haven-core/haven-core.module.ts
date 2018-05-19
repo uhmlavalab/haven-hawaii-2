@@ -1,0 +1,61 @@
+import { NgModule, Optional, SkipSelf } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpModule } from '@angular/http';
+
+import { PapaParseModule } from 'ngx-papaparse';
+
+import { Globals } from './globals';
+
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { AngularFireStorageModule } from 'angularfire2/storage';
+import { AngularFireAuthModule } from 'angularfire2/auth';
+
+import { environment } from '../../environments/environment';
+
+import { AuthGuard } from './services/auth/auth-guard.service';
+import { AuthService } from './services/auth/auth.service';
+import { LayerColorsService } from './services/layers/layer-colors.service';
+import { LayerDownloadService } from './services/layers/layer-download.service';
+import { LayerStateService } from './services/layers/layer-state.service';
+import { LayerUploadService } from './services/layers/layer-upload.service';
+import { PlotlyFirestoreQueryService } from './services/plotly/plotly-firestore-query.service';
+import { NewPortfolioUploadService } from './services/portfolios/new-portfolio-upload.service';
+import { PortfolioService } from './services/portfolios/portfolio.service';
+import { HavenWindowService } from './services/windows/haven-window.service';
+
+@NgModule({
+  imports: [
+    CommonModule,
+    HttpModule,
+    PapaParseModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireDatabaseModule,
+    AngularFirestoreModule,
+    AngularFireAuthModule,
+    AngularFireStorageModule
+  ],
+  providers: [
+    AuthGuard,
+    AuthService,
+    LayerColorsService,
+    LayerDownloadService,
+    LayerStateService,
+    LayerUploadService,
+    PlotlyFirestoreQueryService,
+    NewPortfolioUploadService,
+    PortfolioService,
+    HavenWindowService,
+    Globals
+  ]
+})
+export class HavenCoreModule {
+  constructor(
+    @Optional() @SkipSelf() parentModule: HavenCoreModule
+  ) {
+    if (parentModule) {
+      throw new Error('CoreModule is already loaded. Import only in AppModule');
+    }
+  }
+}

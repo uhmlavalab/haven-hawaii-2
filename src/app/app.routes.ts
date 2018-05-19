@@ -1,10 +1,10 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { HavenLoginComponent } from './haven-login/component/haven-login.component';
-import { HavenHomeComponent } from './haven-home/component/haven-home.component';
+import { AuthGuard } from '@app/haven-core';
 
-import { AuthGuard } from './auth-guard.service';
+import { HavenHomeComponent } from '@app/haven-pages';
+import { HavenLoginComponent } from '@app/haven-pages';
 
 const router: Routes = [
   {
