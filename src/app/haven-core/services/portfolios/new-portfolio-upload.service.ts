@@ -8,38 +8,40 @@ import * as firebase from 'firebase';
 @Injectable()
 export class NewPortfolioUploadService {
 
-  database: firebase.firestore.CollectionReference;
-
   private numOfUploadedDocs = 0;
   private numTotalDocs = 0;
 
-
-  constructor(private afAuth: AngularFireAuth, private papa: PapaParseService) {
-    this.database = firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('portfolios').collection('data');
-  }
+  constructor(private afAuth: AngularFireAuth, private papa: PapaParseService) {}
 
   uploadCSVFiles(keyCSV: any, capCSV: any, loadCSV: any, profileCSV: any, portfolioName: string) {
     this.processKeyCSV(keyCSV).then((keyData) => {
       this.processCapCSV(capCSV).then((capData) => {
         this.processLoadCSV(loadCSV).then((loadData) => {
           this.processProfileCSV(profileCSV).then((profileData) => {
-            console.log(keyData);
-            this.uploadFiles(keyData, capData, loadData, profileData, portfolioName);
+            this.createREData(keyData, capData, loadData, profileData).then((reData) => {
+              console.log(reData);
+              // this.uploadFiles(keyData, capData, loadData, profileData, reData, portfolioName);
+            });
           });
         });
       });
     });
   }
 
-  uploadFiles(keyData: Object, capData: Object, loadData: Object, profileData: Object, portfolioName: string) {
+  uploadFiles(keyData: Object, capData: Object, loadData: Object, profileData: Object, reData: Object, portfolioName: string) {
     if (portfolioName !== '') {
-      this.numTotalDocs = Object.keys(keyData).length + Object.keys(capData).length + Object.keys(loadData).length + Object.keys(profileData).length;
+      this.numTotalDocs = Object.keys(keyData).length + Object.keys(capData).length + Object.keys(loadData).length + Object.keys(profileData).length + Object.keys(reData).length;
       this.numOfUploadedDocs = 0;
       this.uploadData(keyData, 'key', portfolioName).then(() => {
         this.uploadData(capData, 'capacity', portfolioName).then(() => {
           this.uploadData(loadData, 'load', portfolioName).then(() => {
             this.uploadData(profileData, 'profile', portfolioName).then(() => {
-              firebase.firestore().collection(`${this.afAuth.auth.currentUser.uid}`).doc('portfolios').collection('names').doc(portfolioName).set({ name: portfolioName }, { merge: true });
+              this.uploadData(reData, 'renewablePercent', portfolioName).then(() => {
+                firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolio_names').doc(portfolioName).set({
+                  name: portfolioName,
+                  uploadDate: Date.now(),
+                });
+               });
             });
           });
         });
@@ -52,7 +54,7 @@ export class NewPortfolioUploadService {
       console.log(`${collectionName} - Finished Uploading`);
       return Promise.resolve(true);
     }
-    const keyRef = this.database.doc(portfolioName).collection(collectionName);
+    const keyRef = firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('portfolio_data').doc('data').collection(collectionName);
     const batch = firebase.firestore().batch();
     let i = 0;
     while (i < 50 && Object.keys(data).length > 0) {
@@ -136,7 +138,7 @@ export class NewPortfolioUploadService {
           const loadIdx = columns.indexOf('load');
           for (let i = 1; i < results.data.length; i++) {
             const time = new Date(results.data[i][timeIdx]);
-            const load = Number.parseFloat(results.data[i][loadIdx].replace(/,/g, ''));
+            const load = Math.abs(Number.parseFloat(results.data[i][loadIdx].replace(/,/g, '')));
             const hour = time.getHours();
             const dateKey = new Date(time.getFullYear(), time.getMonth(), time.getDate()).toDateString().split(' ').slice(1, 4).join(' ');
             if (!loadData.hasOwnProperty(dateKey)) {
@@ -184,6 +186,74 @@ export class NewPortfolioUploadService {
       });
     });
   }
+
+  createREData(keyData: Object, capData: Object, loadData: Object, profileData: Object): Promise<Object> {
+    return new Promise((complete) => {
+
+      // Create Renewable Key
+      const renewableKey = {};
+      Object.keys(keyData).forEach(station => {
+        if (keyData[station]['renewable']) {
+          const id = keyData[station]['id'];
+          renewableKey[id] = {};
+          renewableKey[id]['profile'] = keyData[station]['profile'];
+          Object.keys(capData).forEach(capYear => {
+            const stationCap = capData[capYear][id];
+            renewableKey[id][capYear] = stationCap;
+          });
+        }
+      });
+
+      // Create Yearly Load Totals
+      const yearlyLoad = {};
+      Object.keys(loadData).forEach(day => {
+        const year = loadData[day]['time'].getFullYear();
+        if (!yearlyLoad.hasOwnProperty(year)) {
+          yearlyLoad[year] = 0;
+        }
+        Object.keys(loadData[day]).forEach(hours => {
+          if (hours !== 'time') {
+            yearlyLoad[year] += loadData[day][hours];
+          }
+        });
+      });
+
+      // Create Yearly Renewable Supply Totals
+      const renewableSupply = {};
+      Object.keys(profileData).forEach(day => {
+        const year = profileData[day]['time'].getFullYear();
+        if (!renewableSupply.hasOwnProperty(year)) {
+          renewableSupply[year] = 0;
+        }
+        Object.keys(profileData[day]).forEach(hour => {
+          if (hour !== 'time') {
+            const hourlyProfile = profileData[day][hour];
+            Object.keys(renewableKey).forEach(renewableStation => {
+              const stationProfile = renewableKey[renewableStation]['profile'];
+              const capacityValue = renewableKey[renewableStation][year];
+              const profileValue = hourlyProfile[stationProfile];
+              const supplyValue = profileValue * capacityValue;
+              if (!isNaN(supplyValue)) {
+                renewableSupply[year] += supplyValue;
+              }
+            });
+          }
+        });
+      });
+      console.log(renewableSupply, yearlyLoad);
+      // Create RE Data
+      const reData = {};
+      Object.keys(renewableSupply).forEach(year => {
+        if (yearlyLoad.hasOwnProperty(year)) {
+          const renewTotal = renewableSupply[year];
+          const loadTotal = yearlyLoad[year];
+          reData[year] = {'re': renewTotal / loadTotal, 'year': year };
+        }
+      });
+      return complete(reData);
+    });
+  }
+
 
   arrayToLowerCase(input) {
     return input.join('|').toLowerCase().split('|');

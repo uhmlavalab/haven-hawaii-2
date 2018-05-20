@@ -40,7 +40,7 @@ export class LayerUploadService {
       (snapshot: any) => {
         // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        dialogRef.updateMessage(`${file.name} uploading ${Math.trunc(progress)}%.`);
+        dialogRef.componentInstance.updateMessage(`${file.name} uploading ${Math.trunc(progress)}%.`);
 
         switch (snapshot.state) {
           case firebase.storage.TaskState.PAUSED: // or 'paused'
@@ -71,13 +71,13 @@ export class LayerUploadService {
           // No Such Value in database
           if (snapshot.val() === null) {
             this.db.list(`/users/${this.afAuth.auth.currentUser.uid}/layers/`).push({ name: file.name, url: downloadURL }).then(value => {
-              dialogRef.updateMessage(`${file.name} upload complete.`);
+              dialogRef.componentInstance.updateMessage(`${file.name} upload complete.`);
             });
           } else {
             // Update
             const key = Object.keys(snapshot.val())[0];
             this.db.database.ref(`/users/${this.afAuth.auth.currentUser.uid}/layers/${key}/`).set({ name: file.name, url: downloadURL }).then(value => {
-              dialogRef.updateMessage(`${file.name} upload complete.`);
+              dialogRef.componentInstance.updateMessage(`${file.name} upload complete.`);
             });
           }
         });

@@ -9,7 +9,7 @@
 </div>
 
 <mat-grid-list cols="1" rows="(layers | async).length" rowHeight="40px">
-  <mat-grid-tile *ngFor="let layer of layers | async;">
+  <mat-grid-tile *ngFor="let layer of portfolioService.getLayersList() | async;">
     <mat-checkbox color="primary" matTooltip="{{ layer.name }}" style="width: 75%; overflow: hidden; text-overflow: clip;" (click)="toggleLayerCheck(layer.name, $event)">
       {{ layer.name.split('.')[0] }}
     </mat-checkbox>

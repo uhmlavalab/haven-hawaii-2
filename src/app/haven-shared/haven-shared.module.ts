@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { HavenDialogComponent } from './haven-dialog/component/haven-dialog.component';
+import { HavenMessageDialogComponent } from './haven-dialog/components/haven-message-dialog/haven-message-dialog.component';
+import { HavenConfirmDialogComponent } from './haven-dialog/components/haven-confirm-dialog/haven-confirm-dialog.component';
 import { HavenDialogService } from './haven-dialog/service/haven-dialog.service';
 
 import {
@@ -31,6 +32,7 @@ import {
   MatPaginatorModule,
 } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
+
 
 @NgModule({
   imports: [
@@ -61,7 +63,8 @@ import { MatTableModule } from '@angular/material/table';
     MatTableModule
   ],
   declarations: [
-    HavenDialogComponent,
+    HavenMessageDialogComponent,
+    HavenConfirmDialogComponent,
   ],
   exports: [
     CommonModule,
@@ -89,10 +92,15 @@ import { MatTableModule } from '@angular/material/table';
     MatToolbarModule,
     MatTooltipModule,
     MatTableModule,
-    HavenDialogComponent
+    HavenMessageDialogComponent,
+    HavenConfirmDialogComponent
   ],
   providers: [
     HavenDialogService
+  ],
+  entryComponents: [
+    HavenMessageDialogComponent,
+    HavenConfirmDialogComponent,
   ]
 })
 export class HavenSharedModule { }

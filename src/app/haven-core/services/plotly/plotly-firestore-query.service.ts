@@ -21,7 +21,7 @@ export class PlotlyFirestoreQueryService {
   }
 
   private getLoad(startDate: Date, endDate: Date, value: string): Promise<any> {
-    return this.portfolioService.portfolioDatabaseRef
+    return this.portfolioService.getDataRef()
       .collection('load')
         .where('time', '>=', startDate)
         .where('time', '<=', endDate)

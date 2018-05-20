@@ -4,7 +4,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireStorage } from 'angularfire2/storage';
 import { Observable } from 'rxjs/Observable';
 
-import { HavenWindowService } from '@app/haven-core';
+import { HavenWindowService, PortfolioService } from '@app/haven-core';
 import { LayerColorsService } from '@app/haven-core';
 
 import { HavenWindow } from '../../haven-window/shared/haven-window';
@@ -36,30 +36,12 @@ export class HavenSidebarMapsComponent implements OnInit {
     }
   ];
 
-
-  items: Observable<any[]>;
-
-  layersRef: AngularFireList<any>;
-  layers: Observable<any[]>;
-
   layerSelected = {};
   layerColors = {};
 
-  constructor(private db: AngularFireDatabase, private afAuth: AngularFireAuth, private windowService: HavenWindowService, public layerColorsService: LayerColorsService, private afStorage: AngularFireStorage) {
-
-    this.layersRef = db.list(`/users/${this.afAuth.auth.currentUser.uid}/layers`);
-    this.layers = this.layersRef.snapshotChanges().map(changes => {
-      for (const layer in this.layerSelected) {
-        if (this.layerSelected.hasOwnProperty(layer)) {
-          this.layerSelected[layer] = false;
-        }
-      }
-      return changes.map(c => ({ key: c.payload.key, ...c.payload.val() }));
-    });
-
+  constructor(private windowService: HavenWindowService, public portfolioService: PortfolioService, public layerColorsService: LayerColorsService) {
     window.addEventListener('dragover', e => e.preventDefault(), false);
     window.addEventListener('drop', e => e.preventDefault(), false);
-
   }
 
   ngOnInit() {
@@ -93,9 +75,8 @@ export class HavenSidebarMapsComponent implements OnInit {
     this.layerColorsService.setLayerColor(layerName, color);
   }
 
-  deleteLayer(layerKey: string, layerName: string) {
-    this.db.list(`/users/${this.afAuth.auth.currentUser.uid}/layers/${layerKey}`).remove();
-    this.afStorage.storage.ref(`/users/${this.afAuth.auth.currentUser.uid}/layers/${layerName}`).delete();
+  deleteLayer() {
+    // TODO
   }
 
 }

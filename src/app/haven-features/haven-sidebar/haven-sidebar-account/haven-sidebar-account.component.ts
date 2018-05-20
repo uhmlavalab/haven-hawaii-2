@@ -1,12 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
-import { AngularFireAuth } from 'angularfire2/auth';
-import { Observable } from 'rxjs/Observable';
 
 import { NewPortfolioComponent } from '../../haven-new-portfolio/new-portfolio.component';
 import { PortfolioService } from '@app/haven-core';
+
+import { HavenDialogService } from '@app/haven-shared';
 
 
 @Component({
@@ -16,22 +15,12 @@ import { PortfolioService } from '@app/haven-core';
 })
 export class HavenSidebarAccountComponent {
 
-  private portfoliosCollection: AngularFirestoreCollection<any>;
-  portfolios: Observable<any[]>;
   selectedPortfolio: any;
-
-  sessions = [
-    { value: 'Session-0', viewValue: 'Session A' },
-    { value: 'Session-1', viewValue: 'Session B' },
-    { value: 'Session-2', viewValue: 'Session C' }
-  ];
+  selectedSession: any;
 
   newPortfolioData: any;
 
-  constructor(public dialog: MatDialog, private afs: AngularFirestore, private afAuth: AngularFireAuth, private portfolioService: PortfolioService) {
-    this.portfoliosCollection = afs.collection<any>(`${afAuth.auth.currentUser.uid}`).doc('portfolios').collection('names');
-    this.portfolios = this.portfoliosCollection.valueChanges();
-   }
+  constructor(public dialog: MatDialog, public portfolioService: PortfolioService, private dialogService: HavenDialogService ) { }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(NewPortfolioComponent, { width: '372px' });
@@ -45,5 +34,36 @@ export class HavenSidebarAccountComponent {
     this.portfolioService.loadPortfolio(this.selectedPortfolio);
   }
 
+  deletePortfolio() {
+    if (this.selectedPortfolio) {
+      this.dialogService.openConfirmationMessage(`Are you sure you want to delete the ${this.selectedPortfolio} portfolio?`)
+        .afterClosed()
+        .subscribe(result => {
+          if (result) {
+            // TODO Delete Portfolio
+          }
+      });
+    }
+  }
+
+  loadSession() {
+    // TODO
+  }
+
+  saveSession() {
+    // TODO
+  }
+
+  deleteSession() {
+    if (this.selectedSession) {
+      this.dialogService.openConfirmationMessage(`Are you sure you want to delete the ${this.selectedSession} session?`)
+        .afterClosed()
+        .subscribe(result => {
+          if (result) {
+            // TODO Delete Session
+          }
+      });
+    }
+  }
 
 }

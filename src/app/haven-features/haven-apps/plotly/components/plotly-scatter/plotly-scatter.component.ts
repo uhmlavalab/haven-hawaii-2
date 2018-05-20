@@ -53,7 +53,6 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit {
         height: this.chartDiv.nativeElement.getBoundingClientRect().height,
         width: this.chartDiv.nativeElement.getBoundingClientRect().width
       };
-      console.log(update);
       Plotly.relayout(this.chartDiv.nativeElement, update);
     }
   }

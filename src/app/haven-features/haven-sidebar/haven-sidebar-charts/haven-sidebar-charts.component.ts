@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { HavenWindowService } from '@app/haven-core';
+import { HavenWindowService, PortfolioService } from '@app/haven-core';
 
 import { HavenWindow } from '../../haven-window/shared/haven-window';
 import { HavenApp } from '../../haven-apps/shared/haven-app';
@@ -14,41 +14,32 @@ import { PlotlyAppInfo } from '../../haven-apps/plotly/shared/plotly-app-info';
 })
 export class HavenSidebarChartsComponent implements OnInit {
 
-  reValue = 50;
-
-  scenarios = [
-    {value: 'Scenario-0', viewValue: 'Scenario A'},
-    {value: 'Scenario-1', viewValue: 'Scenario B'},
-    {value: 'Scenario-2', viewValue: 'Scenario C'}
-  ];
-
   scopes = [
-    {value: 'Annual-0', viewValue: 'Annual'},
-    {value: 'Monthly-1', viewValue: 'Monthly'},
-    {value: 'Daily-2', viewValue: 'Daily'}
+    {value: 'annual', viewValue: 'Annual'},
+    {value: 'monthly', viewValue: 'Monthly'},
+    {value: 'daily', viewValue: 'Daily'},
+    {value: 'hourly', viewValue: 'Hourly'}
   ];
 
   valueTypes = [
-    {value: 'load-0', viewValue: 'Load'},
-    {value: 'netload-1', viewValue: 'NetLoad'},
-    {value: 'Supply-2', viewValue: 'Supply'}
+    {value: 'load', viewValue: 'Load'},
+    {value: 'capacity', viewValue: 'Capacity'},
+    {value: 'supply', viewValue: 'Supply'}
   ];
 
-  constructor(private windowService: HavenWindowService) { }
+  selectedYear = 2030;
+  selectedScope = 'hourly';
+  selectedValue = 'load';
 
-  ngOnInit() {
-  }
+  constructor(private windowService: HavenWindowService, public portfolioService: PortfolioService) { }
 
-  reSliderChange(event) {
-    this.reValue = event.value;
-  }
+  ngOnInit() {}
 
   createChartWindow() {
     const havenWindow = new HavenWindow('Plotly', '', 100, 100, 400, 400, false);
-    const startDate = new Date(2022, 0, 1);
-    const endDate = new Date(2022, 1, 1);
-    const value = 'load';
-    const appInfo = new PlotlyAppInfo(startDate, endDate, value);
+    const startDate = new Date(this.selectedYear, 0, 1);
+    const endDate = new Date(this.selectedYear, 1, 1);
+    const appInfo = new PlotlyAppInfo(startDate, endDate, this.selectedValue);
     const newApp = new HavenApp('plotly-scatter', appInfo);
     havenWindow.app = newApp;
     this.windowService.addWindow(havenWindow);

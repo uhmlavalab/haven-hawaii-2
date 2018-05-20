@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HavenDialogComponent } from './haven-dialog.component';
+import { HavenMessageDialogComponent } from './haven-message-dialog.component';
 
 describe('HavenDialogComponent', () => {
-  let component: HavenDialogComponent;
-  let fixture: ComponentFixture<HavenDialogComponent>;
+  let component: HavenMessageDialogComponent;
+  let fixture: ComponentFixture<HavenMessageDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HavenDialogComponent ]
+      declarations: [ HavenMessageDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HavenDialogComponent);
+    fixture = TestBed.createComponent(HavenMessageDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -3,13 +3,13 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-haven-dialog',
-  templateUrl: './haven-dialog.component.html',
-  styleUrls: ['./haven-dialog.component.css']
+  templateUrl: './haven-message-dialog.component.html',
+  styleUrls: ['./haven-message-dialog.component.css']
 })
-export class HavenDialogComponent {
+export class HavenMessageDialogComponent {
 
   constructor(
-    public dialogRef: MatDialogRef<HavenDialogComponent>,
+    public dialogRef: MatDialogRef<HavenMessageDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   onCloseClick(): void {
