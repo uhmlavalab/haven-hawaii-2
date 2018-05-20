@@ -1,14 +1,14 @@
+
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
-import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFireStorage } from 'angularfire2/storage';
-import { Observable } from 'rxjs/Observable';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { HavenWindowService, PortfolioService } from '@app/haven-core';
 import { LayerColorsService } from '@app/haven-core';
 
 import { HavenWindow } from '../../haven-window/shared/haven-window';
 import { HavenApp } from '../../haven-apps/shared/haven-app';
+
+import { HavenNewLayerComponent } from '../../haven-new-layer/haven-new-layer.component';
 
 import { LeafletAppInfo } from '../../haven-apps/leaflet/shared/leaflet-app-info';
 
@@ -17,7 +17,7 @@ import { LeafletAppInfo } from '../../haven-apps/leaflet/shared/leaflet-app-info
   templateUrl: './haven-sidebar-maps.component.html',
   styleUrls: ['./haven-sidebar-maps.component.css']
 })
-export class HavenSidebarMapsComponent implements OnInit {
+export class HavenSidebarMapsComponent {
 
   selectedMapStyle = 'street';
   mapStyles = [
@@ -39,12 +39,13 @@ export class HavenSidebarMapsComponent implements OnInit {
   layerSelected = {};
   layerColors = {};
 
-  constructor(private windowService: HavenWindowService, public portfolioService: PortfolioService, public layerColorsService: LayerColorsService) {
+  constructor(public dialog: MatDialog, private windowService: HavenWindowService, public portfolioService: PortfolioService, public layerColorsService: LayerColorsService) {
     window.addEventListener('dragover', e => e.preventDefault(), false);
     window.addEventListener('drop', e => e.preventDefault(), false);
   }
 
-  ngOnInit() {
+  openNewLayerDialog(): void {
+    const dialogRef = this.dialog.open(HavenNewLayerComponent, { width: '372px' });
   }
 
   createMapWindow() {

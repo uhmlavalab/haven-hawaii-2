@@ -15,6 +15,10 @@ export class LayerUploadService {
 
   constructor(private http: Http, private afAuth: AngularFireAuth, private db: AngularFireDatabase, private dialogService: HavenDialogService) { }
 
+  uploadLayer(layerFile: File, layerName?: string, selectedProfile?: string[]) {
+    console.log(layerFile, layerName, selectedProfile);
+  }
+
   uploadFile(file: File) {
 
     const extension = file.name.split('.').pop();

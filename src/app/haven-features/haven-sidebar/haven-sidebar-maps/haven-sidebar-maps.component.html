@@ -4,9 +4,7 @@
   </mat-grid-tile>
 </mat-grid-list>
 
-<div appHavenLayerFileDrop class="layer-droparea">
-  <p>Drop Layers Here</p>
-</div>
+<button mat-raised-button color="primary" (click)="openNewLayerDialog()">New Layer</button>
 
 <mat-grid-list cols="1" rows="(layers | async).length" rowHeight="40px">
   <mat-grid-tile *ngFor="let layer of portfolioService.getLayersList() | async;">

@@ -28,8 +28,9 @@ export class HavenSidebarChartsComponent implements OnInit {
   ];
 
   selectedYear = 2030;
-  selectedScope = 'hourly';
-  selectedValue = 'load';
+  selectedScenario = '';
+  selectedScope = '';
+  selectedValue = '';
 
   constructor(private windowService: HavenWindowService, public portfolioService: PortfolioService) { }
 
@@ -43,6 +44,10 @@ export class HavenSidebarChartsComponent implements OnInit {
     const newApp = new HavenApp('plotly-scatter', appInfo);
     havenWindow.app = newApp;
     this.windowService.addWindow(havenWindow);
+  }
+
+  scenarioChange() {
+    this.portfolioService.setScenario(this.selectedScenario);
   }
 
 }

@@ -26,6 +26,7 @@ import {HavenWindowResizeDirective } from './haven-window/directives/haven-windo
 
 // MISC
 import { NewPortfolioComponent } from './haven-new-portfolio/new-portfolio.component';
+import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.component';
 
 @NgModule({
   imports: [
@@ -57,6 +58,7 @@ import { NewPortfolioComponent } from './haven-new-portfolio/new-portfolio.compo
 
     // Misc
     NewPortfolioComponent,
+    HavenNewLayerComponent,
   ],
   exports: [
     // Apps
@@ -83,6 +85,7 @@ import { NewPortfolioComponent } from './haven-new-portfolio/new-portfolio.compo
 
     // MISC
     NewPortfolioComponent,
+    HavenNewLayerComponent,
   ]
 })
 export class HavenFeaturesModule { }

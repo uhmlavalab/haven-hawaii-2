@@ -29,6 +29,7 @@ export class NewPortfolioComponent {
   allFilesUploaded = false;
 
   public portfolioName = '';
+  public scenarioName = '';
   @ViewChild('keyInput') keyFileInput: ElementRef;
   @ViewChild('capInput') capFileInput: ElementRef;
   @ViewChild('loadInput') loadFileInput: ElementRef;
@@ -78,8 +79,9 @@ export class NewPortfolioComponent {
   }
 
   uploadFiles() {
-    if (this.portfolioName !== '' && this.allFilesUploaded) {
-      this.portfolioUploadService.uploadCSVFiles(this.keyCSV, this.capCSV, this.loadCSV, this.profileCSV, this.portfolioName);
+    if (this.portfolioName !== '' &&  this.scenarioName !== '' && this.allFilesUploaded) {
+      this.portfolioUploadService.uploadCSVFiles(this.keyCSV, this.capCSV, this.loadCSV, this.profileCSV, this.portfolioName, this.scenarioName);
+      this.dialogRef.close();
     }
   }
 

@@ -1,0 +1,26 @@
+<h1 mat-dialog-title>New Layer Upload</h1>
+<div mat-dialog-content>
+  <form class="example-form">
+    <mat-form-field style="width: 100%;">
+      <input matInput placeholder="New Layer Name" [(ngModel)]="layerName" [ngModelOptions]="{standalone: true}">
+    </mat-form-field>
+    <mat-form-field style="width: 100%;">
+      <mat-select placeholder="Connected Profile" [(value)]="selectedProfiles" multiple>
+        <mat-option *ngFor="let keyItem of keyList | async" [value]="keyItem.profile">
+          {{ keyItem.profile }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
+<hr>
+<div mat-dialog-actions>
+  <button mat-raised-button color="primary" (click)="layerInput.click()">
+    Select Layer
+    <input #layerInput type="file" accept=".json" (change)="onLayerInput($event)" style="display:none;" />
+  </button>
+  <hr>
+  <button mat-raised-button [color]="layerFile ? 'primary' : 'accent'" (click)="uploadLayer()" >Upload</button>
+  <hr>
+  <button mat-raised-button color="warn" (click)="onCloseClick()">Cancel</button>
+</div>

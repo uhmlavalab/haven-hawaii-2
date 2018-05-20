@@ -13,14 +13,13 @@ export class NewPortfolioUploadService {
 
   constructor(private afAuth: AngularFireAuth, private papa: PapaParseService) {}
 
-  uploadCSVFiles(keyCSV: any, capCSV: any, loadCSV: any, profileCSV: any, portfolioName: string) {
+  uploadCSVFiles(keyCSV: any, capCSV: any, loadCSV: any, profileCSV: any, portfolioName: string, scenarioName: string) {
     this.processKeyCSV(keyCSV).then((keyData) => {
       this.processCapCSV(capCSV).then((capData) => {
         this.processLoadCSV(loadCSV).then((loadData) => {
           this.processProfileCSV(profileCSV).then((profileData) => {
             this.createREData(keyData, capData, loadData, profileData).then((reData) => {
-              console.log(reData);
-              // this.uploadFiles(keyData, capData, loadData, profileData, reData, portfolioName);
+              this.uploadFiles(keyData, capData, loadData, profileData, reData, portfolioName, scenarioName);
             });
           });
         });
@@ -28,17 +27,21 @@ export class NewPortfolioUploadService {
     });
   }
 
-  uploadFiles(keyData: Object, capData: Object, loadData: Object, profileData: Object, reData: Object, portfolioName: string) {
+  uploadFiles(keyData: Object, capData: Object, loadData: Object, profileData: Object, reData: Object, portfolioName: string, scenarioName: string) {
     if (portfolioName !== '') {
       this.numTotalDocs = Object.keys(keyData).length + Object.keys(capData).length + Object.keys(loadData).length + Object.keys(profileData).length + Object.keys(reData).length;
       this.numOfUploadedDocs = 0;
       this.uploadData(keyData, 'key', portfolioName).then(() => {
-        this.uploadData(capData, 'capacity', portfolioName).then(() => {
+        this.uploadData(capData, 'capacity', portfolioName, scenarioName).then(() => {
           this.uploadData(loadData, 'load', portfolioName).then(() => {
             this.uploadData(profileData, 'profile', portfolioName).then(() => {
-              this.uploadData(reData, 'renewablePercent', portfolioName).then(() => {
+              this.uploadData(reData, 'renewablePercent', portfolioName, scenarioName).then(() => {
                 firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolio_names').doc(portfolioName).set({
                   name: portfolioName,
+                  uploadDate: Date.now(),
+                });
+                firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('scenario_names').doc(scenarioName).set({
+                  name: scenarioName,
                   uploadDate: Date.now(),
                 });
                });
@@ -49,12 +52,16 @@ export class NewPortfolioUploadService {
     }
   }
 
-  uploadData(data: any, collectionName: string, portfolioName: string): Promise<any> {
+  uploadData(data: any, collectionName: string, portfolioName: string, scenarioName?: string): Promise<any> {
     if (Object.keys(data).length <= 0) {
       console.log(`${collectionName} - Finished Uploading`);
       return Promise.resolve(true);
     }
-    const keyRef = firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('portfolio_data').doc('data').collection(collectionName);
+    let keyRef = firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('portfolio_data').doc('data').collection(collectionName);
+    if (scenarioName) {
+      keyRef = firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('scenarios').doc(scenarioName).collection(collectionName);
+    }
+
     const batch = firebase.firestore().batch();
     let i = 0;
     while (i < 50 && Object.keys(data).length > 0) {
@@ -240,7 +247,6 @@ export class NewPortfolioUploadService {
           }
         });
       });
-      console.log(renewableSupply, yearlyLoad);
       // Create RE Data
       const reData = {};
       Object.keys(renewableSupply).forEach(year => {

@@ -18,16 +18,10 @@ export class HavenSidebarAccountComponent {
   selectedPortfolio: any;
   selectedSession: any;
 
-  newPortfolioData: any;
-
   constructor(public dialog: MatDialog, public portfolioService: PortfolioService, private dialogService: HavenDialogService ) { }
 
-  openDialog(): void {
+  openNewPortfolioDialog(): void {
     const dialogRef = this.dialog.open(NewPortfolioComponent, { width: '372px' });
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.newPortfolioData = result;
-    });
   }
 
   loadPortfolio() {
