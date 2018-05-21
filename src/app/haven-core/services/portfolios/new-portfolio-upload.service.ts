@@ -11,15 +11,15 @@ export class NewPortfolioUploadService {
   private numOfUploadedDocs = 0;
   private numTotalDocs = 0;
 
-  constructor(private afAuth: AngularFireAuth, private papa: PapaParseService) {}
+  constructor(private afAuth: AngularFireAuth, private papa: PapaParseService) { }
 
-  uploadCSVFiles(keyCSV: any, capCSV: any, loadCSV: any, profileCSV: any, portfolioName: string, scenarioName: string) {
+  uploadCSVFiles(keyCSV: any, capCSV: any, loadCSV: any, profileCSV: any, portfolioName: string, scenarioName: string, loadName: string) {
     this.processKeyCSV(keyCSV).then((keyData) => {
       this.processCapCSV(capCSV).then((capData) => {
         this.processLoadCSV(loadCSV).then((loadData) => {
           this.processProfileCSV(profileCSV).then((profileData) => {
             this.createREData(keyData, capData, loadData, profileData).then((reData) => {
-              this.uploadFiles(keyData, capData, loadData, profileData, reData, portfolioName, scenarioName);
+              this.uploadFiles(keyData, capData, loadData, profileData, reData, portfolioName, scenarioName, loadName);
             });
           });
         });
@@ -27,24 +27,19 @@ export class NewPortfolioUploadService {
     });
   }
 
-  uploadFiles(keyData: Object, capData: Object, loadData: Object, profileData: Object, reData: Object, portfolioName: string, scenarioName: string) {
+  uploadFiles(keyData: Object, capData: Object, loadData: Object, profileData: Object, reData: Object, portfolioName: string, scenarioName: string, loadName: string) {
     if (portfolioName !== '') {
       this.numTotalDocs = Object.keys(keyData).length + Object.keys(capData).length + Object.keys(loadData).length + Object.keys(profileData).length + Object.keys(reData).length;
       this.numOfUploadedDocs = 0;
-      this.uploadData(keyData, 'key', portfolioName).then(() => {
-        this.uploadData(capData, 'capacity', portfolioName, scenarioName).then(() => {
-          this.uploadData(loadData, 'load', portfolioName).then(() => {
-            this.uploadData(profileData, 'profile', portfolioName).then(() => {
-              this.uploadData(reData, 'renewablePercent', portfolioName, scenarioName).then(() => {
-                firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolio_names').doc(portfolioName).set({
-                  name: portfolioName,
-                  uploadDate: Date.now(),
-                });
-                firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('scenario_names').doc(scenarioName).set({
-                  name: scenarioName,
-                  uploadDate: Date.now(),
-                });
-               });
+      this.uploadStaticData(keyData, 'key', portfolioName).then(() => {
+        this.uploadStaticData(profileData, 'profile', portfolioName).then(() => {
+          firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).set({ name: portfolioName });
+          this.uploadScenarioData(capData, 'capacity', portfolioName, scenarioName).then(() => {
+            this.uploadScenarioData(reData, 'renewablePercent', portfolioName, scenarioName).then(() => {
+              firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('scenarios').doc(scenarioName).set({ name: scenarioName });
+              this.uploadLoadData(loadData, 'load', portfolioName, loadName).then(() => {
+                firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('loads').doc(loadName).set({ name: loadName });
+              });
             });
           });
         });
@@ -52,16 +47,12 @@ export class NewPortfolioUploadService {
     }
   }
 
-  uploadData(data: any, collectionName: string, portfolioName: string, scenarioName?: string): Promise<any> {
+  uploadLoadData(data: any, collectionName: string, portfolioName: string, loadName: string): Promise<any> {
     if (Object.keys(data).length <= 0) {
       console.log(`${collectionName} - Finished Uploading`);
       return Promise.resolve(true);
     }
-    let keyRef = firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('portfolio_data').doc('data').collection(collectionName);
-    if (scenarioName) {
-      keyRef = firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('scenarios').doc(scenarioName).collection(collectionName);
-    }
-
+    const keyRef = firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('loads').doc(loadName).collection(collectionName);
     const batch = firebase.firestore().batch();
     let i = 0;
     while (i < 50 && Object.keys(data).length > 0) {
@@ -74,7 +65,51 @@ export class NewPortfolioUploadService {
     return batch.commit().then(() => {
       this.numOfUploadedDocs = this.numOfUploadedDocs + i;
       console.log(((this.numOfUploadedDocs / this.numTotalDocs) * 100) + '%');
-      return this.uploadData(data, collectionName, portfolioName);
+      return this.uploadLoadData(data, collectionName, portfolioName, loadName);
+    });
+  }
+
+  uploadScenarioData(data: any, collectionName: string, portfolioName: string, scenarioName: string): Promise<any> {
+    if (Object.keys(data).length <= 0) {
+      console.log(`${collectionName} - Finished Uploading`);
+      return Promise.resolve(true);
+    }
+    const keyRef = firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('scenarios').doc(scenarioName).collection(collectionName);
+    const batch = firebase.firestore().batch();
+    let i = 0;
+    while (i < 50 && Object.keys(data).length > 0) {
+      const key = Object.keys(data)[0];
+      const eleRef = keyRef.doc(key);
+      batch.set(eleRef, data[key]);
+      delete data[key];
+      i++;
+    }
+    return batch.commit().then(() => {
+      this.numOfUploadedDocs = this.numOfUploadedDocs + i;
+      console.log(((this.numOfUploadedDocs / this.numTotalDocs) * 100) + '%');
+      return this.uploadScenarioData(data, collectionName, portfolioName, scenarioName);
+    });
+  }
+
+  uploadStaticData(data: any, collectionName: string, portfolioName: string): Promise<any> {
+    if (Object.keys(data).length <= 0) {
+      console.log(`${collectionName} - Finished Uploading`);
+      return Promise.resolve(true);
+    }
+    const keyRef = firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection(collectionName);
+    const batch = firebase.firestore().batch();
+    let i = 0;
+    while (i < 50 && Object.keys(data).length > 0) {
+      const key = Object.keys(data)[0];
+      const eleRef = keyRef.doc(key);
+      batch.set(eleRef, data[key]);
+      delete data[key];
+      i++;
+    }
+    return batch.commit().then(() => {
+      this.numOfUploadedDocs = this.numOfUploadedDocs + i;
+      console.log(((this.numOfUploadedDocs / this.numTotalDocs) * 100) + '%');
+      return this.uploadStaticData(data, collectionName, portfolioName);
     });
   }
 
@@ -253,7 +288,7 @@ export class NewPortfolioUploadService {
         if (yearlyLoad.hasOwnProperty(year)) {
           const renewTotal = renewableSupply[year];
           const loadTotal = yearlyLoad[year];
-          reData[year] = {'re': renewTotal / loadTotal, 'year': year };
+          reData[year] = { 're': renewTotal / loadTotal, 'year': year };
         }
       });
       return complete(reData);

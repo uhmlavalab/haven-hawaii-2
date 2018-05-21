@@ -23,17 +23,17 @@
     <mat-divider style="margin-top: 8px"></mat-divider>
 
     <!-- Account Sidenav -->
-    <div *ngIf="selectedDrawer === 'account'" class='account-drawer'>
+    <div [hidden]="selectedDrawer !== 'account'" class='account-drawer'>
       <app-haven-sidebar-account></app-haven-sidebar-account>
     </div>
 
     <!-- Chart Sidenav -->
-    <div *ngIf="selectedDrawer === 'chart'">
+    <div [hidden]="selectedDrawer !== 'chart'">
       <app-haven-sidebar-charts></app-haven-sidebar-charts>
     </div>
 
     <!-- Map Sidenav -->
-    <div *ngIf="selectedDrawer === 'map'">
+    <div [hidden]="selectedDrawer !== 'map'">
       <app-haven-sidebar-maps></app-haven-sidebar-maps>
     </div>
 

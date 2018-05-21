@@ -25,7 +25,7 @@ export class HavenSidebarAccountComponent {
   }
 
   loadPortfolio() {
-    this.portfolioService.loadPortfolio(this.selectedPortfolio);
+    this.portfolioService.setPortfolio(this.selectedPortfolio);
   }
 
   deletePortfolio() {

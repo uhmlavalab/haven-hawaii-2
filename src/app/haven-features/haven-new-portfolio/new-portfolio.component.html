@@ -6,6 +6,9 @@
     <mat-form-field style="width: 100%;">
       <input matInput placeholder="Scenario Name" [(ngModel)]="scenarioName" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
+    <mat-form-field style="width: 100%;">
+        <input matInput placeholder="Load Name" [(ngModel)]="loadName" [ngModelOptions]="{standalone: true}">
+      </mat-form-field>
   </form>
   <div class="circle">
     <mat-progress-spinner mode="determinate" [value]="progressValue" [diameter]="264" [strokeWidth]="7" color="accent"></mat-progress-spinner>

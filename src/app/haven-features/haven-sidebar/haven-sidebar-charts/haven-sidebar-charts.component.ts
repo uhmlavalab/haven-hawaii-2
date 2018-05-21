@@ -29,18 +29,29 @@ export class HavenSidebarChartsComponent implements OnInit {
 
   selectedYear = 2030;
   selectedScenario = '';
+  selectedLoad = '';
   selectedScope = '';
   selectedValue = '';
+  selectedChart = 'scatter';
 
   constructor(private windowService: HavenWindowService, public portfolioService: PortfolioService) { }
 
   ngOnInit() {}
 
   createChartWindow() {
-    const havenWindow = new HavenWindow('Plotly', '', 100, 100, 400, 400, false);
     const startDate = new Date(this.selectedYear, 0, 1);
-    const endDate = new Date(this.selectedYear, 1, 1);
-    const appInfo = new PlotlyAppInfo(startDate, endDate, this.selectedValue);
+    const endDate = new Date(this.selectedYear, 11, 31);
+    const appInfo = new PlotlyAppInfo(
+      this.portfolioService.getSelectedPortfolioName(),
+      this.selectedScenario,
+      this.selectedLoad,
+      startDate,
+      endDate,
+      this.selectedValue,
+      this.selectedScope,
+      this.selectedChart
+    );
+    const havenWindow = new HavenWindow('Plotly', '', 100, 100, 400, 400, false);
     const newApp = new HavenApp('plotly-scatter', appInfo);
     havenWindow.app = newApp;
     this.windowService.addWindow(havenWindow);
@@ -48,6 +59,10 @@ export class HavenSidebarChartsComponent implements OnInit {
 
   scenarioChange() {
     this.portfolioService.setScenario(this.selectedScenario);
+  }
+
+  loadChange() {
+    this.portfolioService.setLoad(this.selectedLoad);
   }
 
 }

@@ -4,7 +4,8 @@ import { HavenWindow } from '../../../../haven-window/shared/haven-window';
 import { HavenApp } from '../../../shared/haven-app';
 
 import { PlotlyFirestoreQueryService } from '@app/haven-core';
-import { Subscription } from 'rxjs/Subscription';
+
+import { PlotlyAppInfo } from '../../shared/plotly-app-info';
 
 @Component({
   selector: 'app-plotly-scatter',
@@ -15,7 +16,7 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit {
 
   havenWindow: HavenWindow;
   havenApp: HavenApp;
-  loadSub: Subscription;
+  plotlyInfo: PlotlyAppInfo;
 
   @ViewChild('chart') chartDiv: ElementRef;
   loaded = false;
@@ -23,28 +24,28 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit {
   constructor(private firestoreQueryService: PlotlyFirestoreQueryService, private changeDetector: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.firestoreQueryService.getData(
-        this.havenApp.appInfo.startDate,
-        this.havenApp.appInfo.endDate,
-        this.havenApp.appInfo.value).then((data) => {
-          this.loaded = true;
-          this.changeDetector.detectChanges();
-          const layout = {
-            height: this.chartDiv.nativeElement.getBoundingClientRect().height,
-            width: this.chartDiv.nativeElement.getBoundingClientRect().width,
-            margin: {
-              t: 50,
-              l: 55,
-              r: 20,
-              b: 50,
-            },
-            font: {
-              family: 'Roboto, sans-serif',
-            },
-            hovermode: 'closest',
-          };
-          Plotly.newPlot(this.chartDiv.nativeElement, data, layout);
-        });
+    this.plotlyInfo = this.havenApp.appInfo;
+    this.firestoreQueryService.getData(this.plotlyInfo).then((data) => {
+      console.log(data);
+      this.loaded = true;
+      this.changeDetector.detectChanges();
+      const layout = {
+        height: this.chartDiv.nativeElement.getBoundingClientRect().height,
+        width: this.chartDiv.nativeElement.getBoundingClientRect().width,
+        margin: {
+          t: 50,
+          l: 55,
+          r: 20,
+          b: 50,
+        },
+        font: {
+          family: 'Roboto, sans-serif',
+        },
+        hovermode: 'closest',
+        title: data[0]['name']
+      };
+      Plotly.newPlot(this.chartDiv.nativeElement, data[0]['traces'], layout);
+    });
   }
 
   resize() {

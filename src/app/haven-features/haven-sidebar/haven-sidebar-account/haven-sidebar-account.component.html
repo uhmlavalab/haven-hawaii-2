@@ -13,7 +13,7 @@
 
 <mat-form-field>
   <mat-select placeholder="Session" [(value)]="selectedSession">
-    <mat-option *ngFor="let session of portfolioService.getSessionList() | async" [value]="session.name">
+    <mat-option *ngFor="let session of portfolioService.getSessionsList() | async" [value]="session.name">
       {{ session.name }}
     </mat-option>
   </mat-select>
