@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { HavenWindowService, PortfolioService } from '@app/haven-core';
-import { LayerColorsService } from '@app/haven-core';
+import { LayersService } from '@app/haven-core';
 
 import { HavenWindow } from '../../haven-window/shared/haven-window';
 import { HavenApp } from '../../haven-apps/shared/haven-app';
@@ -24,7 +24,6 @@ export class HavenSidebarMapsComponent {
     {
       name: 'street',
       url: './assets/mapthumbnails/street.png',
-      div: ViewChild,
     },
     {
       name: 'satellite',
@@ -36,27 +35,29 @@ export class HavenSidebarMapsComponent {
     }
   ];
 
-  layerSelected = {};
   layerColors = {};
 
-  constructor(public dialog: MatDialog, private windowService: HavenWindowService, public portfolioService: PortfolioService, public layerColorsService: LayerColorsService) {
-    window.addEventListener('dragover', e => e.preventDefault(), false);
-    window.addEventListener('drop', e => e.preventDefault(), false);
+  selectedYear: number;
+  selectedScenario = '';
+
+  colorUpdateFinished = true;
+  layerColorChangeName: string;
+  constructor(public dialog: MatDialog, private windowService: HavenWindowService, public portfolioService: PortfolioService, public layerService: LayersService) {
   }
 
   openNewLayerDialog(): void {
-    const dialogRef = this.dialog.open(HavenNewLayerComponent, { width: '372px' });
+    const dialogRef = this.dialog.open(HavenNewLayerComponent, { width: '450px' });
   }
 
   createMapWindow() {
-    const selectedLayers = [];
-    for (const layerName in this.layerSelected) {
-      if (this.layerSelected[layerName]) {
-        selectedLayers.push({ name: layerName, color: this.layerColorsService.getLayerColor(layerName) });
-      }
-    }
     const havenWindow = new HavenWindow('Map', '', 100, 100, 400, 400, false);
-    const appInfo = new LeafletAppInfo(21.480066,  -157.96, 11, this.selectedMapStyle, selectedLayers);
+    const appInfo = new LeafletAppInfo(
+      this.portfolioService.getSelectedPortfolioName(),
+      this.selectedScenario, this.selectedYear,
+      21.480066,
+      -157.96,
+      11,
+      this.selectedMapStyle);
     const newApp = new HavenApp('leaflet', appInfo);
     havenWindow.app = newApp;
     this.windowService.addWindow(havenWindow);
@@ -66,18 +67,13 @@ export class HavenSidebarMapsComponent {
     this.selectedMapStyle = styleName;
   }
 
-  toggleLayerCheck(name, event) {
-    const value = !event.srcElement.childNodes[0].checked;
-    this.layerSelected[name] = value;
+
+  deleteLayer(layerName: string) {
+    this.layerService.deleteLayer(layerName);
   }
 
-  colorCheck(layerName: string, event) {
-    const color = event.srcElement.value;
-    this.layerColorsService.setLayerColor(layerName, color);
-  }
-
-  deleteLayer() {
-    // TODO
+  scenarioChange() {
+    this.portfolioService.setScenario(this.selectedScenario);
   }
 
 }

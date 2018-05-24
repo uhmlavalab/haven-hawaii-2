@@ -14,5 +14,6 @@ export * from './services/plotly/plotly-firestore-query.service';
 export * from './services/layers/layer-download.service';
 export * from './services/layers/layer-upload.service';
 
-export * from './services/layers/layer-colors.service';
-export * from './services/layers/layer-state.service';
+export * from './services/layers/layers.service';
+
+export * from './services/leaflet/leaflet-map-state.service';

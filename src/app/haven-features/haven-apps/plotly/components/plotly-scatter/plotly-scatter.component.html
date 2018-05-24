@@ -2,6 +2,9 @@
   <img class="loading-image" src="./assets/logo/haven-animation.gif">
 </div>
 
-<div *ngIf="loaded" #chart style="height: 100%">
+<div *ngIf="loaded" #chart style="height: 90%">
   <!-- Chart will appear here -->
 </div>
+
+<mat-slider *ngIf="loaded" [min]="0" [max]="numberOfData" (input)="plotData($event)" style="height: 10%; width:100%;"></mat-slider>
+

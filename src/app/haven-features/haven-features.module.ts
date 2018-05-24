@@ -10,7 +10,6 @@ import { PlotlyScatterComponent } from './haven-apps/plotly/components/plotly-sc
 import { HavenAppsHostDirective } from './haven-apps/shared/haven-apps-host.directive';
 
 // Sidebar
-import { HavenLayerFileDropDirective } from './haven-sidebar/directives/haven-layer-filedrop';
 import { HavenSidebarAccountComponent } from './haven-sidebar/haven-sidebar-account/haven-sidebar-account.component';
 import { HavenSidebarChartsComponent } from './haven-sidebar/haven-sidebar-charts/haven-sidebar-charts.component';
 import { HavenSidebarMapsComponent } from './haven-sidebar/haven-sidebar-maps/haven-sidebar-maps.component';
@@ -42,7 +41,6 @@ import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.compon
     HavenAppsHostDirective,
 
     // Sidebar
-    HavenLayerFileDropDirective,
     HavenSidebarAccountComponent,
     HavenSidebarChartsComponent,
     HavenSidebarMapsComponent,

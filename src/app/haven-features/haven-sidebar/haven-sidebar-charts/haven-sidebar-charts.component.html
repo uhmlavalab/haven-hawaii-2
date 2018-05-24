@@ -30,14 +30,6 @@
   </mat-select>
 </mat-form-field>
 
-<mat-form-field>
-  <mat-select placeholder="Scope" [(value)]="selectedScope">
-    <mat-option *ngFor="let scope of scopes" [value]="scope.value">
-      {{ scope.viewValue }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
 <mat-grid-list cols="3" rows="2">
   <mat-grid-tile>
     <button mat-icon-button color="primary">

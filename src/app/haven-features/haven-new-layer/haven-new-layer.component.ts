@@ -14,7 +14,8 @@ export class HavenNewLayerComponent {
 
   layerName = '';
   layerFile: any;
-  selectedProfiles: string[];
+  selectedProfiles = [];
+  layerColor = '#fe5217';
 
   keyList: Observable<any[]>;
 
@@ -37,8 +38,12 @@ export class HavenNewLayerComponent {
   }
 
   uploadLayer() {
-    this.layerUploadService.uploadLayer(this.layerFile, this.layerName, this.selectedProfiles);
+    this.layerUploadService.uploadLayer(this.layerFile, this.layerName, this.layerColor, this.selectedProfiles);
     this.dialogRef.close();
+  }
+
+  changeColor(event) {
+    this.layerColor = event.srcElement.value;
   }
 
 }

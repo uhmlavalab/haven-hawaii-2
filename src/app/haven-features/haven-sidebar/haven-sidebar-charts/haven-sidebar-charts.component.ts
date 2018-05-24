@@ -14,20 +14,18 @@ import { PlotlyAppInfo } from '../../haven-apps/plotly/shared/plotly-app-info';
 })
 export class HavenSidebarChartsComponent implements OnInit {
 
-  scopes = [
-    {value: 'annual', viewValue: 'Annual'},
-    {value: 'monthly', viewValue: 'Monthly'},
-    {value: 'daily', viewValue: 'Daily'},
-    {value: 'hourly', viewValue: 'Hourly'}
-  ];
-
   valueTypes = [
     {value: 'load', viewValue: 'Load'},
     {value: 'capacity', viewValue: 'Capacity'},
     {value: 'supply', viewValue: 'Supply'}
   ];
 
-  selectedYear = 2030;
+  scopes = [
+    {value: 'monthly', viewValue: 'Monthly'},
+    {value: 'daily', viewValue: 'Daily'},
+  ];
+
+  selectedYear: number;
   selectedScenario = '';
   selectedLoad = '';
   selectedScope = '';

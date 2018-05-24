@@ -140,7 +140,7 @@ export class PortfolioService {
 
   public getKeyObservable(): Observable<any[]> {
     if (this.selectedPortfolio) {
-      const keyReference = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios').doc(this.selectedPortfolio).collection('key');
+      const keyReference = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios').doc(this.selectedPortfolio).collection('key', ref => ref.orderBy('id', 'asc'));
       return keyReference.valueChanges();
     }
   }

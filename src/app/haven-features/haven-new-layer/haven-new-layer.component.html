@@ -5,12 +5,16 @@
       <input matInput placeholder="New Layer Name" [(ngModel)]="layerName" [ngModelOptions]="{standalone: true}">
     </mat-form-field>
     <mat-form-field style="width: 100%;">
-      <mat-select placeholder="Connected Profile" [(value)]="selectedProfiles" multiple>
-        <mat-option *ngFor="let keyItem of keyList | async" [value]="keyItem.profile">
-          {{ keyItem.profile }}
+      <mat-select placeholder="Connected Profiles" [(value)]="selectedProfiles" multiple>
+        <mat-option *ngFor="let keyItem of keyList | async" [value]="keyItem.id">
+          {{ keyItem.id }} - {{keyItem['station name']}} - {{ keyItem.profile }}
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <div style="width: 100%; margin-top: 10px; margin-bottom:20px;">
+      Layer Color
+      <input type="color" [value]="layerColor" style="width:65%; float:right; transform: translateY(-4px)" (change)="changeColor($event)">
+    </div>
   </form>
 </div>
 <hr>
@@ -20,7 +24,7 @@
     <input #layerInput type="file" accept=".json" (change)="onLayerInput($event)" style="display:none;" />
   </button>
   <hr>
-  <button mat-raised-button [color]="layerFile ? 'primary' : 'accent'" (click)="uploadLayer()" >Upload</button>
+  <button mat-raised-button [color]="layerFile ? 'primary' : 'accent'" (click)="uploadLayer()">Upload</button>
   <hr>
   <button mat-raised-button color="warn" (click)="onCloseClick()">Cancel</button>
 </div>

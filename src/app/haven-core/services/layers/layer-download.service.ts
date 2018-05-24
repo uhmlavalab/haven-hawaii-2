@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireStorage } from 'angularfire2/storage';
 import * as firebase from 'firebase';
-import { Observable } from '@firebase/util';
+
+import { PortfolioService } from '../portfolios/portfolio.service';
 
 @Injectable()
 export class LayerDownloadService {
@@ -10,15 +11,48 @@ export class LayerDownloadService {
   mapurl;
   layers = {};
 
-  constructor(private afAuth: AngularFireAuth, private storage: AngularFireStorage) {}
+  constructor(private afAuth: AngularFireAuth, private storage: AngularFireStorage, private portfolioService: PortfolioService) {
+}
 
-  getLayer(name: string): Promise<any> {
-    if (this.layers.hasOwnProperty(name)) {
-      return Promise.resolve(this.layers[name]);
+  public getLayers(portfolioName: string): Promise<any[]> {
+    return new Promise((complete) => {
+      const layers = [];
+      this.portfolioService.getPortfolioRef().collection('layers').get().then((querySnapshot) => {
+        const promises = [];
+        querySnapshot.forEach(doc => {
+          const layerName = doc.data()['name'];
+          const promise = this.getLayer(portfolioName, layerName).then((result) => {
+            layers.push(result);
+          });
+          promises.push(promise);
+        });
+        return Promise.all(promises).then(() => {
+          return complete(layers);
+        });
+      });
+    });
+  }
+
+  private getLayer(portfolioName: string, layerName: string): Promise<any> {
+    if (this.layers.hasOwnProperty(portfolioName)) {
+      if (this.layers[portfolioName].hasOwnProperty(layerName)) {
+        return Promise.resolve(this.layers[portfolioName][layerName]);
+      } else {
+        this.layers[portfolioName][layerName] = {};
+        return this.downloadLayer(portfolioName, layerName).then((result) => {
+          if (result) {
+            return Promise.resolve(this.layers[portfolioName][layerName]);
+          } else {
+            return Promise.resolve(false);
+          }
+        });
+      }
     } else {
-      return this.downloadLayer(name).then((result) => {
+      this.layers[portfolioName] = {};
+      this.layers[portfolioName][layerName] = {};
+      return this.downloadLayer(portfolioName, layerName).then((result) => {
         if (result) {
-          return Promise.resolve(this.layers[name]);
+          return Promise.resolve(this.layers[portfolioName][layerName]);
         } else {
           return Promise.resolve(false);
         }
@@ -26,8 +60,8 @@ export class LayerDownloadService {
     }
   }
 
-  downloadLayer(name: string): Promise<boolean | void | any> {
-    const storageURL = `/users/${this.afAuth.auth.currentUser.uid}/layers/${name}`;
+  private downloadLayer(portfolioName: string, layerName: string): Promise<boolean | void | any> {
+    const storageURL = `/${this.afAuth.auth.currentUser.uid}/${portfolioName}/layers/${layerName}`;
     const ref = this.storage.ref(storageURL);
     return ref.getDownloadURL().toPromise().then((url) => {
       return new Promise((resolve, reject) => {
@@ -41,7 +75,8 @@ export class LayerDownloadService {
           if (req.status === 200) {
             // Resolve the promise with the response text
             const data = JSON.parse(JSON.stringify(req.response));
-            this.layers[name] =  data;
+            const layer = { 'name': layerName, 'data': data };
+            this.layers[portfolioName][layerName] = layer;
             resolve(true);
           } else {
             // Otherwise reject with the status text

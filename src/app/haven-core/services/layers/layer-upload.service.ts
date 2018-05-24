@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response, URLSearchParams, RequestOptions } from '@angular/http';
 
-import { HavenDialogService } from '@app/haven-shared';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFireDatabase } from 'angularfire2/database';
 import * as firebase from 'firebase';
+
+import { PortfolioService } from '../portfolios/portfolio.service';
+import { HavenDialogService } from '@app/haven-shared';
 
 @Injectable()
 export class LayerUploadService {
@@ -13,38 +14,86 @@ export class LayerUploadService {
 
   private supportedLayerExtensions = ['json', 'geojson', 'topojson'];
 
-  constructor(private http: Http, private afAuth: AngularFireAuth, private db: AngularFireDatabase, private dialogService: HavenDialogService) { }
+  constructor(private http: Http, private afAuth: AngularFireAuth, private portfolioService: PortfolioService,  private dialogService: HavenDialogService) { }
 
-  uploadLayer(layerFile: File, layerName?: string, selectedProfile?: string[]) {
-    console.log(layerFile, layerName, selectedProfile);
+  uploadLayer(layerFile: File, layerName: string, layerColor: string, selectedProfiles: string[]) {
+    this.loadLayerLocally(layerFile).then((layer) => {
+      this.checkLayerFileForCorrectProperties(layer).then((propResults) => {
+        if (!propResults) {
+          this.dialogService.openErrorDialog('Layer file is incorrectly formatted. Requires format: { type: \'FeatureCollection\', features: [] }');
+          return;
+        }
+        if (selectedProfiles.length > 0) {
+          this.checkLayerFilePropertiesMWCF(layer).then((mwcfResults) => {
+            if (!mwcfResults) {
+              this.dialogService.openErrorDialog('Features in layer file do not include properties \'cf\' or \'MWac\'.');
+            }
+          });
+        }
+        this.uploadFile(layerFile, layerName, layerColor, selectedProfiles);
+      });
+    });
   }
 
-  uploadFile(file: File) {
+  loadLayerLocally(layerFile: File): Promise<any> {
+    return new Promise((complete) => {
+      const fr = new FileReader();
+      fr.onload = (e: any) => {
+        const lines = e.target.result;
+        const featureCollection = JSON.parse(lines);
+        return complete(featureCollection);
+      };
+      const layer = fr.readAsText(layerFile);
+    });
+  }
 
-    const extension = file.name.split('.').pop();
-    let type: string;
+  checkLayerFileForCorrectProperties(layer: any): Promise<any> {
+    return new Promise((complete) => {
+      if (!layer.hasOwnProperty('type')) {
+        return complete(false);
+      }
+      if (layer['type'] !== 'FeatureCollection') {
+        return complete(false);
+      }
+      if (!layer.hasOwnProperty('features')) {
+        return complete(false);
+      }
+      return complete(true);
+    });
+  }
 
-    if (this.supportedLayerExtensions.indexOf(extension) !== -1) {
-      type = '.json';
-    } else {
-      this.dialogService.openErrorDialog('Unsupported File Type Extension. Supported File Types: .json .geojson .topojson');
-      return;
-    }
+  checkLayerFilePropertiesMWCF(layer: any): Promise<any> {
+    return new Promise((complete) => {
+      layer['features'].forEach(feature => {
+        if (!feature['properties'].hasOwnProperty('MWac') || !feature['properties'].hasOwnProperty('cf')) {
+          return complete(false);
+        }
+        if (isNaN(feature['properties']['MWac']) || isNaN(feature['properties']['cf'])) {
+          return complete(false);
+        }
+      });
+      return complete(true);
+    });
+  }
+
+  uploadFile(layerFile: File, layerName: string, layerColor: string, selectedProfiles?: string[]) {
+
+    const type = '.json';
 
     const metadata = {
-      contentType: `${type}/${extension}`
+      contentType: `${type}`
     };
 
-    const dialogRef = this.dialogService.openMessageDialog(`${file.name} uploading 0%.`);
+    const dialogRef = this.dialogService.openMessageDialog(`${layerName} uploading 0%.`);
 
     // Upload file and metadata to the object 'images/mountains.jpg'
-    const uploadTask = firebase.storage().ref().child(`/users/${this.afAuth.auth.currentUser.uid}/layers/` + file.name).put(file, metadata);
+    const uploadTask = firebase.storage().ref().child(`/${this.afAuth.auth.currentUser.uid}/${this.portfolioService.getSelectedPortfolioName()}/layers/` + layerName).put(layerFile, metadata);
     // Listen for state changes, errors, and completion of the upload.
     uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
       (snapshot: any) => {
         // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        dialogRef.componentInstance.updateMessage(`${file.name} uploading ${Math.trunc(progress)}%.`);
+        dialogRef.componentInstance.updateMessage(`${layerName} uploading ${Math.trunc(progress)}%.`);
 
         switch (snapshot.state) {
           case firebase.storage.TaskState.PAUSED: // or 'paused'
@@ -71,19 +120,15 @@ export class LayerUploadService {
       }, () => {
         // Upload completed successfully, now we can get the download URL
         const downloadURL = uploadTask.snapshot.downloadURL;
-        this.db.database.ref(`/users/${this.afAuth.auth.currentUser.uid}/layers/`).orderByChild('name').equalTo(file.name).limitToFirst(1).once('value').then((snapshot) => {
-          // No Such Value in database
-          if (snapshot.val() === null) {
-            this.db.list(`/users/${this.afAuth.auth.currentUser.uid}/layers/`).push({ name: file.name, url: downloadURL }).then(value => {
-              dialogRef.componentInstance.updateMessage(`${file.name} upload complete.`);
-            });
-          } else {
-            // Update
-            const key = Object.keys(snapshot.val())[0];
-            this.db.database.ref(`/users/${this.afAuth.auth.currentUser.uid}/layers/${key}/`).set({ name: file.name, url: downloadURL }).then(value => {
-              dialogRef.componentInstance.updateMessage(`${file.name} upload complete.`);
-            });
-          }
+        const layersCollectionRef = this.portfolioService.getPortfolioRef().collection('layers');
+        const newLayerDocument = {
+          'name': layerName,
+          'url': downloadURL,
+          'profiles': selectedProfiles,
+          'color': layerColor,
+        };
+        layersCollectionRef.doc(layerName).set(newLayerDocument).then((result) => {
+          dialogRef.componentInstance.updateMessage(`${layerName} Uploaded Successfully`);
         });
       });
   }

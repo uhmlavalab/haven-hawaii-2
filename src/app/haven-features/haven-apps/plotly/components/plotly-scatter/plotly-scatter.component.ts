@@ -20,33 +20,60 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit {
 
   @ViewChild('chart') chartDiv: ElementRef;
   loaded = false;
+  data: any;
+  maxY: number;
+  minY: number;
+  numberOfData: number;
 
   constructor(private firestoreQueryService: PlotlyFirestoreQueryService, private changeDetector: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.plotlyInfo = this.havenApp.appInfo;
     this.firestoreQueryService.getData(this.plotlyInfo).then((data) => {
-      console.log(data);
+      this.data = data;
+      let yValues = [];
+      this.data.forEach(element => {
+        element['traces'].forEach(trace => {
+          yValues.push(trace['y']);
+        });
+      });
+      yValues = yValues.reduce((a, b) => a.concat(b), []);
+      this.maxY = Math.max(...yValues);
+      this.minY = Math.min(...yValues);
+      const pad = (this.maxY - this.minY) * 0.05;
+      this.maxY += pad;
+      this.minY -= pad;
+      this.numberOfData = data.length - 1;
       this.loaded = true;
       this.changeDetector.detectChanges();
-      const layout = {
-        height: this.chartDiv.nativeElement.getBoundingClientRect().height,
-        width: this.chartDiv.nativeElement.getBoundingClientRect().width,
-        margin: {
-          t: 50,
-          l: 55,
-          r: 20,
-          b: 50,
-        },
-        font: {
-          family: 'Roboto, sans-serif',
-        },
-        hovermode: 'closest',
-        title: data[0]['name']
-      };
-      Plotly.newPlot(this.chartDiv.nativeElement, data[0]['traces'], layout);
+      this.plotData(0);
     });
   }
+
+  plotData(index: any) {
+    let idx = index;
+    if (isNaN(index)) {
+      idx = index.value;
+    }
+    const layout = {
+      height: this.chartDiv.nativeElement.getBoundingClientRect().height,
+      width: this.chartDiv.nativeElement.getBoundingClientRect().width,
+      margin: {
+        t: 50,
+        l: 55,
+        r: 20,
+        b: 50,
+      },
+      font: {
+        family: 'Roboto, sans-serif',
+      },
+      hovermode: 'closest',
+      title: this.data[idx]['name'],
+      yaxis: {range: [this.minY, this.maxY]}
+    };
+    Plotly.newPlot(this.chartDiv.nativeElement, this.data[idx]['traces'], layout);
+  }
+
 
   resize() {
     if (this.loaded) {

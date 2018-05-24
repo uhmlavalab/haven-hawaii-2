@@ -11,8 +11,10 @@ import { HavenApp } from '../../shared/haven-app';
 import { HavenWindow } from '../../../haven-window/shared/haven-window';
 
 import { LayerDownloadService } from '@app/haven-core';
-import { LayerColorsService } from '@app/haven-core';
-import { LayerStateService } from '@app/haven-core';
+import { LayersService, PortfolioService } from '@app/haven-core';
+import { LeafletMapStateService } from '@app/haven-core';
+import { LeafletAppInfo } from '../shared/leaflet-app-info';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-haven-leaflet',
@@ -21,11 +23,12 @@ import { LayerStateService } from '@app/haven-core';
 })
 export class HavenLeafletComponent implements HavenAppInterface, OnInit {
 
-  map: L.Map;
+  leafletMap: L.Map;
   loaded = false;
 
   havenWindow: HavenWindow;
   havenApp: HavenApp;
+  leafletAppInfo: LeafletAppInfo;
 
   mapStateSub: Subscription;
 
@@ -63,64 +66,69 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
     center: L.latLng([21.480066, -157.96])
   };
 
-  constructor(private layerDownloadService: LayerDownloadService, private layerColorsService: LayerColorsService, private layerStateService: LayerStateService) { }
+  layerColorInfo = {};
+
+  constructor(private layerDownloadService: LayerDownloadService, private layerService: LayersService, private layerStateService: LeafletMapStateService, private portfolioService: PortfolioService) { }
 
   ngOnInit() {
-    this.havenApp.appInfo.layers.forEach(el => {
-      this.layerDownloadService.getLayer(el.name).then((layer) => {
+    this.leafletAppInfo = this.havenApp.appInfo;
+    this.portfolioService.getPortfolioRef().collection('layers')
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const name = doc.data()['name'];
+          const color = doc.data()['color'];
+          this.layerColorInfo[name] = color;
+          if (this.layersControl.overlays.hasOwnProperty(name)) {
+            this.layersControl.overlays[name].setStyle({ color: color });
+          }
+        });
+      });
+    this.layerDownloadService.getLayers(this.leafletAppInfo.portfolioName).then((layers) => {
+      layers.forEach(layer => {
         if (layer) {
-          const geojsonFeature: GeoJSON.FeatureCollection<any> = {
-            'type': 'FeatureCollection',
-            'features': []
-          };
-          const features = layer.features;
-          features.forEach(element => {
-            geojsonFeature.features.push(element);
-          });
-          const newLayer = L.geoJSON(geojsonFeature, {
+          const geojsonFeature: GeoJSON.FeatureCollection<any> = layer.data;
+          const newLayer = L.geoJSON(layer.data, {
             style: (feature) => ({
-              color: this.layerColorsService.getLayerColor(el.name),
+              color: this.layerColorInfo[layer.name]
             }),
           });
-          this.layersControl.overlays[el.name] = newLayer;
-          this.colorSubs[el.name] = this.layerColorsService.layerColorsSub[el.name].subscribe((value) => {
-            this.layersControl.overlays[el.name].setStyle({ color: value });
-          });
+          this.layersControl.overlays[layer.name] = newLayer;
         }
       });
+      this.mapStateSub = this.layerStateService.mapStateSubs[this.havenApp.appInfo.mapStateSync].subscribe((state) => {
+        this.mapStateCheck(state);
+      });
+      this.loaded = true;
     });
-    this.mapStateSub = this.layerStateService.mapStateSubs[this.havenApp.appInfo.mapStateSync].subscribe((state) => {
-      this.mapStateCheck(state);
-    });
-    this.loaded = true;
+
   }
 
-  setMap(map: L.Map) {
-    this.map = map;
-    this.map.setView(this.havenApp.appInfo.center, this.havenApp.appInfo.zoom);
+  setMap(leafletMap: L.Map) {
+    this.leafletMap = leafletMap;
+    this.leafletMap.setView(this.havenApp.appInfo.center, this.havenApp.appInfo.zoom);
 
     const base = this.havenApp.appInfo.baseLayer.charAt(0).toUpperCase() + this.havenApp.appInfo.baseLayer.slice(1);
-    this.map.removeLayer(this.options.layers[0]);
-    this.map.addLayer(this.baseLayers[base]);
+    this.leafletMap.removeLayer(this.options.layers[0]);
+    this.leafletMap.addLayer(this.baseLayers[base]);
 
-    this.map.on('zoomend', () => this.stateUpdate());
-    this.map.on('moveend', () => this.stateUpdate());
+    this.leafletMap.on('zoomend', () => this.stateUpdate());
+    this.leafletMap.on('moveend', () => this.stateUpdate());
   }
 
   stateUpdate() {
-    const zoom = this.map.getZoom();
-    const latitude = this.map.getCenter().lat;
-    const longitude = this.map.getCenter().lng;
+    const zoom = this.leafletMap.getZoom();
+    const latitude = this.leafletMap.getCenter().lat;
+    const longitude = this.leafletMap.getCenter().lng;
     if (this.havenApp.appInfo.mapStateSync !== 4) {
       this.layerStateService.setState(this.havenApp.appInfo.mapStateSync, zoom, L.latLng(latitude, longitude));
     }
   }
 
   mapStateCheck(state: Object) {
-    if (!isUndefined(this.map)) {
+    if (!isUndefined(this.leafletMap)) {
       this.havenApp.appInfo.zoom = state['zoom'];
       this.havenApp.appInfo.center = state['center'];
-      this.map.setView(this.havenApp.appInfo.center, this.havenApp.appInfo.zoom);
+      this.leafletMap.setView(this.havenApp.appInfo.center, this.havenApp.appInfo.zoom);
     }
   }
 
@@ -137,7 +145,7 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
 
   resize() {
     if (this.loaded) {
-      this.map.invalidateSize();
+      this.leafletMap.invalidateSize();
     }
   }
 

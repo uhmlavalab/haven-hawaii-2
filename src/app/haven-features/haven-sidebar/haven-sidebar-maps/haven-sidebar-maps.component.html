@@ -4,18 +4,36 @@
   </mat-grid-tile>
 </mat-grid-list>
 
+<mat-form-field>
+  <mat-select placeholder="Scenario" [(value)]="selectedScenario" (selectionChange)="scenarioChange($event)">
+    <mat-option *ngFor="let scenario of portfolioService.getScenariosList() | async" [value]="scenario.name">
+      {{ scenario.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-select placeholder="Renewable Percent" [(value)]="selectedYear">
+    <mat-option *ngFor="let reValues of portfolioService.getREValues() | async" [value]="reValues.year">
+      {{ reValues.year }} - {{ (reValues.re * 100).toFixed(2) }}%
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<button mat-raised-button color="primary" (click)="createMapWindow()">Create Map</button>
+
+<hr>
+
 <button mat-raised-button color="primary" (click)="openNewLayerDialog()">New Layer</button>
 
 <mat-grid-list cols="1" rows="(layers | async).length" rowHeight="40px">
   <mat-grid-tile *ngFor="let layer of portfolioService.getLayersList() | async;">
-    <mat-checkbox color="primary" matTooltip="{{ layer.name }}" style="width: 75%; overflow: hidden; text-overflow: clip;" (click)="toggleLayerCheck(layer.name, $event)">
-      {{ layer.name  }}
-    </mat-checkbox>
-    <input type="color" value="{{ layerColorsService.getLayerColor(layer.name) }}" style="width:10%; margin: 2.5%; border-radius: 20%;" (change)="colorCheck(layer.name, $event)">
-    <button mat-icon-button color="warn" style="width:10%;" (click)="deleteLayer(layer.key, layer.name)">
+    <div [style.background]="layer.color"  style="width:10%; height:20px; margin-bottom: 5px;"></div>
+    <div style="width: 78%; padding-left: 2%; overflow: hidden; text-overflow: clip;">{{ layer.name }} </div>
+    <button mat-icon-button color="warn" style="width:10%;" (click)="deleteLayer(layer.name)">
       <mat-icon>close</mat-icon>
     </button>
   </mat-grid-tile>
 </mat-grid-list>
 
-<button mat-raised-button color="primary" (click)="createMapWindow()">Create Map</button>
+

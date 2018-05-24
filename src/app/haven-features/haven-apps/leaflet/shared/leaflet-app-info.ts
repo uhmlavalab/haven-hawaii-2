@@ -5,16 +5,22 @@ export class LeafletAppInfo {
   center: L.LatLng;
   zoom: number;
   baseLayer: string;
-  layers: any[];
 
   mapStateSync: number;
 
-  constructor(lat: number, lng: number, zoom: number, baseLayer: string, layers: any[]) {
+  portfolioName: string;
+  scenarioName: string;
+  year: number;
+
+  constructor(portfolioName: string, scenarioName: string, year: number, lat: number, lng: number, zoom: number, baseLayer: string) {
     this.center = new L.LatLng(lat, lng);
     this.zoom = zoom;
     this.baseLayer = baseLayer;
-    this.layers = layers;
     this.mapStateSync = 0;
+
+    this.portfolioName = portfolioName;
+    this.scenarioName = scenarioName;
+    this.year = year;
   }
 
 }

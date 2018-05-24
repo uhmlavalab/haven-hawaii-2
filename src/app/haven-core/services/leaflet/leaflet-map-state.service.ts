@@ -5,7 +5,7 @@ import { Subject } from 'rxjs/subject';
 import * as L from 'leaflet';
 
 @Injectable()
-export class LayerStateService {
+export class LeafletMapStateService {
 
   mapStates = [];
   mapStateSubs = [new Subject<object>(), new Subject<object>(), new Subject<object>(), new Subject<object>()];

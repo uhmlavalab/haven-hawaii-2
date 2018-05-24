@@ -16,9 +16,9 @@ import { environment } from '../../environments/environment';
 
 import { AuthGuard } from './services/auth/auth-guard.service';
 import { AuthService } from './services/auth/auth.service';
-import { LayerColorsService } from './services/layers/layer-colors.service';
+import { LayersService } from './services/layers/layers.service';
 import { LayerDownloadService } from './services/layers/layer-download.service';
-import { LayerStateService } from './services/layers/layer-state.service';
+import { LeafletMapStateService } from './services/leaflet/leaflet-map-state.service';
 import { LayerUploadService } from './services/layers/layer-upload.service';
 import { PlotlyFirestoreQueryService } from './services/plotly/plotly-firestore-query.service';
 import { NewPortfolioUploadService } from './services/portfolios/new-portfolio-upload.service';
@@ -39,9 +39,9 @@ import { HavenWindowService } from './services/windows/haven-window.service';
   providers: [
     AuthGuard,
     AuthService,
-    LayerColorsService,
+    LayersService,
     LayerDownloadService,
-    LayerStateService,
+    LeafletMapStateService,
     LayerUploadService,
     PlotlyFirestoreQueryService,
     NewPortfolioUploadService,

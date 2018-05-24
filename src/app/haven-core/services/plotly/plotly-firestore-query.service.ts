@@ -58,7 +58,7 @@ export class PlotlyFirestoreQueryService {
             return this.processKeyDocs(keySnapshot.docs).then((keyData) => {
               return this.processProfileDocs(profileSnapshot.docs).then((profileData) => {
                 return this.createSupplyData(keyData, capacityData, profileData).then((processedData) => {
-                   return this.formatProcessedData(queryInfo, processedData);
+                  return this.formatProcessedData(queryInfo, processedData);
                  });
               });
             });
@@ -164,22 +164,38 @@ export class PlotlyFirestoreQueryService {
   private createSupplyData(keyData: Object, capacityData: Object, profileData: Object): Promise<Object> {
     return new Promise((complete) => {
       const processedSupplyData = {};
-      // for (const day in profileData) {
-      //   if (profileData.hasOwnProperty(day)) {
-      //     for (const hour in profileData[day]) {
-      //       if (profileData[day].hasOwnProperty(hour)) {
-      //         for (const profileName in profileData[day][hour]) {
-      //           if (profileData[day][hour].hasOwnProperty(profileName)) {
-      //             const year = new Date(day).getFullYear();
-                  
-
-
-      //           }
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
+      for (const day in profileData) {
+        if (profileData.hasOwnProperty(day)) {
+          for (const hour in profileData[day]) {
+            if (profileData[day].hasOwnProperty(hour)) {
+              for (const station in keyData) {
+                if (keyData.hasOwnProperty(station)) {
+                  const fuelType = keyData[station]['fuel type'];
+                  const profile = keyData[station]['profile'];
+                  const id = keyData[station]['id'];
+                  const hourProfiles = profileData[day][hour];
+                  if (hourProfiles.hasOwnProperty(profile)) {
+                    const year = new Date(day).getFullYear();
+                    const capValue = capacityData[year][id];
+                    const profileValue = hourProfiles[profile];
+                    const supply = capValue * profileValue;
+                    if (!processedSupplyData.hasOwnProperty(day)) {
+                      processedSupplyData[day] = {};
+                    }
+                    if (!processedSupplyData[day].hasOwnProperty(fuelType)) {
+                      processedSupplyData[day][fuelType] = {};
+                    }
+                    if (!processedSupplyData[day][fuelType].hasOwnProperty(hour)) {
+                      processedSupplyData[day][fuelType][hour] = 0;
+                    }
+                    processedSupplyData[day][fuelType][hour] += supply;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
       return complete(processedSupplyData);
     });
   }

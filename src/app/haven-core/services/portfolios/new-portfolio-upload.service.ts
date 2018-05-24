@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { AngularFireAuth } from 'angularfire2/auth';
 import { PapaParseService } from 'ngx-papaparse';
+import { HavenDialogService } from '@app/haven-shared';
 
 import * as firebase from 'firebase';
 
@@ -10,8 +11,9 @@ export class NewPortfolioUploadService {
 
   private numOfUploadedDocs = 0;
   private numTotalDocs = 0;
+  private dialogRef: any;
 
-  constructor(private afAuth: AngularFireAuth, private papa: PapaParseService) { }
+  constructor(private afAuth: AngularFireAuth, private papa: PapaParseService, private dialogService: HavenDialogService) { }
 
   uploadCSVFiles(keyCSV: any, capCSV: any, loadCSV: any, profileCSV: any, portfolioName: string, scenarioName: string, loadName: string) {
     this.processKeyCSV(keyCSV).then((keyData) => {
@@ -31,13 +33,14 @@ export class NewPortfolioUploadService {
     if (portfolioName !== '') {
       this.numTotalDocs = Object.keys(keyData).length + Object.keys(capData).length + Object.keys(loadData).length + Object.keys(profileData).length + Object.keys(reData).length;
       this.numOfUploadedDocs = 0;
+      this.dialogRef = this.dialogService.openMessageDialog(`Portfolio uploading 0%.`);
       this.uploadStaticData(keyData, 'key', portfolioName).then(() => {
         this.uploadStaticData(profileData, 'profile', portfolioName).then(() => {
-          firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).set({ name: portfolioName });
           this.uploadScenarioData(capData, 'capacity', portfolioName, scenarioName).then(() => {
             this.uploadScenarioData(reData, 'renewablePercent', portfolioName, scenarioName).then(() => {
-              firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('scenarios').doc(scenarioName).set({ name: scenarioName });
               this.uploadLoadData(loadData, 'load', portfolioName, loadName).then(() => {
+                firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).set({ name: portfolioName });
+                firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('scenarios').doc(scenarioName).set({ name: scenarioName });
                 firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('loads').doc(loadName).set({ name: loadName });
               });
             });
@@ -64,6 +67,9 @@ export class NewPortfolioUploadService {
     }
     return batch.commit().then(() => {
       this.numOfUploadedDocs = this.numOfUploadedDocs + i;
+      if (this.dialogRef.componentInstance) {
+        this.dialogRef.componentInstance.updateMessage(`Portfolio uploading ${Math.trunc(((this.numOfUploadedDocs / this.numTotalDocs) * 100))}%.`);
+      }
       console.log(((this.numOfUploadedDocs / this.numTotalDocs) * 100) + '%');
       return this.uploadLoadData(data, collectionName, portfolioName, loadName);
     });
@@ -86,6 +92,9 @@ export class NewPortfolioUploadService {
     }
     return batch.commit().then(() => {
       this.numOfUploadedDocs = this.numOfUploadedDocs + i;
+      if (this.dialogRef.componentInstance) {
+      this.dialogRef.componentInstance.updateMessage(`Portfolio uploading ${Math.trunc(((this.numOfUploadedDocs / this.numTotalDocs) * 100))}%.`);
+      }
       console.log(((this.numOfUploadedDocs / this.numTotalDocs) * 100) + '%');
       return this.uploadScenarioData(data, collectionName, portfolioName, scenarioName);
     });
@@ -108,6 +117,9 @@ export class NewPortfolioUploadService {
     }
     return batch.commit().then(() => {
       this.numOfUploadedDocs = this.numOfUploadedDocs + i;
+      if (this.dialogRef.componentInstance) {
+      this.dialogRef.componentInstance.updateMessage(`Portfolio uploading ${Math.trunc(((this.numOfUploadedDocs / this.numTotalDocs) * 100))}%.`);
+      }
       console.log(((this.numOfUploadedDocs / this.numTotalDocs) * 100) + '%');
       return this.uploadStaticData(data, collectionName, portfolioName);
     });
