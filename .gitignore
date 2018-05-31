@@ -9,6 +9,7 @@
 # dependencies
 /node_modules
 /functions/node_modules
+/functions/service-account.json
 
 # IDEs and editors
 /.idea

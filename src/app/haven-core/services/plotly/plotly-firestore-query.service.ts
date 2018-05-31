@@ -208,6 +208,8 @@ export class PlotlyFirestoreQueryService {
         return this.formatDataforBar(data);
       case 'heatmap':
         return this.formatDataForHeatmap(data);
+      case 'surface':
+        return this.formatDataForSurface(data);
     }
   }
 
@@ -287,6 +289,29 @@ export class PlotlyFirestoreQueryService {
           dataList.push({ x, y, z, type: 'heatmap', 'name': datagroupName, 'colorscale': 'Portland', xgap: 1, ygap: 1 });
         }
       }
+      return complete(dataList);
+    });
+  }
+
+  private formatDataForSurface(data: Object): Promise<any> {
+    return new Promise((complete) => {
+      const z = [];
+      for (const datagroupName in data) {
+        if (data.hasOwnProperty(datagroupName)) {
+          for (const traceName in data[datagroupName]) {
+            if (data[datagroupName].hasOwnProperty(traceName)) {
+              const dayData = [];
+              for (const xVal in data[datagroupName][traceName]) {
+                if (data[datagroupName][traceName].hasOwnProperty(xVal)) {
+                  dayData.push(data[datagroupName][traceName][xVal]);
+                }
+              }
+              z.push(dayData);
+            }
+          }
+        }
+      }
+      const dataList = { 'surfaceData': {z, type: 'surface', 'colorscale': 'Portland'}, 'yTitle': 'Day', 'xTitle': 'Hour'  };
       return complete(dataList);
     });
   }

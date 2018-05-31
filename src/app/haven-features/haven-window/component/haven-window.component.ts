@@ -34,6 +34,7 @@ export class HavenWindowComponent implements AfterContentInit {
     this.windowDiv.nativeElement.style.height = this.havenWindow.size.height + 'px';
     this.windowDiv.nativeElement.style.left = this.havenWindow.position.left + 'px';
     this.windowDiv.nativeElement.style.top = this.havenWindow.position.top + 'px';
+    this.windowDiv.nativeElement.style.zIndex = 100;
     this.havenWindowService.bringWindowForward(this.havenWindow.id);
   }
 

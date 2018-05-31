@@ -1,7 +1,8 @@
 import { HavenLeafletComponent } from '../leaflet/component/haven-leaflet.component';
 import { PlotlyScatterComponent } from '../plotly/components/plotly-scatter/plotly-scatter.component';
-import { PlotlyBarComponent } from '@app/haven-features/haven-apps/plotly/components/plotly-bar/plotly-bar.component';
-import { PlotlyHeatmapComponent } from '@app/haven-features/haven-apps/plotly/components/plotly-heatmap/plotly-heatmap.component';
+import { PlotlyBarComponent } from '../plotly/components/plotly-bar/plotly-bar.component';
+import { PlotlyHeatmapComponent } from '../plotly/components/plotly-heatmap/plotly-heatmap.component';
+import { PlotlySurfaceComponent } from '../plotly/components/plotly-surface/plotly-surface.component';
 
 export class HavenAppList {
 
@@ -9,6 +10,7 @@ export class HavenAppList {
     'leaflet': HavenLeafletComponent,
     'plotly-scatter': PlotlyScatterComponent,
     'plotly-bar': PlotlyBarComponent,
-    'plotly-heatmap': PlotlyHeatmapComponent
+    'plotly-heatmap': PlotlyHeatmapComponent,
+    'plotly-surface': PlotlySurfaceComponent
   };
 }

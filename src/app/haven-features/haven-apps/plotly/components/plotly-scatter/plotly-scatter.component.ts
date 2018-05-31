@@ -35,6 +35,7 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDest
     this.plotlyInfo = this.havenApp.appInfo;
     this.firestoreQueryService.getData(this.plotlyInfo).then((data) => {
       this.data = data;
+      this.plotlyInfo.valueName = this.plotlyInfo.valueName.charAt(0).toUpperCase() + this.plotlyInfo.valueName.slice(1);
       let yValues = [];
       this.data.forEach(element => {
         element['traces'].forEach(trace => {
@@ -63,7 +64,7 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDest
       height: this.chartDiv.nativeElement.getBoundingClientRect().height,
       width: this.chartDiv.nativeElement.getBoundingClientRect().width,
       margin: {
-        t: 25,
+        t: 35,
         l: 55,
         r: 20,
         b: 50,

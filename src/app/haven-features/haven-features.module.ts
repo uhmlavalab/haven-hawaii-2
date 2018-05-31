@@ -9,6 +9,7 @@ import { HavenLeafletComponent } from './haven-apps/leaflet/component/haven-leaf
 import { PlotlyScatterComponent } from './haven-apps/plotly/components/plotly-scatter/plotly-scatter.component';
 import { PlotlyBarComponent } from './haven-apps/plotly/components/plotly-bar/plotly-bar.component';
 import { PlotlyHeatmapComponent } from './haven-apps/plotly/components/plotly-heatmap/plotly-heatmap.component';
+import { PlotlySurfaceComponent } from './haven-apps/plotly/components/plotly-surface/plotly-surface.component';
 import { HavenAppsHostDirective } from './haven-apps/shared/haven-apps-host.directive';
 
 // Sidebar
@@ -23,7 +24,7 @@ import { HavenWindowBringforwardDirective } from './haven-window/directives/have
 import { HavenWindowDragDirective } from './haven-window/directives/haven-window-drag.directive';
 import { HavenWindowHostDirective } from './haven-window/directives/haven-window-host.directive';
 import { HavenWindowMaximizeDirective } from './haven-window/directives/haven-window-maximize.directive';
-import {HavenWindowResizeDirective } from './haven-window/directives/haven-window-resize.directive';
+import { HavenWindowResizeDirective } from './haven-window/directives/haven-window-resize.directive';
 
 // MISC
 import { NewPortfolioComponent } from './haven-new-portfolio/new-portfolio.component';
@@ -62,6 +63,7 @@ import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.compon
     NewPortfolioComponent,
     HavenNewLayerComponent,
     PlotlyBarComponent,
+    PlotlySurfaceComponent,
 
   ],
   exports: [
@@ -71,6 +73,7 @@ import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.compon
     PlotlyScatterComponent,
     PlotlyBarComponent,
     PlotlyHeatmapComponent,
+    PlotlySurfaceComponent,
 
     // Sidebar
     HavenSidebarAccountComponent,
@@ -87,6 +90,7 @@ import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.compon
     PlotlyScatterComponent,
     PlotlyBarComponent,
     PlotlyHeatmapComponent,
+    PlotlySurfaceComponent,
 
     // Window
     HavenWindowComponent,

@@ -31,31 +31,37 @@
 </mat-form-field>
 
 <mat-grid-list cols="3" rows="2">
+
   <mat-grid-tile>
-    <button mat-icon-button [color]="selectedChart == 'scatter' ? 'primary' : 'accent'" (click)="setSelectedChart('scatter')">
+    <button mat-icon-button  matTooltip="Line Chart" [color]="selectedChart == 'scatter' ? 'primary' : 'warn'" (click)="setSelectedChart('scatter')">
       <mat-icon>show_chart</mat-icon>
     </button>
   </mat-grid-tile>
+
   <mat-grid-tile>
-    <button mat-icon-button [color]="selectedChart == 'bar' ? 'primary' : 'accent'" (click)="setSelectedChart('bar')">
+    <button mat-icon-button matTooltip="Bar Chart" [color]="selectedChart == 'bar' ? 'primary' : 'warn'" (click)="setSelectedChart('bar')">
       <mat-icon>insert_chart</mat-icon>
     </button>
   </mat-grid-tile>
+
   <mat-grid-tile>
-    <button mat-icon-button [color]="selectedChart == 'heatmap' ? 'primary' : 'accent'" (click)="setSelectedChart('heatmap')">
+    <button mat-icon-button matTooltip="Heatmap" [color]="selectedChart == 'heatmap' ? 'primary' : 'warn'" (click)="setSelectedChart('heatmap')">
       <mat-icon>grid_on</mat-icon>
     </button>
   </mat-grid-tile>
+
   <mat-grid-tile>
-    <button mat-icon-button [color]="selectedChart == 'table' ? 'primary' : 'accent'" (click)="setSelectedChart('table')">
-      <mat-icon>format_list_numbered</mat-icon>
-    </button>
-  </mat-grid-tile>
-  <mat-grid-tile>
-    <button mat-icon-button [color]="selectedChart == 'surface' ? 'primary' : 'accent'" (click)="setSelectedChart('surface')">
+    <button mat-icon-button matTooltip="3D Surface" [disabled]="selectedValue != 'load'" [color]="selectedChart == 'surface' ? 'primary' : 'warn'" (click)="setSelectedChart('surface')">
       <mat-icon>layers</mat-icon>
     </button>
   </mat-grid-tile>
+
+  <mat-grid-tile>
+    <button mat-icon-button matTooltip="Table" [disabled]="true" [color]="selectedChart == 'table' ? 'accent' : 'accent'">
+      <mat-icon>format_list_numbered</mat-icon>
+    </button>
+  </mat-grid-tile>
+
 </mat-grid-list>
 
 <button mat-raised-button color="primary" (click)="createChartWindow()">Create Chart</button>

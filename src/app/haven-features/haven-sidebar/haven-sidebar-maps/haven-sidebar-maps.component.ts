@@ -50,7 +50,9 @@ export class HavenSidebarMapsComponent {
   }
 
   createMapWindow() {
-    const havenWindow = new HavenWindow('Map', '', 100, 100, 400, 400, false);
+    const title = `Map - ${this.selectedYear}`;
+    const footer = `${this.portfolioService.getSelectedPortfolioName()} - ${this.selectedScenario}`;
+    const havenWindow = new HavenWindow(title, footer, 100, 100, 400, 400, false);
     const appInfo = new LeafletAppInfo(
       this.portfolioService.getSelectedPortfolioName(),
       this.selectedScenario, this.selectedYear,

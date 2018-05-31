@@ -77,7 +77,7 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
         const name = doc.data()['name'];
         const color = doc.data()['color'];
         const profiles = doc.data()['profiles'];
-        this.layerColorInfo[name] = {color: color, profiles: profiles };
+        this.layerColorInfo[name] = { color: color, profiles: profiles };
         if (this.layersControl.overlays.hasOwnProperty(name)) {
           this.layersControl.overlays[name].setStyle({ color: color });
         }
@@ -160,23 +160,26 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
 
   updateSupplyLayerColor(layerName: string, supplyAmount: number) {
     let supply = supplyAmount;
-    const colorShaded = this.layerColorInfo[layerName]['color'];
+    const colorSelected = this.layerColorInfo[layerName]['color'];
+    const colorShaded = this.lightenColor(colorSelected);
     const organizedByMWac = [];
     Object.keys(this.layersControl.overlays[layerName]['_layers']).forEach(layer => {
       const layerProperties = this.layersControl.overlays[layerName]['_layers'][layer]['feature']['properties'];
       const MWac = layerProperties['capacity'];
       const cf = layerProperties['cf'];
       const total = MWac * cf * 8760;
-      organizedByMWac.push({'total': total, 'layer': layer });
+      organizedByMWac.push({ 'total': total, 'layer': layer });
 
     });
     organizedByMWac.sort((a, b) => parseFloat(b.total) - parseFloat(a.total));
     organizedByMWac.forEach(element => {
       if (supply > 0) {
-        this.layersControl.overlays[layerName]['_layers'][element.layer]['options']['color'] = colorShaded;
+        this.layersControl.overlays[layerName]['_layers'][element.layer]['options']['fillColor'] = colorSelected;
+        this.layersControl.overlays[layerName]['_layers'][element.layer]['options']['weight'] = 1;
         supply -= element.total;
       } else {
-        this.layersControl.overlays[layerName]['_layers'][element.layer]['options']['color'] = '#FFFFFF';
+        this.layersControl.overlays[layerName]['_layers'][element.layer]['options']['color'] = colorShaded;
+        this.layersControl.overlays[layerName]['_layers'][element.layer]['options']['weight'] = 1;
       }
     });
     this.loaded = true;
@@ -215,6 +218,16 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
     if (this.loaded) {
       this.leafletMap.invalidateSize();
     }
+  }
+
+  lightenColor(color) {
+    let colorValue = '';
+    if (color.length <= 7) {
+      colorValue = color + '25';
+    } else {
+      colorValue = color.slice(8, color.length) + '25';
+    }
+    return colorValue;
   }
 
 }

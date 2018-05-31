@@ -35,6 +35,7 @@ export class PlotlyHeatmapComponent implements HavenAppInterface, OnInit, OnDest
     this.plotlyInfo = this.havenApp.appInfo;
     this.firestoreQueryService.getData(this.plotlyInfo).then((data) => {
       this.data = data;
+      this.plotlyInfo.valueName = this.plotlyInfo.valueName.charAt(0).toUpperCase() + this.plotlyInfo.valueName.slice(1);
       let yValues = [];
       this.data.forEach(element => {
         element['z'].forEach(trace => {
@@ -63,7 +64,7 @@ export class PlotlyHeatmapComponent implements HavenAppInterface, OnInit, OnDest
         l: 70,
         r: 30,
         b: 20,
-        t: 30,
+        t: 35,
         pad: 0
       },
       font: {

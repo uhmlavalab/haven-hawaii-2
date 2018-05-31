@@ -19,7 +19,9 @@ export class HavenLoginComponent {
   constructor(private authService: AuthService, public dialogService: HavenDialogService) { }
 
   login() {
-    this.authService.signinUser('cat@gmail.com', 'asdfasdf');
+    if (this.email && this.password) {
+      this.authService.signinUser(this.email, this.password);
+    }
   }
 
   createAccount() {

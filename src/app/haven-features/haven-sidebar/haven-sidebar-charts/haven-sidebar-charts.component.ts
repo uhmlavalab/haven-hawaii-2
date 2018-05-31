@@ -49,7 +49,9 @@ export class HavenSidebarChartsComponent implements OnInit {
       this.selectedScope,
       this.selectedChart
     );
-    const havenWindow = new HavenWindow('Plotly', '', 100, 100, 400, 400, false);
+    const title = `${this.selectedValue.charAt(0).toUpperCase() + this.selectedValue.slice(1)} - ${startDate.getFullYear()}`;
+    const footer = `${this.portfolioService.getSelectedPortfolioName()} - ${this.selectedScenario} - ${this.selectedLoad} Load`;
+    const havenWindow = new HavenWindow(title, footer, 100, 100, 400, 400, false);
     const newApp = new HavenApp(`plotly-${this.selectedChart}`, appInfo);
     havenWindow.app = newApp;
     this.windowService.addWindow(havenWindow);
