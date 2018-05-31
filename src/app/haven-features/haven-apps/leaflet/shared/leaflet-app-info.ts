@@ -1,26 +1,24 @@
 import { Type } from '@angular/core';
-import * as L from 'leaflet';
+import { MapState} from '@app/haven-core';
 
 export class LeafletAppInfo {
-  center: L.LatLng;
-  zoom: number;
-  baseLayer: string;
-
-  mapStateSync: number;
 
   portfolioName: string;
   scenarioName: string;
   year: number;
 
+  mapState: MapState;
+  baseLayer: string;
+
   constructor(portfolioName: string, scenarioName: string, year: number, lat: number, lng: number, zoom: number, baseLayer: string) {
-    this.center = new L.LatLng(lat, lng);
-    this.zoom = zoom;
-    this.baseLayer = baseLayer;
-    this.mapStateSync = 0;
 
     this.portfolioName = portfolioName;
     this.scenarioName = scenarioName;
     this.year = year;
+
+    this.baseLayer = baseLayer;
+    this.mapState = new MapState(lat, lng, zoom, 0);
+
   }
 
 }

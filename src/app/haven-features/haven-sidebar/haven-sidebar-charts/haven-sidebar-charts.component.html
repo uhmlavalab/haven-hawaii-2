@@ -32,33 +32,28 @@
 
 <mat-grid-list cols="3" rows="2">
   <mat-grid-tile>
-    <button mat-icon-button color="primary">
+    <button mat-icon-button [color]="selectedChart == 'scatter' ? 'primary' : 'accent'" (click)="setSelectedChart('scatter')">
       <mat-icon>show_chart</mat-icon>
     </button>
   </mat-grid-tile>
   <mat-grid-tile>
-    <button mat-icon-button color="accent">
+    <button mat-icon-button [color]="selectedChart == 'bar' ? 'primary' : 'accent'" (click)="setSelectedChart('bar')">
       <mat-icon>insert_chart</mat-icon>
     </button>
   </mat-grid-tile>
   <mat-grid-tile>
-    <button mat-icon-button color="accent">
-      <mat-icon>pie_chart</mat-icon>
+    <button mat-icon-button [color]="selectedChart == 'heatmap' ? 'primary' : 'accent'" (click)="setSelectedChart('heatmap')">
+      <mat-icon>grid_on</mat-icon>
     </button>
   </mat-grid-tile>
   <mat-grid-tile>
-    <button mat-icon-button color="warn">
-      <mat-icon>bubble_chart</mat-icon>
+    <button mat-icon-button [color]="selectedChart == 'table' ? 'primary' : 'accent'" (click)="setSelectedChart('table')">
+      <mat-icon>format_list_numbered</mat-icon>
     </button>
   </mat-grid-tile>
   <mat-grid-tile>
-    <button mat-icon-button color="warn">
-      <mat-icon>insert_chart</mat-icon>
-    </button>
-  </mat-grid-tile>
-  <mat-grid-tile>
-    <button mat-icon-button color="warn">
-      <mat-icon>show_chart</mat-icon>
+    <button mat-icon-button [color]="selectedChart == 'surface' ? 'primary' : 'accent'" (click)="setSelectedChart('surface')">
+      <mat-icon>layers</mat-icon>
     </button>
   </mat-grid-tile>
 </mat-grid-list>

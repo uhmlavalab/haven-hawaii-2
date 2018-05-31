@@ -7,33 +7,31 @@ import * as L from 'leaflet';
 @Injectable()
 export class LeafletMapStateService {
 
-  mapStates = [];
-  mapStateSubs = [new Subject<object>(), new Subject<object>(), new Subject<object>(), new Subject<object>()];
+  mapMoveSub = new Subject<any>();
+  mapZoomSub = new Subject<any>();
 
-  constructor() {
+  constructor() {  }
 
-    for (let i = 0; i < 4; i++) {
-      this.mapStates.push({
-        center: L.latLng([21.480066, -157.96]),
-        zoom: 11,
-      });
-    }
-
-    let index = 0;
-    this.mapStateSubs.forEach(sub => {
-      sub = new Subject<object>();
-      sub.next(this.mapStates[index]);
-      index++;
-    });
-
+  setLoacation(mapState: MapState, windowId: number) {
+    this.mapMoveSub.next({ 'state': mapState, 'windowId':  windowId });
   }
 
-  setState(index: number, zoom: number, center: L.LatLng) {
-    if (zoom !== this.mapStates[index].zoom || !center.equals(this.mapStates[index].center, 0.0005)) {
-      this.mapStates[index].center = center;
-      this.mapStates[index].zoom = zoom;
-      this.mapStateSubs[index].next(this.mapStates[index]);
-    }
+  setZoom(mapState: MapState, windowId: number) {
+    this.mapZoomSub.next({ 'state': mapState, 'windowId':  windowId });
   }
 
+}
+
+export class MapState {
+  latitude: number;
+  longitude: number;
+  zoom: number;
+  mapStateId: number;
+
+  constructor(latitude: number, longitude: number, zoom: number, mapStateId: number) {
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.zoom = zoom;
+    this.mapStateId = mapStateId;
+  }
 }

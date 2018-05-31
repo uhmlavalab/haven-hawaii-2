@@ -69,8 +69,12 @@ export class PortfolioService {
     return this.selectedPortfolio;
   }
 
-  public getPortfolioRef(): firebase.firestore.DocumentReference {
+  public getSelectedPortfolioRef(): firebase.firestore.DocumentReference {
     return this.portfolioRef;
+  }
+
+  public getPortfolioRef(portfolioName: string): firebase.firestore.DocumentReference {
+    return firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName);
   }
 
   public getPortfolioNames(): Observable<any[]> {

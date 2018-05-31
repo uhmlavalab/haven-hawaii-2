@@ -8,11 +8,11 @@ import { PlotlyFirestoreQueryService } from '@app/haven-core';
 import { PlotlyAppInfo } from '../../shared/plotly-app-info';
 
 @Component({
-  selector: 'app-plotly-scatter',
-  templateUrl: './plotly-scatter.component.html',
-  styleUrls: ['./plotly-scatter.component.css']
+  selector: 'app-plotly-heatmap',
+  templateUrl: './plotly-heatmap.component.html',
+  styleUrls: ['./plotly-heatmap.component.css']
 })
-export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDestroy {
+export class PlotlyHeatmapComponent implements HavenAppInterface, OnInit, OnDestroy {
 
   havenWindow: HavenWindow;
   havenApp: HavenApp;
@@ -21,8 +21,8 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDest
   @ViewChild('chart') chartDiv: ElementRef;
   loaded = false;
   data: any;
-  maxY: number;
-  minY: number;
+  maxZ: number;
+  minZ: number;
   numberOfData: number;
   selectedDataSlice: number;
   paused = false;
@@ -37,16 +37,13 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDest
       this.data = data;
       let yValues = [];
       this.data.forEach(element => {
-        element['traces'].forEach(trace => {
-          yValues.push(trace['y']);
+        element['z'].forEach(trace => {
+          yValues.push(trace);
         });
       });
       yValues = yValues.reduce((a, b) => a.concat(b), []);
-      this.maxY = Math.max(...yValues);
-      this.minY = Math.min(...yValues);
-      const pad = (this.maxY - this.minY) * 0.05;
-      this.maxY += pad;
-      this.minY -= pad;
+      this.maxZ = Math.max(...yValues);
+      this.minZ = Math.min(...yValues);
       this.numberOfData = data.length - 1;
       this.loaded = true;
       this.changeDetector.detectChanges();
@@ -63,28 +60,26 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDest
       height: this.chartDiv.nativeElement.getBoundingClientRect().height,
       width: this.chartDiv.nativeElement.getBoundingClientRect().width,
       margin: {
-        t: 25,
-        l: 55,
-        r: 20,
-        b: 50,
+        l: 70,
+        r: 30,
+        b: 20,
+        t: 30,
+        pad: 0
       },
       font: {
         family: 'Roboto, sans-serif',
       },
-      xaxis: {
-        title: 'Time',
-        showgrid: false,
-        zeroline: false
-      },
       yaxis: {
-        title: this.plotlyInfo.valueName,
-        range: [this.minY, this.maxY],
-        showline: false
+        tickangle: -45,
       },
+      showlegend: true,
       title: this.toShortDate(this.data[this.selectedDataSlice]['name']),
       hovermode: 'closest',
     };
-    Plotly.newPlot(this.chartDiv.nativeElement, this.data[this.selectedDataSlice]['traces'], layout);
+    const data = this.data[this.selectedDataSlice];
+    data.zmax = this.maxZ;
+    data.zmin = this.minZ;
+    Plotly.newPlot(this.chartDiv.nativeElement, [data], layout);
   }
 
   toShortDate(inputDate: string): string {
@@ -123,5 +118,4 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDest
   ngOnDestroy() {
     clearInterval(this.intervalPlayer);
   }
-
 }

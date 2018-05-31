@@ -2,9 +2,18 @@
   <img class="loading-image" src="./assets/logo/haven-animation.gif">
 </div>
 
-<div *ngIf="loaded" #chart style="height: 90%">
+<div *ngIf="loaded" #chart style="height: calc(100% - 60px)">
   <!-- Chart will appear here -->
 </div>
 
-<mat-slider *ngIf="loaded" [min]="0" [max]="numberOfData" (input)="plotData($event)" style="height: 10%; width:100%;"></mat-slider>
-
+<mat-card *ngIf="loaded" style="height: 50px; padding: 5px;">
+  <mat-card-content>
+    <button mat-mini-fab color="primary" *ngIf="!paused" (click)="playPause()">
+      <mat-icon>pause</mat-icon>
+    </button>
+    <button mat-mini-fab color="primary" *ngIf="paused" (click)="playPause()">
+      <mat-icon>play_arrow</mat-icon>
+    </button>
+    <mat-slider *ngIf="loaded" [min]="0" [max]="numberOfData" [(ngModel)]="selectedDataSlice" (input)="plotData($event)" style="width: calc(100% - 56px);"></mat-slider>
+  </mat-card-content>
+</mat-card>

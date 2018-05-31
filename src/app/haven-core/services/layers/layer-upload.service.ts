@@ -120,7 +120,7 @@ export class LayerUploadService {
       }, () => {
         // Upload completed successfully, now we can get the download URL
         const downloadURL = uploadTask.snapshot.downloadURL;
-        const layersCollectionRef = this.portfolioService.getPortfolioRef().collection('layers');
+        const layersCollectionRef = this.portfolioService.getSelectedPortfolioRef().collection('layers');
         const newLayerDocument = {
           'name': layerName,
           'url': downloadURL,

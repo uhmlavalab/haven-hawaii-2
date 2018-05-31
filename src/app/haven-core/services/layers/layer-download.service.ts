@@ -17,7 +17,7 @@ export class LayerDownloadService {
   public getLayers(portfolioName: string): Promise<any[]> {
     return new Promise((complete) => {
       const layers = [];
-      this.portfolioService.getPortfolioRef().collection('layers').get().then((querySnapshot) => {
+      this.portfolioService.getPortfolioRef(portfolioName).collection('layers').get().then((querySnapshot) => {
         const promises = [];
         querySnapshot.forEach(doc => {
           const layerName = doc.data()['name'];

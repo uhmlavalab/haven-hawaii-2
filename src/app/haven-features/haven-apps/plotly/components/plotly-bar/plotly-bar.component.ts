@@ -8,11 +8,11 @@ import { PlotlyFirestoreQueryService } from '@app/haven-core';
 import { PlotlyAppInfo } from '../../shared/plotly-app-info';
 
 @Component({
-  selector: 'app-plotly-scatter',
-  templateUrl: './plotly-scatter.component.html',
-  styleUrls: ['./plotly-scatter.component.css']
+  selector: 'app-plotly-bar',
+  templateUrl: './plotly-bar.component.html',
+  styleUrls: ['./plotly-bar.component.css']
 })
-export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDestroy {
+export class PlotlyBarComponent implements HavenAppInterface, OnInit, OnDestroy {
 
   havenWindow: HavenWindow;
   havenApp: HavenApp;
@@ -37,9 +37,13 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDest
       this.data = data;
       let yValues = [];
       this.data.forEach(element => {
+        const yValue = new Array(element['traces'][0]['y'].length).fill(0);
         element['traces'].forEach(trace => {
-          yValues.push(trace['y']);
+          for (let i = 0; i < trace['y'].length; i++) {
+            yValue[i] += trace['y'][i];
+          }
         });
+        yValues.push(yValue);
       });
       yValues = yValues.reduce((a, b) => a.concat(b), []);
       this.maxY = Math.max(...yValues);
@@ -82,6 +86,7 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDest
         showline: false
       },
       title: this.toShortDate(this.data[this.selectedDataSlice]['name']),
+      barmode: 'stack',
       hovermode: 'closest',
     };
     Plotly.newPlot(this.chartDiv.nativeElement, this.data[this.selectedDataSlice]['traces'], layout);
@@ -123,5 +128,4 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDest
   ngOnDestroy() {
     clearInterval(this.intervalPlayer);
   }
-
 }

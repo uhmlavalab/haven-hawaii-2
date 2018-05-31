@@ -1,20 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Subscription } from 'rxjs/Subscription';
 import * as L from 'leaflet';
 import { GeoJsonObject } from 'geojson';
 
-import { Subscription } from 'rxjs/Subscription';
 import { isUndefined } from 'util';
 
 import { HavenAppInterface } from '../../shared/haven-app-interface';
 import { HavenApp } from '../../shared/haven-app';
 import { HavenWindow } from '../../../haven-window/shared/haven-window';
-
-import { LayerDownloadService } from '@app/haven-core';
-import { LayersService, PortfolioService } from '@app/haven-core';
-import { LeafletMapStateService } from '@app/haven-core';
 import { LeafletAppInfo } from '../shared/leaflet-app-info';
-import { map } from 'rxjs/operators';
+
+import { PortfolioService, LayersService, LayerDownloadService, LeafletMapStateService, MapState } from '@app/haven-core';
 
 @Component({
   selector: 'app-haven-leaflet',
@@ -23,17 +20,18 @@ import { map } from 'rxjs/operators';
 })
 export class HavenLeafletComponent implements HavenAppInterface, OnInit {
 
-  leafletMap: L.Map;
-  loaded = false;
-
   havenWindow: HavenWindow;
   havenApp: HavenApp;
   leafletAppInfo: LeafletAppInfo;
 
-  mapStateSub: Subscription;
+  leafletMap: L.Map;
+  mapLocationSub: Subscription;
+  mapZoomSub: Subscription;
+  layerColorInfo = {};
+  loaded = false;
 
-  layers = [];
-  colorSubs = {};
+  ignoreMoveUpdate = false;
+  ignoreZoomUpdate = false;
 
   baseLayers = {
     'Street': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -66,81 +64,151 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
     center: L.latLng([21.480066, -157.96])
   };
 
-  layerColorInfo = {};
 
-  constructor(private layerDownloadService: LayerDownloadService, private layerService: LayersService, private layerStateService: LeafletMapStateService, private portfolioService: PortfolioService) { }
+  constructor(private portfolioService: PortfolioService, private layerService: LayersService, private layerDownloadService: LayerDownloadService, private mapStateService: LeafletMapStateService) { }
 
   ngOnInit() {
     this.leafletAppInfo = this.havenApp.appInfo;
-    this.portfolioService.getPortfolioRef().collection('layers')
-      .onSnapshot((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const name = doc.data()['name'];
-          const color = doc.data()['color'];
-          this.layerColorInfo[name] = color;
-          if (this.layersControl.overlays.hasOwnProperty(name)) {
-            this.layersControl.overlays[name].setStyle({ color: color });
-          }
-        });
+    this.options.zoom = this.leafletAppInfo.mapState.zoom;
+    this.options.center = L.latLng(this.leafletAppInfo.mapState.latitude, this.leafletAppInfo.mapState.longitude);
+
+    this.portfolioService.getPortfolioRef(this.leafletAppInfo.portfolioName).collection('layers').onSnapshot((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const name = doc.data()['name'];
+        const color = doc.data()['color'];
+        const profiles = doc.data()['profiles'];
+        this.layerColorInfo[name] = {color: color, profiles: profiles };
+        if (this.layersControl.overlays.hasOwnProperty(name)) {
+          this.layersControl.overlays[name].setStyle({ color: color });
+        }
       });
+    });
+
     this.layerDownloadService.getLayers(this.leafletAppInfo.portfolioName).then((layers) => {
+      let waitForLayerColors = false;
       layers.forEach(layer => {
         if (layer) {
           const geojsonFeature: GeoJSON.FeatureCollection<any> = layer.data;
+          if (this.layerColorInfo[layer.name]['profiles'].length > 0) {
+            waitForLayerColors = true;
+            this.layerService.getSupplyOfProfiles(this.leafletAppInfo, this.layerColorInfo[layer.name]['profiles']).then((supplyAmount) => {
+              this.layerColorInfo[layer.name]['supplyAmount'] = supplyAmount;
+              this.updateSupplyLayerColor(layer.name, supplyAmount);
+            });
+          }
           const newLayer = L.geoJSON(layer.data, {
             style: (feature) => ({
-              color: this.layerColorInfo[layer.name]
+              color: this.layerColorInfo[layer.name]['color']
             }),
           });
           this.layersControl.overlays[layer.name] = newLayer;
         }
       });
-      this.mapStateSub = this.layerStateService.mapStateSubs[this.havenApp.appInfo.mapStateSync].subscribe((state) => {
-        this.mapStateCheck(state);
-      });
-      this.loaded = true;
+      if (!waitForLayerColors) {
+        this.loaded = true;
+      }
+
     });
 
+    this.mapLocationSub = this.mapStateService.mapMoveSub.subscribe((stateUpdate) => {
+      this.mapMoveCheck(stateUpdate['state'], stateUpdate['windowId'], true);
+    });
+    this.mapZoomSub = this.mapStateService.mapZoomSub.subscribe((stateUpdate) => {
+      this.mapZoomCheck(stateUpdate['state'], stateUpdate['windowId'], true);
+    });
   }
+
 
   setMap(leafletMap: L.Map) {
     this.leafletMap = leafletMap;
-    this.leafletMap.setView(this.havenApp.appInfo.center, this.havenApp.appInfo.zoom);
+    this.leafletMap.setView(this.options.center, this.options.zoom);
 
     const base = this.havenApp.appInfo.baseLayer.charAt(0).toUpperCase() + this.havenApp.appInfo.baseLayer.slice(1);
     this.leafletMap.removeLayer(this.options.layers[0]);
     this.leafletMap.addLayer(this.baseLayers[base]);
 
-    this.leafletMap.on('zoomend', () => this.stateUpdate());
-    this.leafletMap.on('moveend', () => this.stateUpdate());
+    this.leafletMap.on('zoomend', (e) => this.mapZoomCheck(this.leafletAppInfo.mapState, this.havenWindow.id, false));
+    this.leafletMap.on('moveend', (e) => this.mapMoveCheck(this.leafletAppInfo.mapState, this.havenWindow.id, false));
   }
 
-  stateUpdate() {
-    const zoom = this.leafletMap.getZoom();
-    const latitude = this.leafletMap.getCenter().lat;
-    const longitude = this.leafletMap.getCenter().lng;
-    if (this.havenApp.appInfo.mapStateSync !== 4) {
-      this.layerStateService.setState(this.havenApp.appInfo.mapStateSync, zoom, L.latLng(latitude, longitude));
+
+  mapMoveCheck(mapState: MapState, windowId: number, fromSub: boolean) {
+    if (!isUndefined(this.leafletMap)) {
+      if (!this.ignoreMoveUpdate) {
+        if (fromSub) {
+          if (windowId !== this.havenWindow.id) {
+            if (mapState.mapStateId === this.leafletAppInfo.mapState.mapStateId) {
+              // from sub, different window, same id
+              this.leafletAppInfo.mapState.latitude = mapState.latitude;
+              this.leafletAppInfo.mapState.longitude = mapState.longitude;
+              this.leafletMap.flyTo(L.latLng(this.leafletAppInfo.mapState.latitude, this.leafletAppInfo.mapState.longitude));
+              this.ignoreMoveUpdate = true;
+            }
+          }
+        } else {
+          // NOT from sub, same window
+          const center = this.leafletMap.getCenter();
+          this.leafletAppInfo.mapState.latitude = center.lat;
+          this.leafletAppInfo.mapState.longitude = center.lng;
+          this.mapStateService.setLoacation(this.leafletAppInfo.mapState, this.havenWindow.id);
+        }
+      } else {
+        this.ignoreMoveUpdate = false;
+      }
     }
   }
 
-  mapStateCheck(state: Object) {
+  updateSupplyLayerColor(layerName: string, supplyAmount: number) {
+    let supply = supplyAmount;
+    const colorShaded = this.layerColorInfo[layerName]['color'];
+    const organizedByMWac = [];
+    Object.keys(this.layersControl.overlays[layerName]['_layers']).forEach(layer => {
+      const layerProperties = this.layersControl.overlays[layerName]['_layers'][layer]['feature']['properties'];
+      const MWac = layerProperties['capacity'];
+      const cf = layerProperties['cf'];
+      const total = MWac * cf * 8760;
+      organizedByMWac.push({'total': total, 'layer': layer });
+
+    });
+    organizedByMWac.sort((a, b) => parseFloat(b.total) - parseFloat(a.total));
+    organizedByMWac.forEach(element => {
+      if (supply > 0) {
+        this.layersControl.overlays[layerName]['_layers'][element.layer]['options']['color'] = colorShaded;
+        supply -= element.total;
+      } else {
+        this.layersControl.overlays[layerName]['_layers'][element.layer]['options']['color'] = '#FFFFFF';
+      }
+    });
+    this.loaded = true;
+  }
+
+  mapZoomCheck(mapState: MapState, windowId: number, fromSub: boolean) {
     if (!isUndefined(this.leafletMap)) {
-      this.havenApp.appInfo.zoom = state['zoom'];
-      this.havenApp.appInfo.center = state['center'];
-      this.leafletMap.setView(this.havenApp.appInfo.center, this.havenApp.appInfo.zoom);
+      if (!this.ignoreZoomUpdate) {
+        if (fromSub) {
+          if (windowId !== this.havenWindow.id) {
+            if (mapState.mapStateId === this.leafletAppInfo.mapState.mapStateId) {
+              // from sub, different window, same id
+              this.leafletAppInfo.mapState.zoom = mapState.zoom;
+              this.leafletMap.setZoom(this.leafletAppInfo.mapState.zoom);
+              this.ignoreMoveUpdate = true;
+            }
+          }
+        } else {
+          // NOT from sub, same window
+          const zoom = this.leafletMap.getZoom();
+          this.leafletAppInfo.mapState.zoom = zoom;
+          this.mapStateService.setZoom(this.leafletAppInfo.mapState, this.havenWindow.id);
+        }
+      } else {
+        this.ignoreZoomUpdate = false;
+      }
     }
   }
 
   mapStateSyncInc() {
-    this.havenApp.appInfo.mapStateSync++;
-    this.havenApp.appInfo.mapStateSync = this.havenApp.appInfo.mapStateSync % 5;
-    this.mapStateSub.unsubscribe();
-    if (this.havenApp.appInfo.mapStateSync !== 4) {
-      this.mapStateSub = this.layerStateService.mapStateSubs[this.havenApp.appInfo.mapStateSync].subscribe((state) => {
-        this.mapStateCheck(state);
-      });
-    }
+    this.leafletAppInfo.mapState.mapStateId++;
+    this.leafletAppInfo.mapState.mapStateId = this.leafletAppInfo.mapState.mapStateId % 5;
   }
 
   resize() {

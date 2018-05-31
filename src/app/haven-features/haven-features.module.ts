@@ -7,6 +7,8 @@ import { HavenAppsFactoryComponent } from './haven-apps/factory/haven-apps-facto
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { HavenLeafletComponent } from './haven-apps/leaflet/component/haven-leaflet.component';
 import { PlotlyScatterComponent } from './haven-apps/plotly/components/plotly-scatter/plotly-scatter.component';
+import { PlotlyBarComponent } from './haven-apps/plotly/components/plotly-bar/plotly-bar.component';
+import { PlotlyHeatmapComponent } from './haven-apps/plotly/components/plotly-heatmap/plotly-heatmap.component';
 import { HavenAppsHostDirective } from './haven-apps/shared/haven-apps-host.directive';
 
 // Sidebar
@@ -38,6 +40,8 @@ import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.compon
     HavenAppsFactoryComponent,
     HavenLeafletComponent,
     PlotlyScatterComponent,
+    PlotlyBarComponent,
+    PlotlyHeatmapComponent,
     HavenAppsHostDirective,
 
     // Sidebar
@@ -57,12 +61,16 @@ import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.compon
     // Misc
     NewPortfolioComponent,
     HavenNewLayerComponent,
+    PlotlyBarComponent,
+
   ],
   exports: [
     // Apps
     HavenAppsFactoryComponent,
     HavenLeafletComponent,
     PlotlyScatterComponent,
+    PlotlyBarComponent,
+    PlotlyHeatmapComponent,
 
     // Sidebar
     HavenSidebarAccountComponent,
@@ -77,6 +85,8 @@ import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.compon
     // Apps
     HavenLeafletComponent,
     PlotlyScatterComponent,
+    PlotlyBarComponent,
+    PlotlyHeatmapComponent,
 
     // Window
     HavenWindowComponent,

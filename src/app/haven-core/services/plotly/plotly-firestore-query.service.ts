@@ -59,7 +59,7 @@ export class PlotlyFirestoreQueryService {
               return this.processProfileDocs(profileSnapshot.docs).then((profileData) => {
                 return this.createSupplyData(keyData, capacityData, profileData).then((processedData) => {
                   return this.formatProcessedData(queryInfo, processedData);
-                 });
+                });
               });
             });
           });
@@ -205,9 +205,9 @@ export class PlotlyFirestoreQueryService {
       case 'scatter':
         return this.formatDataForScatter(data);
       case 'bar':
-        return this.formatDataForScatter(data);
+        return this.formatDataforBar(data);
       case 'heatmap':
-        return this.formatDataForScatter(data);
+        return this.formatDataForHeatmap(data);
     }
   }
 
@@ -231,6 +231,60 @@ export class PlotlyFirestoreQueryService {
             }
           }
           dataList.push({ 'name': datagroupName, 'traces': traces });
+        }
+      }
+      return complete(dataList);
+    });
+  }
+
+  private formatDataforBar(data: Object): Promise<any[]> {
+    return new Promise((complete) => {
+      const dataList = [];
+      for (const datagroupName in data) {
+        if (data.hasOwnProperty(datagroupName)) {
+          const traces = [];
+          for (const traceName in data[datagroupName]) {
+            if (data[datagroupName].hasOwnProperty(traceName)) {
+              const x = [];
+              const y = [];
+              for (const xVal in data[datagroupName][traceName]) {
+                if (data[datagroupName][traceName].hasOwnProperty(xVal)) {
+                  x.push(Number(xVal));
+                  y.push(data[datagroupName][traceName][xVal]);
+                }
+              }
+              traces.push({ x, y, type: 'bar', name: traceName });
+            }
+          }
+          dataList.push({ 'name': datagroupName, 'traces': traces });
+        }
+      }
+      return complete(dataList);
+    });
+  }
+
+  private formatDataForHeatmap(data: Object): Promise<any[]> {
+    return new Promise((complete) => {
+      const dataList = [];
+      for (const datagroupName in data) {
+        if (data.hasOwnProperty(datagroupName)) {
+          const z = [];
+          const y = [];
+          const x = [];
+          for (const traceName in data[datagroupName]) {
+            if (data[datagroupName].hasOwnProperty(traceName)) {
+              y.push(traceName);
+              const zTraceValues = [];
+              for (const xVal in data[datagroupName][traceName]) {
+                if (data[datagroupName][traceName].hasOwnProperty(xVal)) {
+                  if (x.indexOf(xVal) === -1) { x.push(xVal); }
+                  zTraceValues.push(data[datagroupName][traceName][xVal]);
+                }
+              }
+              z.push(zTraceValues);
+            }
+          }
+          dataList.push({ x, y, z, type: 'heatmap', 'name': datagroupName, 'colorscale': 'Portland', xgap: 1, ygap: 1 });
         }
       }
       return complete(dataList);

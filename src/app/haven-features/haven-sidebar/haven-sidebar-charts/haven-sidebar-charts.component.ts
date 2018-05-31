@@ -50,7 +50,7 @@ export class HavenSidebarChartsComponent implements OnInit {
       this.selectedChart
     );
     const havenWindow = new HavenWindow('Plotly', '', 100, 100, 400, 400, false);
-    const newApp = new HavenApp('plotly-scatter', appInfo);
+    const newApp = new HavenApp(`plotly-${this.selectedChart}`, appInfo);
     havenWindow.app = newApp;
     this.windowService.addWindow(havenWindow);
   }
@@ -61,6 +61,10 @@ export class HavenSidebarChartsComponent implements OnInit {
 
   loadChange() {
     this.portfolioService.setLoad(this.selectedLoad);
+  }
+
+  setSelectedChart(value: any) {
+    this.selectedChart = value;
   }
 
 }
