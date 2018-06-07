@@ -13,8 +13,8 @@
 
 <mat-form-field>
   <mat-select placeholder="Session" [(value)]="selectedSession">
-    <mat-option *ngFor="let session of portfolioService.getSessionsList() | async" [value]="session.name">
-      {{ session.name }}
+    <mat-option *ngFor="let session of portfolioService.getSessionsList() | async" [value]="session">
+      {{ session.sessionName }} - {{ session.timestamp  | date:'short'}}
     </mat-option>
   </mat-select>
 </mat-form-field>

@@ -1,5 +1,5 @@
 import { Type } from '@angular/core';
-import { MapState} from '@app/haven-core';
+import { MapState} from '../../../../haven-core/services/leaflet/leaflet-map-state.service';
 
 export class LeafletAppInfo {
 
@@ -19,6 +19,21 @@ export class LeafletAppInfo {
     this.baseLayer = baseLayer;
     this.mapState = new MapState(lat, lng, zoom, 0);
 
+  }
+
+  getObject() {
+    return {
+      'portfolioName': this.portfolioName,
+      'scenarioName': this.scenarioName,
+      'year': this.year,
+      'baseLayer': this.baseLayer,
+      'mapState': {
+        'lat': this.mapState.latitude,
+        'lng': this.mapState.longitude,
+        'zoom': this.mapState.zoom,
+        'mapStateId': this.mapState.mapStateId
+      }
+    };
   }
 
 }

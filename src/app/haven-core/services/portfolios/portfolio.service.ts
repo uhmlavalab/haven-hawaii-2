@@ -39,6 +39,7 @@ export class PortfolioService {
   constructor(private afs: AngularFirestore, private afAuth: AngularFireAuth) {
     this.portfolioNamesCollection = this.afs.collection<any>(`${afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios');
     this.portfolioNames = this.portfolioNamesCollection.valueChanges();
+    this.setSessionsListReference();
   }
 
   public setPortfolio(portfolioName: string) {
@@ -117,6 +118,10 @@ export class PortfolioService {
     return firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('loads').doc(loadName).collection('load');
   }
 
+  public getSessionsCollection(): firebase.firestore.CollectionReference {
+    return firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('sessions');
+  }
+
   private setScenariosListReference() {
     this.scenarioNamesCollection = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios').doc(this.selectedPortfolio).collection('scenarios');
     this.scenarioNames = this.scenarioNamesCollection.valueChanges();
@@ -133,8 +138,8 @@ export class PortfolioService {
   }
 
   private setSessionsListReference() {
-    this.portfolioLayersCollection = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios').doc(this.selectedPortfolio).collection('sessions');
-    this.portfolioLayers = this.portfolioLayersCollection.valueChanges();
+    this.sessionNamesCollection = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('sessions');
+    this.scenssionsNames = this.sessionNamesCollection.valueChanges();
   }
 
   private setREValuesReference() {
@@ -147,6 +152,10 @@ export class PortfolioService {
       const keyReference = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios').doc(this.selectedPortfolio).collection('key', ref => ref.orderBy('id', 'asc'));
       return keyReference.valueChanges();
     }
+  }
+
+  public deletePortfolio(portfolioName: string) {
+    this.afs.firestore.collection('deletePortfolio').add({ 'uid': this.afAuth.auth.currentUser.uid, 'portfolioName': portfolioName, 'timestamp': firebase.firestore.FieldValue.serverTimestamp() });
   }
 
 }

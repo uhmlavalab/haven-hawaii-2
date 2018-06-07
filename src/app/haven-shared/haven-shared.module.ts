@@ -32,6 +32,7 @@ import {
   MatPaginatorModule,
 } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
+import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven-savesession-dialog/haven-savesession-dialog.component';
 
 
 @NgModule({
@@ -65,6 +66,7 @@ import { MatTableModule } from '@angular/material/table';
   declarations: [
     HavenMessageDialogComponent,
     HavenConfirmDialogComponent,
+    HavenSavesessionDialogComponent,
   ],
   exports: [
     CommonModule,
@@ -93,7 +95,8 @@ import { MatTableModule } from '@angular/material/table';
     MatTooltipModule,
     MatTableModule,
     HavenMessageDialogComponent,
-    HavenConfirmDialogComponent
+    HavenConfirmDialogComponent,
+    HavenSavesessionDialogComponent
   ],
   providers: [
     HavenDialogService
@@ -101,6 +104,7 @@ import { MatTableModule } from '@angular/material/table';
   entryComponents: [
     HavenMessageDialogComponent,
     HavenConfirmDialogComponent,
+    HavenSavesessionDialogComponent
   ]
 })
 export class HavenSharedModule { }

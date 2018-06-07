@@ -8,4 +8,7 @@ export class HavenApp {
     this.appInfo = appInfo;
   }
 
+  public getObject() {
+    return { 'appName': this.appName, 'appInfo': this.appInfo.getObject() };
+  }
 }

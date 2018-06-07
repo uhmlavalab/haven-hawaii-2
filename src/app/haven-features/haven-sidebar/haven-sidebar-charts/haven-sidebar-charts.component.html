@@ -1,5 +1,5 @@
 <mat-form-field>
-  <mat-select placeholder="Load" [(value)]="selectedLoad" (selectionChange)="loadChange($event)">
+  <mat-select placeholder="Load" [(value)]="selectedLoad" (selectionChange)="loadChange()">
     <mat-option *ngFor="let load of portfolioService.getLoadsList() | async" [value]="load.name">
       {{ load.name }}
     </mat-option>
@@ -7,7 +7,7 @@
 </mat-form-field>
 
 <mat-form-field>
-  <mat-select placeholder="Scenario" [(value)]="selectedScenario" (selectionChange)="scenarioChange($event)">
+  <mat-select placeholder="Scenario" [(value)]="selectedScenario" (selectionChange)="scenarioChange()">
     <mat-option *ngFor="let scenario of portfolioService.getScenariosList() | async" [value]="scenario.name">
       {{ scenario.name }}
     </mat-option>

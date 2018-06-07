@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 
 import { NewPortfolioComponent } from '../../haven-new-portfolio/new-portfolio.component';
-import { PortfolioService } from '@app/haven-core';
+import { PortfolioService, HavenWindowService } from '@app/haven-core';
 
 import { HavenDialogService } from '@app/haven-shared';
 
@@ -17,8 +17,9 @@ export class HavenSidebarAccountComponent {
 
   selectedPortfolio: any;
   selectedSession: any;
+  sessionTimeStamp: any;
 
-  constructor(public dialog: MatDialog, public portfolioService: PortfolioService, private dialogService: HavenDialogService ) { }
+  constructor(public dialog: MatDialog, private havenWindowService: HavenWindowService, public portfolioService: PortfolioService, private dialogService: HavenDialogService ) { }
 
   openNewPortfolioDialog(): void {
     const dialogRef = this.dialog.open(NewPortfolioComponent, { width: '372px' });
@@ -30,31 +31,45 @@ export class HavenSidebarAccountComponent {
 
   deletePortfolio() {
     if (this.selectedPortfolio) {
-      this.dialogService.openConfirmationMessage(`Are you sure you want to delete the ${this.selectedPortfolio} portfolio?`)
+      this.dialogService.openConfirmationMessage(`Are you sure you want to DELETE the ${this.selectedPortfolio} portfolio?`)
         .afterClosed()
         .subscribe(result => {
           if (result) {
-            // TODO Delete Portfolio
+            this.portfolioService.deletePortfolio(this.selectedPortfolio);
           }
       });
     }
   }
 
   loadSession() {
-    // TODO
+    if (this.selectedSession) {
+      this.dialogService.openConfirmationMessage(`Are you sure you want to LOAD the ${this.selectedSession.sessionName} session?`)
+        .afterClosed()
+        .subscribe(result => {
+          if (result) {
+            this.havenWindowService.loadWindowSession(this.selectedSession.timestamp);
+          }
+      });
+    }
   }
 
   saveSession() {
-    // TODO
+    this.dialogService.openSaveSessionDialog()
+    .afterClosed()
+    .subscribe(result => {
+      if (result) {
+        this.havenWindowService.saveWindowSession(result);
+      }
+  });
   }
 
   deleteSession() {
     if (this.selectedSession) {
-      this.dialogService.openConfirmationMessage(`Are you sure you want to delete the ${this.selectedSession} session?`)
+      this.dialogService.openConfirmationMessage(`Are you sure you want to DELETE the ${this.selectedSession.sessionName} session?`)
         .afterClosed()
         .subscribe(result => {
           if (result) {
-            // TODO Delete Session
+            this.havenWindowService.deleteWindowSession(this.selectedSession.timestamp);
           }
       });
     }

@@ -5,13 +5,12 @@ export class HavenWindow {
   id: number;
   header: string;
   footer: string;
-  maximized: boolean;
 
   position: Position;
   size: Size;
   savePosition: Position;
   saveSize: Size;
-
+  maximized: boolean;
   sidebar: boolean;
 
   app: HavenApp;
@@ -24,6 +23,20 @@ export class HavenWindow {
     this.savePosition = new Position(left, top);
     this.saveSize = new Size(width, height);
     this.sidebar = sidebar;
+    this.maximized = false;
+  }
+
+  getObject() {
+    return {
+      'id': this.id,
+      'header': this.header,
+      'footer': this.footer,
+      'position': { 'left': this.position.left, 'top': this.position.top },
+      'size': { 'width': this.size.width, 'height': this.size.height },
+      'maximized': false,
+      'sidebar': this.sidebar,
+      'app': this.app.getObject()
+    };
   }
 
 }

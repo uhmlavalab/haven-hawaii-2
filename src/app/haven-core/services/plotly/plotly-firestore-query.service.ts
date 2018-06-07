@@ -16,7 +16,7 @@ export class PlotlyFirestoreQueryService {
   constructor(private portfolioService: PortfolioService, private afs: AngularFirestore, private afAuth: AngularFireAuth) { }
 
   public getData(queryInfo: PlotlyAppInfo): Promise<any[]> {
-    switch (queryInfo.valueName) {
+    switch (queryInfo.valueName.toLowerCase()) {
       case 'load':
         return this.getLoad(queryInfo);
       case 'capacity':

@@ -5,7 +5,6 @@ import { HavenWindowService } from '@app/haven-core';
 import { HavenWindow } from '../../haven-window/shared/haven-window';
 
 import { HavenAppsHostDirective } from '../shared/haven-apps-host.directive';
-import { HavenApp } from '../shared/haven-app';
 import { HavenAppList } from '../shared/haven-app-list';
 
 @Component({

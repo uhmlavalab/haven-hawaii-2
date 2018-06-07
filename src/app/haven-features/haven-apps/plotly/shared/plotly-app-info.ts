@@ -22,4 +22,17 @@ export class PlotlyAppInfo {
     this.chartType = chartType;
   }
 
+  getObject() {
+    return {
+      'portfolioName': this.portfolioName,
+      'scenarioName': this.scenarioName,
+      'loadName': this.loadName,
+      'startDate': this.startDate,
+      'endDate': this.endDate,
+      'valueName': this.valueName,
+      'scope': this.scope,
+      'chartType': this.chartType
+    };
+  }
+
 }
