@@ -19,19 +19,25 @@ export class HavenLoginComponent {
   constructor(private authService: AuthService, public dialogService: HavenDialogService) { }
 
   login() {
-    //if (this.email && this.password) {
-      this.authService.signinUser('cat@gmail.com', 'asdfasdf');
-    //}
+    // if (this.email && this.password) {
+      this.authService.signinUser('cat@gmail.com', 'asdfasdf', 'home');
+    // }
   }
 
   createAccount() {
     this.authService.createAccount(this.email, this.password).then(message => {
       if (message === 'Success') {
-        this.authService.signinUser(this.email, this.password);
+        this.authService.signinUser(this.email, this.password, 'home');
       } else {
         this.dialogService.openErrorDialog(message);
       }
     });
+  }
+
+  loadAR() {
+    // if (this.email && this.password) {
+      this.authService.signinUser('cat@gmail.com', 'asdfasdf', 'ar');
+    // }
   }
 
 }

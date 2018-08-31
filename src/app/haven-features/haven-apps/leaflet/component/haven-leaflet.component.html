@@ -17,3 +17,5 @@
   <div *ngIf="havenApp.appInfo.mapStateSync !== 4">{{ leafletAppInfo.mapState.mapStateId }}</div>
   <div *ngIf="havenApp.appInfo.mapStateSync === 4">X</div>
 </button>
+
+<button *ngIf="loaded" matTooltip="AR Sync" class="ar-sync-toggle" color="accent" (click)="arSync()">AR</button>

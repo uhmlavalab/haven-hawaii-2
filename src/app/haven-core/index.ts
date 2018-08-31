@@ -17,3 +17,4 @@ export * from './services/layers/layer-upload.service';
 export * from './services/layers/layers.service';
 
 export * from './services/leaflet/leaflet-map-state.service';
+export * from './services/leaflet/leaflet-ar.service';

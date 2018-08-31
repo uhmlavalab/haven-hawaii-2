@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Observable } from 'rxjs/Observable';
-
+import { map } from 'rxjs/operators';
 import { HavenWindowService } from '../windows/haven-window.service';
 
 import * as firebase from 'firebase';
@@ -134,7 +134,13 @@ export class PortfolioService {
 
   private setLayersListReference() {
     this.portfolioLayersCollection = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios').doc(this.selectedPortfolio).collection('layers');
-    this.portfolioLayers = this.portfolioLayersCollection.valueChanges();
+    this.portfolioLayers = this.portfolioLayersCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data();
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
   }
 
   private setSessionsListReference() {

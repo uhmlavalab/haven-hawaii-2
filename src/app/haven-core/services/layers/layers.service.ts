@@ -26,6 +26,16 @@ export class LayersService {
     });
   }
 
+  updateLayer(layerId: string, name: string, color: string, selectedProfiles: string[]) {
+    this.portfolioService.getSelectedPortfolioRef().collection('layers').doc(layerId).update({
+      'name': name,
+      'color': color,
+      'profiles': selectedProfiles,
+    }). then(() => {
+      console.log(`${layerId} Sucessfully Updated`);
+    });
+  }
+
   deleteLayer(layerName: string) {
     this.dialogService.openConfirmationMessage(`Are you sure you want to delete ${layerName}?`)
       .afterClosed()

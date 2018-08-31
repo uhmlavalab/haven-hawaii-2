@@ -11,7 +11,7 @@ import { HavenApp } from '../../shared/haven-app';
 import { HavenWindow } from '../../../haven-window/shared/haven-window';
 import { LeafletAppInfo } from '../shared/leaflet-app-info';
 
-import { PortfolioService, LayersService, LayerDownloadService, LeafletMapStateService, MapState } from '@app/haven-core';
+import { PortfolioService, LayersService, LayerDownloadService, LeafletMapStateService, MapState, LeafletArService } from '@app/haven-core';
 
 @Component({
   selector: 'app-haven-leaflet',
@@ -65,7 +65,7 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
   };
 
 
-  constructor(private portfolioService: PortfolioService, private layerService: LayersService, private layerDownloadService: LayerDownloadService, private mapStateService: LeafletMapStateService) { }
+  constructor(private portfolioService: PortfolioService, private layerService: LayersService, private layerDownloadService: LayerDownloadService, private mapStateService: LeafletMapStateService, private leafletArService: LeafletArService) { }
 
   ngOnInit() {
     this.leafletAppInfo = this.havenApp.appInfo;
@@ -77,9 +77,17 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
         const name = doc.data()['name'];
         const color = doc.data()['color'];
         const profiles = doc.data()['profiles'];
-        this.layerColorInfo[name] = { color: color, profiles: profiles };
         if (this.layersControl.overlays.hasOwnProperty(name)) {
-          this.layersControl.overlays[name].setStyle({ color: color });
+          this.layerColorInfo[name]['color'] = color;
+          this.layerColorInfo[name]['profiles'] = profiles;
+          this.layerColorInfo[name]['name'] = name;
+        } else {
+          this.layerColorInfo[name] = { 'name': name, 'profiles': profiles, 'color': color };
+        }
+        if (this.layerColorInfo[name]['profiles'].length > 0 && this.loaded) {
+          this.updateSupplyLayerColor(name, this.layerColorInfo[name]['supplyAmount']);
+        } else if (this.loaded) {
+          this.layersControl.overlays[name].setStyle({ 'color': color });
         }
       });
     });
@@ -88,7 +96,6 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
       let waitForLayerColors = false;
       layers.forEach(layer => {
         if (layer) {
-          const geojsonFeature: GeoJSON.FeatureCollection<any> = layer.data;
           if (this.layerColorInfo[layer.name]['profiles'].length > 0) {
             waitForLayerColors = true;
             this.layerService.getSupplyOfProfiles(this.leafletAppInfo, this.layerColorInfo[layer.name]['profiles']).then((supplyAmount) => {
@@ -171,10 +178,11 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
       organizedByMWac.push({ 'total': total, 'layer': layer });
 
     });
+    console.log(colorSelected, layerName, supplyAmount);
     organizedByMWac.sort((a, b) => parseFloat(b.total) - parseFloat(a.total));
     organizedByMWac.forEach(element => {
       if (supply > 0) {
-        this.layersControl.overlays[layerName]['_layers'][element.layer]['options']['fillColor'] = colorSelected;
+        this.layersControl.overlays[layerName]['_layers'][element.layer]['options']['color'] = colorSelected;
         this.layersControl.overlays[layerName]['_layers'][element.layer]['options']['weight'] = 1;
         supply -= element.total;
       } else {
@@ -229,5 +237,27 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
     }
     return colorValue;
   }
+
+  arSync() {
+    let baseLayer = null;
+    Object.keys(this.leafletMap['_layers']).forEach(el => {
+      if (this.leafletMap['_layers'][el].hasOwnProperty('_url')) {
+        baseLayer = this.leafletMap['_layers'][el]['_url'];
+      }
+    });
+    const portfolio = this.havenApp.appInfo['portfolioName'];
+    const scenario = this.havenApp.appInfo['scenarioName'];
+    const year = this.havenApp.appInfo['year'];
+    const layers = [];
+
+    Object.keys(this.layersControl.overlays).forEach(el => {
+      if (this.leafletMap.hasLayer(this.layersControl.overlays[el])) {
+        console.log('Has Layer', el);
+        layers.push(el);
+      }
+    });
+    this.leafletArService.uploadARData(baseLayer, portfolio, scenario, year, layers);
+  }
+
 
 }

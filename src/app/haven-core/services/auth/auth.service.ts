@@ -10,18 +10,20 @@ export class AuthService {
 
   constructor(private router: Router, private afAuth: AngularFireAuth) { }
 
-  signinUser(email: string, password: string) {
+  signinUser(email: string, password: string, path: string) {
     // this.token = 'cat';
     // this.router.navigate(['/home']);
     this.afAuth.auth.signInWithEmailAndPassword(email, password).then(response => {
       firebase.auth().currentUser.getIdToken().then((token: string) => {
         this.token = token;
         if (this.token) {
-          this.router.navigate(['/home']);
+          this.router.navigate([path]);
         }
       });
     }, error => alert(error.message)).catch(error => alert(error));
   }
+
+  loadAR() {}
 
   signOut(): void {
     this.afAuth.auth.signOut();

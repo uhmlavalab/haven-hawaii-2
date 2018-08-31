@@ -10,8 +10,6 @@ import { HavenDialogService } from '@app/haven-shared';
 @Injectable()
 export class LayerUploadService {
 
-  private wallReference: string;
-
   private supportedLayerExtensions = ['json', 'geojson', 'topojson'];
 
   constructor(private http: Http, private afAuth: AngularFireAuth, private portfolioService: PortfolioService,  private dialogService: HavenDialogService) { }
@@ -127,7 +125,7 @@ export class LayerUploadService {
           'profiles': selectedProfiles,
           'color': layerColor,
         };
-        layersCollectionRef.doc(layerName).set(newLayerDocument).then((result) => {
+        layersCollectionRef.add(newLayerDocument).then(() => {
           dialogRef.componentInstance.updateMessage(`${layerName} Uploaded Successfully`);
         });
       });

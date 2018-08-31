@@ -29,10 +29,9 @@
 <mat-grid-list cols="1" rows="(layers | async).length" rowHeight="40px">
   <mat-grid-tile *ngFor="let layer of portfolioService.getLayersList() | async;">
     <div [style.background]="layer.color"  style="width:10%; height:20px; margin-bottom: 5px;"></div>
-    <div style="width: 78%; padding-left: 2%; overflow: hidden; text-overflow: clip;">{{ layer.name }} </div>
-    <button mat-icon-button color="warn" style="width:10%;" (click)="deleteLayer(layer.name)">
-      <mat-icon>close</mat-icon>
-    </button>
+    <div style="width: 68%; padding-left: 2%; overflow: hidden; text-overflow: clip;">{{ layer.name }} </div>
+    <button mat-icon-button color="warn" style="width:10%;" (click)="deleteLayer(layer.name)"><mat-icon>close</mat-icon></button>
+    <button mat-icon-button color="primary" style="width:10%;" (click)="editLayer(layer)"><mat-icon>edit</mat-icon></button>
   </mat-grid-tile>
 </mat-grid-list>
 

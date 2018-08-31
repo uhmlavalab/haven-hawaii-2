@@ -29,6 +29,7 @@ import { HavenWindowResizeDirective } from './haven-window/directives/haven-wind
 // MISC
 import { NewPortfolioComponent } from './haven-new-portfolio/new-portfolio.component';
 import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.component';
+import { HavenLayerEditDialogComponent } from './haven-layeredit-dialog/haven-layeredit-dialog.component';
 
 @NgModule({
   imports: [
@@ -64,6 +65,7 @@ import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.compon
     HavenNewLayerComponent,
     PlotlyBarComponent,
     PlotlySurfaceComponent,
+    HavenLayerEditDialogComponent,
 
   ],
   exports: [
@@ -98,6 +100,7 @@ import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.compon
     // MISC
     NewPortfolioComponent,
     HavenNewLayerComponent,
+    HavenLayerEditDialogComponent
   ]
 })
 export class HavenFeaturesModule { }

@@ -11,6 +11,7 @@ import { HavenApp } from '../../haven-apps/shared/haven-app';
 import { HavenNewLayerComponent } from '../../haven-new-layer/haven-new-layer.component';
 
 import { LeafletAppInfo } from '../../haven-apps/leaflet/shared/leaflet-app-info';
+import { HavenLayerEditDialogComponent } from '../../haven-layeredit-dialog/haven-layeredit-dialog.component';
 
 @Component({
   selector: 'app-haven-sidebar-maps',
@@ -46,7 +47,7 @@ export class HavenSidebarMapsComponent {
   }
 
   openNewLayerDialog(): void {
-    const dialogRef = this.dialog.open(HavenNewLayerComponent, { width: '450px' });
+   this.dialog.open(HavenNewLayerComponent, { width: '450px' });
   }
 
   createMapWindow() {
@@ -73,6 +74,11 @@ export class HavenSidebarMapsComponent {
 
   deleteLayer(layerName: string) {
     this.layerService.deleteLayer(layerName);
+  }
+
+  editLayer(layer: any) {
+    console.log(layer);
+    this.dialog.open(HavenLayerEditDialogComponent, { width: '450px', data: { 'layerDoc': layer} });
   }
 
   scenarioChange() {
