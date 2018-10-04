@@ -93,16 +93,8 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
     });
 
     this.layerDownloadService.getLayers(this.leafletAppInfo.portfolioName).then((layers) => {
-      let waitForLayerColors = false;
       layers.forEach(layer => {
         if (layer) {
-          if (this.layerColorInfo[layer.name]['profiles'].length > 0) {
-            waitForLayerColors = true;
-            this.layerService.getSupplyOfProfiles(this.leafletAppInfo, this.layerColorInfo[layer.name]['profiles']).then((supplyAmount) => {
-              this.layerColorInfo[layer.name]['supplyAmount'] = supplyAmount;
-              this.updateSupplyLayerColor(layer.name, supplyAmount);
-            });
-          }
           const newLayer = L.geoJSON(layer.data, {
             style: (feature) => ({
               color: this.layerColorInfo[layer.name]['color']
@@ -110,10 +102,8 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
           });
           this.layersControl.overlays[layer.name] = newLayer;
         }
-      });
-      if (!waitForLayerColors) {
         this.loaded = true;
-      }
+      });
 
     });
 

@@ -24,7 +24,7 @@ export class HavenLayerEditDialogComponent  {
     public portfolioService: PortfolioService,
     public layersService: LayersService,
     @Inject(MAT_DIALOG_DATA) public data: any) {
-      this.keyList = this.portfolioService.getKeyObservable();
+      // this.keyList = this.portfolioService.getKeyObservable();
       this.layerName = data.layerDoc.name;
       this.selectedProfiles = data.layerDoc.profiles;
       this.layerColor = data.layerDoc.color;

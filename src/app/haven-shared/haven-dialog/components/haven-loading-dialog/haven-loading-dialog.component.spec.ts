@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HavenArComponent } from './haven-ar.component';
+import { HavenLoadingDialogComponent } from './haven-loading-dialog.component';
 
-describe('HavenArComponent', () => {
-  let component: HavenArComponent;
-  let fixture: ComponentFixture<HavenArComponent>;
+describe('HavenDialogComponent', () => {
+  let component: HavenLoadingDialogComponent;
+  let fixture: ComponentFixture<HavenLoadingDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HavenArComponent ]
+      declarations: [ HavenLoadingDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HavenArComponent);
+    fixture = TestBed.createComponent(HavenLoadingDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

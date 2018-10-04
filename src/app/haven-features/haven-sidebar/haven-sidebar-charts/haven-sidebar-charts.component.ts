@@ -15,10 +15,12 @@ import { PlotlyAppInfo } from '../../haven-apps/plotly/shared/plotly-app-info';
 export class HavenSidebarChartsComponent implements OnInit {
 
   valueTypes = [
-    {value: 'load', viewValue: 'Load'},
     {value: 'capacity', viewValue: 'Capacity'},
-    {value: 'supply', viewValue: 'Supply'}
-  ];
+    {value: 'summary', viewValue: 'Summary'},
+    {value: 'storageCapacity', viewValue: 'Storage Capacity'},
+    {value: 'curtailment', viewValue: 'Curtailment'},
+    {value: 'resources', viewValue: 'Resources'},
+    {value: 'power', viewValue: 'Power'},  ];
 
   scopes = [
     {value: 'monthly', viewValue: 'Monthly'},
@@ -55,14 +57,6 @@ export class HavenSidebarChartsComponent implements OnInit {
     const newApp = new HavenApp(`plotly-${this.selectedChart}`, appInfo);
     havenWindow.app = newApp;
     this.windowService.addWindow(havenWindow);
-  }
-
-  scenarioChange() {
-    this.portfolioService.setScenario(this.selectedScenario);
-  }
-
-  loadChange() {
-    this.portfolioService.setLoad(this.selectedLoad);
   }
 
   setSelectedChart(value: any) {

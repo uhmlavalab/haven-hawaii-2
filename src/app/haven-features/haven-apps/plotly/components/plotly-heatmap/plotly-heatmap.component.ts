@@ -3,7 +3,7 @@ import { HavenAppInterface } from '../../../shared/haven-app-interface';
 import { HavenWindow } from '../../../../haven-window/shared/haven-window';
 import { HavenApp } from '../../../shared/haven-app';
 
-import { PlotlyFirestoreQueryService } from '@app/haven-core';
+import { PortfolioDatabaseService } from '@app/haven-core';
 
 import { PlotlyAppInfo } from '../../shared/plotly-app-info';
 
@@ -29,11 +29,11 @@ export class PlotlyHeatmapComponent implements HavenAppInterface, OnInit, OnDest
   intervalPlayer: any;
   title: string;
 
-  constructor(private firestoreQueryService: PlotlyFirestoreQueryService, private changeDetector: ChangeDetectorRef) { }
+  constructor(private portfolioDatabase: PortfolioDatabaseService, private changeDetector: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.plotlyInfo = this.havenApp.appInfo;
-    this.firestoreQueryService.getData(this.plotlyInfo).then((data) => {
+    this.portfolioDatabase.getPlotlyData(this.plotlyInfo).then((data) => {
       this.data = data;
       this.plotlyInfo.valueName = this.plotlyInfo.valueName.charAt(0).toUpperCase() + this.plotlyInfo.valueName.slice(1);
       let yValues = [];

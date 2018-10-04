@@ -1,5 +1,9 @@
 <img class="logo" src="./assets/logo/havenlogo.png"> 
 
+<button mat-fab [class.mat-elevation-z0]="true" class="ar-map-button" color="accent" (click)="navigateToArMap()">
+    <mat-icon>map</mat-icon>
+  </button>
+
 <mat-toolbar color="primary" [style.height]="toolbarHeight + 'px'">
   <span> {{ title }} - {{ portfolioService.selectedPortfolio }} </span>
 </mat-toolbar>

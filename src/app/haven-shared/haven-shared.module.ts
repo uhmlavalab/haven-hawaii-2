@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HavenMessageDialogComponent } from './haven-dialog/components/haven-message-dialog/haven-message-dialog.component';
 import { HavenConfirmDialogComponent } from './haven-dialog/components/haven-confirm-dialog/haven-confirm-dialog.component';
 import { HavenDialogService } from './haven-dialog/service/haven-dialog.service';
+import { HavenLoadingDialogComponent } from './haven-dialog/components/haven-loading-dialog/haven-loading-dialog.component';
 
 import {
   MatButtonModule,
@@ -16,10 +17,10 @@ import {
   MatDialogModule,
   MatDividerModule,
   MatFormFieldModule,
-  MatGridListModule,
   MatIconModule,
   MatInputModule,
   MatProgressSpinnerModule,
+  MatProgressBarModule,
   MatRadioModule,
   MatSelectModule,
   MatSidenavModule,
@@ -32,6 +33,7 @@ import {
   MatPaginatorModule,
 } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven-savesession-dialog/haven-savesession-dialog.component';
 
 
@@ -49,6 +51,7 @@ import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven
     MatFormFieldModule,
     MatGridListModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatIconModule,
     MatInputModule,
     MatRadioModule,
@@ -67,6 +70,7 @@ import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven
     HavenMessageDialogComponent,
     HavenConfirmDialogComponent,
     HavenSavesessionDialogComponent,
+    HavenLoadingDialogComponent,
   ],
   exports: [
     CommonModule,
@@ -83,6 +87,7 @@ import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatRadioModule,
     MatSelectModule,
     MatSidenavModule,
@@ -104,7 +109,8 @@ import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven
   entryComponents: [
     HavenMessageDialogComponent,
     HavenConfirmDialogComponent,
-    HavenSavesessionDialogComponent
+    HavenSavesessionDialogComponent,
+    HavenLoadingDialogComponent
   ]
 })
 export class HavenSharedModule { }

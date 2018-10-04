@@ -9,7 +9,7 @@ export * from './services/portfolios/portfolio.service';
 
 export * from './services/windows/haven-window.service';
 
-export * from './services/plotly/plotly-firestore-query.service';
+export * from './services/database/portfolio-database.service';
 
 export * from './services/layers/layer-download.service';
 export * from './services/layers/layer-upload.service';

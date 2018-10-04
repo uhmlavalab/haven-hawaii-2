@@ -1,0 +1,10 @@
+.mat-raised-button {
+  width: 100%;
+}
+
+.mat-progress-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}

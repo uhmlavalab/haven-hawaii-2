@@ -33,11 +33,4 @@ export class HavenLoginComponent {
       }
     });
   }
-
-  loadAR() {
-    // if (this.email && this.password) {
-      this.authService.signinUser('cat@gmail.com', 'asdfasdf', 'ar');
-    // }
-  }
-
 }

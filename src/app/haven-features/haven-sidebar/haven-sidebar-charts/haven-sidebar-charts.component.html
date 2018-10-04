@@ -1,28 +1,4 @@
 <mat-form-field>
-  <mat-select placeholder="Load" [(value)]="selectedLoad" (selectionChange)="loadChange()">
-    <mat-option *ngFor="let load of portfolioService.getLoadsList() | async" [value]="load.name">
-      {{ load.name }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
-<mat-form-field>
-  <mat-select placeholder="Scenario" [(value)]="selectedScenario" (selectionChange)="scenarioChange()">
-    <mat-option *ngFor="let scenario of portfolioService.getScenariosList() | async" [value]="scenario.name">
-      {{ scenario.name }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
-<mat-form-field>
-  <mat-select placeholder="Renewable Percent" [(value)]="selectedYear">
-    <mat-option *ngFor="let reValues of portfolioService.getREValues() | async" [value]="reValues.year">
-      {{ reValues.year }} - {{ (reValues.re * 100).toFixed(2) }}%
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
-<mat-form-field>
   <mat-select placeholder="Value" [(value)]="selectedValue">
     <mat-option *ngFor="let valuetype of valueTypes" [value]="valuetype.value">
       {{ valuetype.viewValue }}

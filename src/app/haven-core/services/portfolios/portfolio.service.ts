@@ -2,68 +2,47 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators';
-import { HavenWindowService } from '../windows/haven-window.service';
-
+import { AngularFireStorage } from 'angularfire2/storage';
 import * as firebase from 'firebase';
+import { map } from 'rxjs/operators';
+
+import { PortfolioDatabaseService } from '../database/portfolio-database.service';
+
 
 @Injectable()
 export class PortfolioService {
 
   public selectedPortfolio: string;
-  private selectedScenario: string;
-  private selectedLoad: string;
 
   private portfolioRef: firebase.firestore.DocumentReference;
 
   private portfolioNamesCollection: AngularFirestoreCollection<any>;
   private portfolioNames: Observable<any[]>;
 
-
-  private scenarioNamesCollection: AngularFirestoreCollection<any>;
-  private scenarioNames: Observable<any[]>;
-
-  private loadNamesCollection: AngularFirestoreCollection<any>;
-  private loadNames: Observable<any[]>;
-
   private sessionNamesCollection: AngularFirestoreCollection<any>;
-  private scenssionsNames: Observable<any[]>;
+  private sessionsNames: Observable<any[]>;
 
   private portfolioLayersCollection: AngularFirestoreCollection<any>;
   private portfolioLayers: Observable<any[]>;
 
-  private scenarioREValuesRef: AngularFirestoreCollection<any>;
-  private scenarioREValues: Observable<any[]>;
-
-
-  constructor(private afs: AngularFirestore, private afAuth: AngularFireAuth) {
+  constructor(private afs: AngularFirestore, private afAuth: AngularFireAuth, private storage: AngularFireStorage, private portfolioDatabaseService: PortfolioDatabaseService) {
     this.portfolioNamesCollection = this.afs.collection<any>(`${afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios');
     this.portfolioNames = this.portfolioNamesCollection.valueChanges();
     this.setSessionsListReference();
   }
 
+  public getSessionsList(): Observable<any[]> {
+    return this.sessionsNames;
+  }
+
+  public getSessionsCollection(): firebase.firestore.CollectionReference {
+    return firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('sessions');
+  }
+
   public setPortfolio(portfolioName: string) {
     this.selectedPortfolio = portfolioName;
-
     this.portfolioRef = firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(this.selectedPortfolio);
-
-    this.selectedScenario = null;
-    this.selectedLoad = null;
-    this.scenarioREValues = null;
-    this.scenarioREValuesRef = null;
-    this.setScenariosListReference();
-    this.setLoadsListReference();
-    this.setSessionsListReference();
-    this.setLayersListReference();
-  }
-
-  public setScenario(scenarioName: string) {
-    this.selectedScenario = scenarioName;
-    this.setREValuesReference();
-  }
-
-  public setLoad(loadName: string) {
-    this.selectedLoad = loadName;
+    this.portfolioDatabaseService.loadPortfolioDatabase(this.selectedPortfolio);
   }
 
   public getSelectedPortfolioName(): string {
@@ -82,54 +61,7 @@ export class PortfolioService {
     return this.portfolioNames;
   }
 
-  public getREValues(): Observable<any[]> {
-    return this.scenarioREValues;
-  }
-
-  public getScenariosList() {
-    return this.scenarioNames;
-  }
-
-  public getSessionsList(): Observable<any[]> {
-    return this.scenssionsNames;
-  }
-
-  public getLayersList(): Observable<any[]> {
-    return this.portfolioLayers;
-  }
-
-  public getLoadsList(): Observable<any[]> {
-    return this.loadNames;
-  }
-
-  public getKeyCollection(portfolioName: string): firebase.firestore.CollectionReference {
-    return firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('key');
-  }
-
-  public getProfilesCollection(portfolioName: string): firebase.firestore.CollectionReference {
-    return firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('profile');
-  }
-
-  public getCapacityCollection(portfolioName: string, scenarioName: string): firebase.firestore.CollectionReference {
-    return firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('scenarios').doc(scenarioName).collection('capacity');
-  }
-
-  public getLoadCollection(portfolioName: string, loadName: string): firebase.firestore.CollectionReference {
-    return firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('portfolios').doc(portfolioName).collection('loads').doc(loadName).collection('load');
-  }
-
-  public getSessionsCollection(): firebase.firestore.CollectionReference {
-    return firebase.firestore().collection(this.afAuth.auth.currentUser.uid).doc('data').collection('sessions');
-  }
-
-  private setScenariosListReference() {
-    this.scenarioNamesCollection = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios').doc(this.selectedPortfolio).collection('scenarios');
-    this.scenarioNames = this.scenarioNamesCollection.valueChanges();
-  }
-
-  private setLoadsListReference() {
-    this.loadNamesCollection = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios').doc(this.selectedPortfolio).collection('loads');
-    this.loadNames = this.loadNamesCollection.valueChanges();
+  public deletePortfolio(portfolioName: string) {
   }
 
   private setLayersListReference() {
@@ -143,25 +75,13 @@ export class PortfolioService {
     );
   }
 
+  public getLayersList(): Observable<any[]> {
+    return this.portfolioLayers;
+  }
+
   private setSessionsListReference() {
     this.sessionNamesCollection = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('sessions');
-    this.scenssionsNames = this.sessionNamesCollection.valueChanges();
-  }
-
-  private setREValuesReference() {
-    this.scenarioREValuesRef = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios').doc(this.selectedPortfolio).collection('scenarios').doc(this.selectedScenario).collection('renewablePercent');
-    this.scenarioREValues = this.scenarioREValuesRef.valueChanges();
-  }
-
-  public getKeyObservable(): Observable<any[]> {
-    if (this.selectedPortfolio) {
-      const keyReference = this.afs.collection<any>(`${this.afAuth.auth.currentUser.uid}`).doc('data').collection('portfolios').doc(this.selectedPortfolio).collection('key', ref => ref.orderBy('id', 'asc'));
-      return keyReference.valueChanges();
-    }
-  }
-
-  public deletePortfolio(portfolioName: string) {
-    this.afs.firestore.collection('deletePortfolio').add({ 'uid': this.afAuth.auth.currentUser.uid, 'portfolioName': portfolioName, 'timestamp': firebase.firestore.FieldValue.serverTimestamp() });
+    this.sessionsNames = this.sessionNamesCollection.valueChanges();
   }
 
 }

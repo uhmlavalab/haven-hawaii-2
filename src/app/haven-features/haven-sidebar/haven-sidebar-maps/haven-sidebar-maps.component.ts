@@ -81,8 +81,4 @@ export class HavenSidebarMapsComponent {
     this.dialog.open(HavenLayerEditDialogComponent, { width: '450px', data: { 'layerDoc': layer} });
   }
 
-  scenarioChange() {
-    this.portfolioService.setScenario(this.selectedScenario);
-  }
-
 }

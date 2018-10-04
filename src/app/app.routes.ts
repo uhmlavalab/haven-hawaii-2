@@ -5,7 +5,7 @@ import { AuthGuard } from '@app/haven-core';
 
 import { HavenHomeComponent } from '@app/haven-pages';
 import { HavenLoginComponent } from '@app/haven-pages';
-import { HavenArComponent } from '@app/haven-pages';
+import { HavenArMapComponent } from '@app/haven-pages';
 
 const router: Routes = [
   {
@@ -18,8 +18,9 @@ const router: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'ar',
-    component: HavenArComponent
+    path: 'armap',
+    component: HavenArMapComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: '',

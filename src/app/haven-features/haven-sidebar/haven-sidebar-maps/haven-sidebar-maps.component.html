@@ -4,21 +4,6 @@
   </mat-grid-tile>
 </mat-grid-list>
 
-<mat-form-field>
-  <mat-select placeholder="Scenario" [(value)]="selectedScenario" (selectionChange)="scenarioChange()">
-    <mat-option *ngFor="let scenario of portfolioService.getScenariosList() | async" [value]="scenario.name">
-      {{ scenario.name }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
-<mat-form-field>
-  <mat-select placeholder="Renewable Percent" [(value)]="selectedYear">
-    <mat-option *ngFor="let reValues of portfolioService.getREValues() | async" [value]="reValues.year">
-      {{ reValues.year }} - {{ (reValues.re * 100).toFixed(2) }}%
-    </mat-option>
-  </mat-select>
-</mat-form-field>
 
 <button mat-raised-button color="primary" (click)="createMapWindow()">Create Map</button>
 
@@ -34,5 +19,3 @@
     <button mat-icon-button color="primary" style="width:10%;" (click)="editLayer(layer)"><mat-icon>edit</mat-icon></button>
   </mat-grid-tile>
 </mat-grid-list>
-
-

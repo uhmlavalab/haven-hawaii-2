@@ -12,29 +12,27 @@ export class NewPortfolioComponent {
 
   title = 'New Portfolio Creation';
 
-  keyToolTip = 'Station Key';
-  capacityToolTip = 'Yearly Capactiy';
-  loadToolTip = 'Hourly Load';
-  supplyToolTip = 'Hourly Profiles';
+  capacityTooltip = 'Capacity for locations by year';
+  curtailmentTooltip = 'Amount of energy curtailed in instances where energy is curtailed';
+  groupsTooltip = 'Groups of energy by type';
+  powerTooltip = 'Energy for each location';
 
-  keyCSV: any;
-  capCSV: any;
-  loadCSV: any;
-  profileCSV: any;
-  keyIn = false;
-  capIn = false;
-  loadIn = false;
-  profileIn = false;
-  progressValue = 0;
-  allFilesUploaded = false;
+  resourcesTooltip = 'Hourly Load';
+  storageTooltip = 'State of charge for the battery';
+  storageCapactiyTooltip = 'Amount of energy the batteries can hold';
+  summaryTooltip = 'Annual values for key parameters';
 
   public portfolioName = '';
-  public scenarioName = '';
-  public loadName = '';
-  @ViewChild('keyInput') keyFileInput: ElementRef;
-  @ViewChild('capInput') capFileInput: ElementRef;
-  @ViewChild('loadInput') loadFileInput: ElementRef;
-  @ViewChild('profileInput') profileFileInput: ElementRef;
+
+  @ViewChild('capacityInput') capcityFile: ElementRef;
+  @ViewChild('curtailmentInput') curtailmentFile: ElementRef;
+  @ViewChild('groupsInput') groupsFile: ElementRef;
+  @ViewChild('powerInput') powerFile: ElementRef;
+
+  @ViewChild('resourcesInput') resourcesFile: ElementRef;
+  @ViewChild('storageInput') storageFile: ElementRef;
+  @ViewChild('storageCapacityInput') storageCapacityFile: ElementRef;
+  @ViewChild('summaryInput') summaryFile: ElementRef;
 
   constructor(
     public dialogRef: MatDialogRef<NewPortfolioComponent>,
@@ -46,42 +44,18 @@ export class NewPortfolioComponent {
     this.dialogRef.close();
   }
 
-  onKeyInput(event) {
-    this.keyCSV = this.keyFileInput.nativeElement.files[0];
-    if (this.keyCSV) {
-      this.progressValue += 25;
-      this.keyIn = true;
-    }
-  }
-  onCapInput(event) {
-    this.capCSV = this.capFileInput.nativeElement.files[0];
-    if (this.capCSV) {
-      this.progressValue += 25;
-      this.capIn = true;
-    }
-  }
-  onLoadInput(event) {
-    this.loadCSV = this.loadFileInput.nativeElement.files[0];
-    if (this.loadCSV) {
-      this.progressValue += 25;
-      this.loadIn = true;
-    }
-
-  }
-  onProfileInput(event) {
-    this.profileCSV = this.profileFileInput.nativeElement.files[0];
-    if (this.profileCSV) {
-      this.progressValue += 25;
-      this.profileIn = true;
-      if (this.keyIn && this.capIn && this.loadIn && this.profileIn) {
-        this.allFilesUploaded = true;
-      }
-    }
-  }
-
   uploadFiles() {
-    if (this.portfolioName !== '' &&  this.scenarioName !== '' && this.loadName !== '' && this.allFilesUploaded) {
-      this.portfolioUploadService.uploadCSVFiles(this.keyCSV, this.capCSV, this.loadCSV, this.profileCSV, this.portfolioName, this.scenarioName, this.loadName);
+    if (this.portfolioName !== '') {
+      this.portfolioUploadService.uploadNRELFiles(
+        this.capcityFile.nativeElement.files[0],
+        this.curtailmentFile.nativeElement.files[0],
+        this.groupsFile.nativeElement.files[0],
+        this.powerFile.nativeElement.files[0],
+        this.resourcesFile.nativeElement.files[0],
+        this.storageFile.nativeElement.files[0],
+        this.storageCapacityFile.nativeElement.files[0],
+        this.summaryFile.nativeElement.files[0],
+        this.portfolioName);
       this.dialogRef.close();
     }
   }

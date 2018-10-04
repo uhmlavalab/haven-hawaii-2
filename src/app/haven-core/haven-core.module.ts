@@ -21,10 +21,10 @@ import { LayerDownloadService } from './services/layers/layer-download.service';
 import { LeafletMapStateService } from './services/leaflet/leaflet-map-state.service';
 import { LeafletArService } from './services/leaflet/leaflet-ar.service';
 import { LayerUploadService } from './services/layers/layer-upload.service';
-import { PlotlyFirestoreQueryService } from './services/plotly/plotly-firestore-query.service';
 import { NewPortfolioUploadService } from './services/portfolios/new-portfolio-upload.service';
 import { PortfolioService } from './services/portfolios/portfolio.service';
 import { HavenWindowService } from './services/windows/haven-window.service';
+import { PortfolioDatabaseService } from './services/database/portfolio-database.service';
 
 @NgModule({
   imports: [
@@ -45,10 +45,10 @@ import { HavenWindowService } from './services/windows/haven-window.service';
     LeafletMapStateService,
     LeafletArService,
     LayerUploadService,
-    PlotlyFirestoreQueryService,
     NewPortfolioUploadService,
     PortfolioService,
     HavenWindowService,
+    PortfolioDatabaseService,
     Globals
   ]
 })

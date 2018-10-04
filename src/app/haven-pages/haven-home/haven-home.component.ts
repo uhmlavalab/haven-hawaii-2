@@ -4,6 +4,8 @@ import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { Globals } from '@app/haven-core';
 
 import { PortfolioService } from '@app/haven-core';
+import { HavenDialogService } from '@app/haven-shared';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-haven-home',
@@ -25,11 +27,11 @@ export class HavenHomeComponent {
   toolbarHeight: number;
   drawerOpen: boolean;
 
-  constructor (private globals: Globals, private sanitizer: DomSanitizer, public portfolioService: PortfolioService) {
+  constructor(private globals: Globals, private sanitizer: DomSanitizer, public portfolioService: PortfolioService, private router: Router, private dialogService: HavenDialogService) {
     this.sidebarWidth = globals.sidebarWidth;
     this.toolbarHeight = globals.toolbarHeight;
     this.drawerOpen = globals.drawerOpen;
-    this.mainHeight = sanitizer.bypassSecurityTrustStyle('calc(100vh - ' + ( 2 * globals.toolbarHeight) + 'px' + ')');
+    this.mainHeight = sanitizer.bypassSecurityTrustStyle('calc(100vh - ' + (2 * globals.toolbarHeight) + 'px' + ')');
   }
 
   drawerToggle() {
@@ -53,6 +55,14 @@ export class HavenHomeComponent {
       this.mapColor = 'primary';
     }
   }
-
+  navigateToArMap() {
+    this.dialogService.openConfirmationMessage(`Are you sure want to navigate to the AR map?`)
+      .afterClosed()
+      .subscribe(result => {
+        if (result) {
+          this.router.navigate(['/armap']);
+        }
+      });
+  }
 }
 

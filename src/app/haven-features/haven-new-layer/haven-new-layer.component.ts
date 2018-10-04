@@ -26,7 +26,7 @@ export class HavenNewLayerComponent {
     public portfolioService: PortfolioService,
     private layerUploadService: LayerUploadService,
     @Inject(MAT_DIALOG_DATA) public data: any) {
-      this.keyList = this.portfolioService.getKeyObservable();
+      this.keyList = new Observable<any[]>();
   }
 
   onCloseClick(): void {

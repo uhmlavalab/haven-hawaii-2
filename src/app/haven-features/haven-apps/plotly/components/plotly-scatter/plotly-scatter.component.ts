@@ -3,7 +3,7 @@ import { HavenAppInterface } from '../../../shared/haven-app-interface';
 import { HavenWindow } from '../../../../haven-window/shared/haven-window';
 import { HavenApp } from '../../../shared/haven-app';
 
-import { PlotlyFirestoreQueryService } from '@app/haven-core';
+import { PortfolioDatabaseService } from '@app/haven-core';
 
 import { PlotlyAppInfo } from '../../shared/plotly-app-info';
 
@@ -29,29 +29,31 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDest
   intervalPlayer: any;
   title: string;
 
-  constructor(private firestoreQueryService: PlotlyFirestoreQueryService, private changeDetector: ChangeDetectorRef) { }
+  constructor(private portfolioDatabase: PortfolioDatabaseService, private changeDetector: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.plotlyInfo = this.havenApp.appInfo;
-    this.firestoreQueryService.getData(this.plotlyInfo).then((data) => {
-      this.data = data;
+    this.portfolioDatabase.getPlotlyData(this.plotlyInfo).then((data) => {
+      console.log(data);
       this.plotlyInfo.valueName = this.plotlyInfo.valueName.charAt(0).toUpperCase() + this.plotlyInfo.valueName.slice(1);
-      let yValues = [];
-      this.data.forEach(element => {
-        element['traces'].forEach(trace => {
-          yValues.push(trace['y']);
+      this.data = [];
+      Object.keys(data).forEach(el => {
+        const trace = {
+          name: el,
+          mode: 'lines',
+          type: 'scatter',
+          x: [],
+          y: []
+        };
+        Object.keys(data[el]).forEach(el2 => {
+          trace.x.push(el2);
+          trace.y.push(data[el][el2]);
         });
+        this.data.push(trace);
       });
-      yValues = yValues.reduce((a, b) => a.concat(b), []);
-      this.maxY = Math.max(...yValues);
-      this.minY = Math.min(...yValues);
-      const pad = (this.maxY - this.minY) * 0.05;
-      this.maxY += pad;
-      this.minY -= pad;
-      this.numberOfData = data.length - 1;
+      console.log(this.data);
       this.loaded = true;
       this.changeDetector.detectChanges();
-      this.selectedDataSlice = 0;
       this.plotData();
     });
   }
@@ -82,10 +84,10 @@ export class PlotlyScatterComponent implements HavenAppInterface, OnInit, OnDest
         range: [this.minY, this.maxY],
         showline: false
       },
-      title: this.toShortDate(this.data[this.selectedDataSlice]['name']),
+      title: 'capacity',
       hovermode: 'closest',
     };
-    Plotly.newPlot(this.chartDiv.nativeElement, this.data[this.selectedDataSlice]['traces'], layout);
+    Plotly.newPlot(this.chartDiv.nativeElement, this.data, layout);
   }
 
   toShortDate(inputDate: string): string {
