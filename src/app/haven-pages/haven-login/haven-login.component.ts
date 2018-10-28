@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { AuthService } from '@app/haven-core';
-import { FormsModule } from '@angular/forms';
-import { MatFormFieldControl } from '@angular/material';
 
 import { HavenDialogService } from '@app/haven-shared';
 
@@ -20,7 +18,7 @@ export class HavenLoginComponent {
 
   login() {
     // if (this.email && this.password) {
-      this.authService.signinUser('cat@gmail.com', 'asdfasdf', 'home');
+      this.authService.signinUser('havenhseo@gmail.com', 'havenhaven', 'home');
     // }
   }
 

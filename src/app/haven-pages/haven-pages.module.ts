@@ -7,7 +7,11 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
 import { HavenLoginComponent } from './haven-login/haven-login.component';
 import { HavenHomeComponent } from './haven-home/haven-home.component';
-import { HavenArMapComponent } from './haven-ar-map/haven-ar-map.component';
+
+// Sidebar
+import { HavenSidebarScenariosComponent } from './haven-sidebar/haven-sidebar-scenarios/haven-sidebar-scenarios.component';
+import { HavenSidebarChartsComponent } from './haven-sidebar/haven-sidebar-charts/haven-sidebar-charts.component';
+import { HavenSidebarMapsComponent } from './haven-sidebar/haven-sidebar-maps/haven-sidebar-maps.component';
 
 @NgModule({
   imports: [
@@ -17,14 +21,18 @@ import { HavenArMapComponent } from './haven-ar-map/haven-ar-map.component';
     LeafletModule,
   ],
   declarations: [
+    // Pages
     HavenLoginComponent,
     HavenHomeComponent,
-    HavenArMapComponent,
+
+    // Sidebar
+    HavenSidebarScenariosComponent,
+    HavenSidebarChartsComponent,
+    HavenSidebarMapsComponent,
   ],
   exports: [
     HavenLoginComponent,
     HavenHomeComponent,
-    HavenArMapComponent,
   ],
 })
 export class HavenPagesModule { }

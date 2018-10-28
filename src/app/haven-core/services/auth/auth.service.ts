@@ -23,8 +23,6 @@ export class AuthService {
     }, error => alert(error.message)).catch(error => alert(error));
   }
 
-  loadAR() {}
-
   signOut(): void {
     this.afAuth.auth.signOut();
     this.token = null;
@@ -35,7 +33,7 @@ export class AuthService {
     return this.token != null;
   }
 
-  createAccount(email, password): Promise<string> {
+  async createAccount(email, password): Promise<string> {
     return this.afAuth.auth.createUserWithEmailAndPassword(email, password).then(user => {
       if (user !== null) {
         return Promise.resolve('Success');

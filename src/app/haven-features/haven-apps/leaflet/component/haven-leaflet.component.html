@@ -12,10 +12,3 @@
   (leafletMapReady)="setMap($event)"
   [leafletLayersControl]="layersControl">
 </div>
-
-<button *ngIf="loaded" matTooltip="Sync Group - Maps that share the same number sync their location and zoom." class="sync-toggle" color="accent" (click)="mapStateSyncInc()">
-  <div *ngIf="havenApp.appInfo.mapStateSync !== 4">{{ leafletAppInfo.mapState.mapStateId }}</div>
-  <div *ngIf="havenApp.appInfo.mapStateSync === 4">X</div>
-</button>
-
-<button *ngIf="loaded" matTooltip="AR Sync" class="ar-sync-toggle" color="accent" (click)="arSync()">AR</button>

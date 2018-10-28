@@ -1,38 +1,32 @@
-import { Type } from '@angular/core';
-import { MapState} from '../../../../haven-core/services/leaflet/leaflet-map-state.service';
+import { Type, Input } from '@angular/core';
+import * as LeafletGlobals from './leaflet-globals';
 
 export class LeafletAppInfo {
 
-  portfolioName: string;
   scenarioName: string;
   year: number;
+  baseLayerName: string;
+  lat: number;
+  lng: number;
+  zoom: number;
 
-  mapState: MapState;
-  baseLayer: string;
-
-  constructor(portfolioName: string, scenarioName: string, year: number, lat: number, lng: number, zoom: number, baseLayer: string) {
-
-    this.portfolioName = portfolioName;
+  constructor(scenarioName: string, year: number, baseLayerName: string, lat: number, lng: number, zoom: number) {
     this.scenarioName = scenarioName;
     this.year = year;
-
-    this.baseLayer = baseLayer;
-    this.mapState = new MapState(lat, lng, zoom, 0);
-
+    this.baseLayerName = baseLayerName;
+    this.lat = lat;
+    this.lng = lng;
+    this.zoom = zoom;
   }
 
-  getObject() {
+  public getDatabaseObject() {
     return {
-      'portfolioName': this.portfolioName,
       'scenarioName': this.scenarioName,
       'year': this.year,
-      'baseLayer': this.baseLayer,
-      'mapState': {
-        'lat': this.mapState.latitude,
-        'lng': this.mapState.longitude,
-        'zoom': this.mapState.zoom,
-        'mapStateId': this.mapState.mapStateId
-      }
+      'baseLayer': this.baseLayerName,
+      'lat': this.lat,
+      'lng': this.lng,
+      'zoom': this.zoom,
     };
   }
 

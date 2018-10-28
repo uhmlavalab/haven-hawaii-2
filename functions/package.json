@@ -19,6 +19,7 @@
     "firebase-functions": "^1.0.4",
     "mkdirp": "^0.5.1",
     "mkdirp-promise": "^5.0.1",
+    "mysql": "^2.16.0",
     "papaparse": "^4.4.0"
   },
   "devDependencies": {

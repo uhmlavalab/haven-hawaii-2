@@ -8,6 +8,89 @@ import * as fs from 'fs';
 
 import * as Papa from 'papaparse'
 
+
+///// SQL TEST
+const mysql = require('mysql');
+
+/**
+ * TODO(developer): specify SQL connection details
+ */
+const connectionName = process.env.INSTANCE_CONNECTION_NAME || 'haven-196001:us-west1:haven-sql';
+const dbUser = process.env.SQL_USER || 'psip_oahu_user';
+const dbPassword = process.env.SQL_PASSWORD || 'oahupsip!';
+const dbName = process.env.SQL_NAME || 'psip_oahu';
+
+const mysqlConfig = {
+  connectionLimit: 1,
+  user: dbUser,
+  password: dbPassword,
+  database: dbName,
+  socketPath: `/cloudsql/${connectionName}`,
+};
+
+// Connection pools reuse connections between invocations,
+// and handle dropped or expired connections automatically.
+let mysqlPool;
+
+exports.mysqlDemo = functions.https.onRequest((req, res) => {
+  // Initialize the pool lazily, in case SQL access isn't needed for this
+  // GCF instance. Doing so minimizes the number of active SQL connections,
+  // which helps keep your GCF instances under SQL connection limits.
+  if (!mysqlPool) {
+    mysqlPool = mysql.createPool(mysqlConfig);
+  }
+
+  const year = 2031;
+  const loadType = `Base`;
+  const scenario = `E3`;
+  mysqlPool.query(`SELECT * FROM profiles WHERE year(time)=${year}`, (errProfile, profileResults) => {
+    if (errProfile) {
+      console.log('profile error', errProfile);
+      res.status(500).send(errProfile);
+    }
+    mysqlPool.query(`SELECT * FROM capacity WHERE year=${year} AND scenario='${scenario}'`, (errCapacity, capacityResults) => {
+      if (errCapacity) {
+        console.log('capacity error', errProfile);
+        res.status(500).send(errCapacity);
+      }
+      mysqlPool.query(`SELECT * FROM demand WHERE year(time)=${year} AND type='${loadType}'`, (errDemand, demandResults) => {
+        if (errDemand) {
+          console.log('demand error', errDemand);
+          res.status(500).send(errDemand);
+        }
+        mysqlPool.query(`SELECT * FROM stationkey`, (errKey, keyResults) => {
+          if (errKey) {
+            console.log('key error', errKey);
+            res.status(500).send(errKey);
+          } else {
+            const supply = {};
+
+            keyResults.forEach(el => {
+              const station = capacityResults.filter(obj => {
+                return obj['stationId'] === el['stationId'];
+              })
+              el['capacity'] = station.capacity;
+            })
+
+            const results = {
+              key: keyResults,
+            };
+
+            console.log('Query Successful')
+            res.send(results);
+          }
+        });
+      });
+    });
+  });
+
+
+  // Close any SQL resources that were declared inside this function.
+  // Keep any declared in global scope (e.g. mysqlPool) for later reuse.
+});
+
+///////////
+
 const whitelist = ['https://haven-196001.firebaseapp.com/', 'http://localhost:4200']
 const corsOptions = {
   origin: function (origin, callback) {
@@ -18,6 +101,9 @@ const corsOptions = {
     }
   }
 }
+
+
+
 const cors = require('cors')(corsOptions);
 const serviceAccount = require('../service-account.json');
 admin.initializeApp({
@@ -116,3 +202,5 @@ exports.app = functions.https.onRequest(app);
 //   }
 //   return deleteDoc(docIds, this.afAuth.auth.currentUser.uid);
 // });
+
+

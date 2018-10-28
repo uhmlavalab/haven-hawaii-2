@@ -3,10 +3,6 @@ import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { Globals } from '@app/haven-core';
 
-import { PortfolioService } from '@app/haven-core';
-import { HavenDialogService } from '@app/haven-shared';
-import { Router } from '@angular/router';
-
 @Component({
   selector: 'app-haven-home',
   templateUrl: './haven-home.component.html',
@@ -16,9 +12,9 @@ export class HavenHomeComponent {
 
   title = 'HAVEN';
 
-  selectedDrawer = 'account';
+  selectedDrawer = 'scenario';
 
-  accountColor = 'primary';
+  scenarioColor = 'primary';
   chartColor = 'accent';
   mapColor = 'accent';
 
@@ -27,7 +23,7 @@ export class HavenHomeComponent {
   toolbarHeight: number;
   drawerOpen: boolean;
 
-  constructor(private globals: Globals, private sanitizer: DomSanitizer, public portfolioService: PortfolioService, private router: Router, private dialogService: HavenDialogService) {
+  constructor(private globals: Globals, private sanitizer: DomSanitizer) {
     this.sidebarWidth = globals.sidebarWidth;
     this.toolbarHeight = globals.toolbarHeight;
     this.drawerOpen = globals.drawerOpen;
@@ -41,28 +37,20 @@ export class HavenHomeComponent {
 
   sidebarChange(selection: string) {
     this.selectedDrawer = selection;
-    if (selection === 'account') {
-      this.accountColor = 'primary';
+    if (selection === 'scenario') {
+      this.scenarioColor = 'primary';
       this.chartColor = 'accent';
       this.mapColor = 'accent';
     } else if (selection === 'chart') {
-      this.accountColor = 'accent';
+      this.scenarioColor = 'accent';
       this.chartColor = 'primary';
       this.mapColor = 'accent';
     } else if (selection === 'map') {
-      this.accountColor = 'accent';
+      this.scenarioColor = 'accent';
       this.chartColor = 'accent';
       this.mapColor = 'primary';
     }
   }
-  navigateToArMap() {
-    this.dialogService.openConfirmationMessage(`Are you sure want to navigate to the AR map?`)
-      .afterClosed()
-      .subscribe(result => {
-        if (result) {
-          this.router.navigate(['/armap']);
-        }
-      });
-  }
+
 }
 

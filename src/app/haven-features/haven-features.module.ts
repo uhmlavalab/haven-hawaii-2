@@ -2,20 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HavenSharedModule } from '@app/haven-shared';
 
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+
 // Apps
 import { HavenAppsFactoryComponent } from './haven-apps/factory/haven-apps-factory.component';
-import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import { HavenLeafletComponent } from './haven-apps/leaflet/component/haven-leaflet.component';
-import { PlotlyScatterComponent } from './haven-apps/plotly/components/plotly-scatter/plotly-scatter.component';
-import { PlotlyBarComponent } from './haven-apps/plotly/components/plotly-bar/plotly-bar.component';
-import { PlotlyHeatmapComponent } from './haven-apps/plotly/components/plotly-heatmap/plotly-heatmap.component';
-import { PlotlySurfaceComponent } from './haven-apps/plotly/components/plotly-surface/plotly-surface.component';
 import { HavenAppsHostDirective } from './haven-apps/shared/haven-apps-host.directive';
-
-// Sidebar
-import { HavenSidebarAccountComponent } from './haven-sidebar/haven-sidebar-account/haven-sidebar-account.component';
-import { HavenSidebarChartsComponent } from './haven-sidebar/haven-sidebar-charts/haven-sidebar-charts.component';
-import { HavenSidebarMapsComponent } from './haven-sidebar/haven-sidebar-maps/haven-sidebar-maps.component';
+import { HavenLeafletComponent } from './haven-apps/leaflet/component/haven-leaflet.component';
+import { HavenChartComponent } from './haven-apps/plotly/haven-chart.component';
 
 // Windows
 import { HavenWindowComponent } from './haven-window/component/haven-window.component';
@@ -26,10 +19,6 @@ import { HavenWindowHostDirective } from './haven-window/directives/haven-window
 import { HavenWindowMaximizeDirective } from './haven-window/directives/haven-window-maximize.directive';
 import { HavenWindowResizeDirective } from './haven-window/directives/haven-window-resize.directive';
 
-// MISC
-import { NewPortfolioComponent } from './haven-new-portfolio/new-portfolio.component';
-import { HavenNewLayerComponent } from './haven-new-layer/haven-new-layer.component';
-import { HavenLayerEditDialogComponent } from './haven-layeredit-dialog/haven-layeredit-dialog.component';
 
 @NgModule({
   imports: [
@@ -41,15 +30,8 @@ import { HavenLayerEditDialogComponent } from './haven-layeredit-dialog/haven-la
     // Apps
     HavenAppsFactoryComponent,
     HavenLeafletComponent,
-    PlotlyScatterComponent,
-    PlotlyBarComponent,
-    PlotlyHeatmapComponent,
+    HavenChartComponent,
     HavenAppsHostDirective,
-
-    // Sidebar
-    HavenSidebarAccountComponent,
-    HavenSidebarChartsComponent,
-    HavenSidebarMapsComponent,
 
     // Window
     HavenWindowComponent,
@@ -60,27 +42,12 @@ import { HavenLayerEditDialogComponent } from './haven-layeredit-dialog/haven-la
     HavenWindowMaximizeDirective,
     HavenWindowResizeDirective,
 
-    // Misc
-    NewPortfolioComponent,
-    HavenNewLayerComponent,
-    PlotlyBarComponent,
-    PlotlySurfaceComponent,
-    HavenLayerEditDialogComponent,
-
   ],
   exports: [
     // Apps
     HavenAppsFactoryComponent,
     HavenLeafletComponent,
-    PlotlyScatterComponent,
-    PlotlyBarComponent,
-    PlotlyHeatmapComponent,
-    PlotlySurfaceComponent,
-
-    // Sidebar
-    HavenSidebarAccountComponent,
-    HavenSidebarChartsComponent,
-    HavenSidebarMapsComponent,
+    HavenChartComponent,
 
     // Window
     HavenWindowFactoryComponent,
@@ -89,18 +56,11 @@ import { HavenLayerEditDialogComponent } from './haven-layeredit-dialog/haven-la
   entryComponents: [
     // Apps
     HavenLeafletComponent,
-    PlotlyScatterComponent,
-    PlotlyBarComponent,
-    PlotlyHeatmapComponent,
-    PlotlySurfaceComponent,
+    HavenChartComponent,
 
     // Window
     HavenWindowComponent,
 
-    // MISC
-    NewPortfolioComponent,
-    HavenNewLayerComponent,
-    HavenLayerEditDialogComponent
   ]
 })
 export class HavenFeaturesModule { }

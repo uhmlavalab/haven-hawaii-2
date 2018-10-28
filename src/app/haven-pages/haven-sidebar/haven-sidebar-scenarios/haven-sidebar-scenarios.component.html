@@ -1,0 +1,24 @@
+<mat-form-field>
+  <mat-select placeholder="Scenario" [(value)]="selectedScenario">
+    <mat-option *ngFor="let scenario of scenariosService.getScenariosList() | async" [value]="scenario.name">
+      {{ scenario.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<button mat-raised-button color="primary" (click)="loadScenario()">Load Scenario</button>
+
+<mat-form-field>
+  <mat-select placeholder="Session" [(value)]="selectedSession">
+    <mat-option *ngFor="let session of sessionsService.getSessionsList() | async" [value]="session">
+      {{ session.sessionName }} - {{ session.timestamp  | date:'short'}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<button mat-raised-button color="primary" (click)="loadSession()">Load Session</button>
+<button mat-raised-button color="primary" (click)="saveSession()">Save Session</button>
+<button mat-raised-button color="warn" (click)="deleteSession()">Delete Session</button>
+
+<mat-divider style="margin-top: 8px"></mat-divider>
+
