@@ -158,11 +158,10 @@ export class HavenWindowService {
   newPlotlyApp(appInfo: HavenChartAppInfo): HavenChartAppInfo {
     return new HavenChartAppInfo(
       appInfo.scenarioName,
-      appInfo.startDate,
-      appInfo.endDate,
+      appInfo.year,
       appInfo.valueName,
       appInfo.scope,
-      appInfo.chartType);
+      appInfo.chartType,null);
   }
 
   newLeafletApp(appInfo: LeafletAppInfo): LeafletAppInfo {

@@ -20,6 +20,7 @@ import {
   MatIconModule,
   MatInputModule,
   MatListModule,
+  MatNativeDateModule,
   MatProgressSpinnerModule,
   MatProgressBarModule,
   MatRadioModule,
@@ -35,6 +36,7 @@ import {
 } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven-savesession-dialog/haven-savesession-dialog.component';
 
 
@@ -47,11 +49,13 @@ import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,
+    MatDatepickerModule,
     MatDividerModule,
     MatDialogModule,
     MatFormFieldModule,
     MatGridListModule,
     MatListModule,
+    MatNativeDateModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatIconModule,
@@ -82,6 +86,7 @@ import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,
+    MatDatepickerModule,
     MatDialogModule,
     MatDividerModule,
     MatFormFieldModule,
@@ -89,6 +94,7 @@ import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven
     MatIconModule,
     MatInputModule,
     MatListModule,
+    MatNativeDateModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatRadioModule,

@@ -1,7 +1,7 @@
 <mat-form-field>
-  <mat-select placeholder="Value" [(value)]="selectedValue">
-    <mat-option *ngFor="let valuetype of valueTypes" [value]="valuetype.value">
-      {{ valuetype.viewValue }}
+  <mat-select placeholder="Scenario" [(value)]="selShare">
+    <mat-option *ngFor="let share of scenariosService.getScenarioSharesList()" [value]="share">
+      {{ share.percent }}% - {{ share.year }}
     </mat-option>
   </mat-select>
 </mat-form-field>
@@ -40,4 +40,7 @@
 
 </mat-grid-list>
 
-<button mat-raised-button color="primary" (click)="createChartWindow()">Create Chart</button>
+<!-- <button mat-raised-button color="primary" (click)="createChartWindow()">Create Chart</button> -->
+<button mat-raised-button color="primary" (click)="capacityChart()">Get Capacity Data</button>
+<button mat-raised-button color="primary" (click)="generationChart()">Get Generation Data</button>
+

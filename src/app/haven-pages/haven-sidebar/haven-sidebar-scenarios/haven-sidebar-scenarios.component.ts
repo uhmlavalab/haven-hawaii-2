@@ -14,16 +14,23 @@ export class HavenSidebarScenariosComponent {
 
   selectedScenario: any;
   selectedSession: any;
+  scenarios = [];
 
-  constructor(private havenWindowService: HavenWindowService, public scenariosService: ScenariosService, public sessionsService: SessionsService, private dialogService: HavenDialogService, public dialog: MatDialog,  ) { }
+  constructor(private havenWindowService: HavenWindowService, public scenariosService: ScenariosService, public sessionsService: SessionsService, private dialogService: HavenDialogService, public dialog: MatDialog,  ) { 
+    this.scenariosService.getScenariosList().then(scenarios => {
+      this.scenarios = scenarios;
+
+    });
+  }
 
   loadScenario() {
     if (this.selectedScenario) {
-      this.dialogService.openConfirmationMessage(`Are you sure you want to LOAD the ${this.selectedScenario.scenarioName} session?`)
+      this.dialogService.openConfirmationMessage(`Are you sure you want to LOAD the ${this.selectedScenario.name} session?`)
         .afterClosed()
         .subscribe(result => {
           if (result) {
-            this.scenariosService.loadScenario(this.selectedScenario);
+            console.log(this.selectedScenario);
+            this.scenariosService.setScenario(this.selectedScenario);
           }
       });
     }

@@ -35,8 +35,8 @@ export class HavenWindowResizeDirective {
 
   @HostListener('document:mousemove', ['$event']) onMouseMove(event) {
     if (this.resizeSelected === true) {
-      this.havenWindow.size.width = Math.max(200, this.startWindowWidth + (event.clientX - this.resizeStartLeft));
-      this.havenWindow.size.height = Math.max(200, this.startWindowHeight + (event.clientY - this.resizeStartTop));
+      this.havenWindow.size.width = Math.max(350, this.startWindowWidth + (event.clientX - this.resizeStartLeft));
+      this.havenWindow.size.height = Math.max(350, this.startWindowHeight + (event.clientY - this.resizeStartTop));
       this.windowDiv.style.width = this.havenWindow.size.width + 'px';
       this.windowDiv.style.height = this.havenWindow.size.height + 'px';
       this.appRef.resize();

@@ -2,26 +2,25 @@ import { Type } from '@angular/core';
 
 export class HavenChartAppInfo {
   scenarioName: string;
-  startDate: Date;
-  endDate: Date;
+  year: number;
   valueName: string;
   scope: string;
   chartType: string;
+  data: any;
 
-  constructor(scenarioName: string, startDate: Date, endDate: Date, valueName: string, scope: string, chartType: string) {
+  constructor(scenarioName: string, year: number, valueName: string, scope: string, chartType: string, data: any) {
     this.scenarioName = scenarioName;
-    this.startDate = startDate;
-    this.endDate = endDate;
+    this.year = year;
     this.valueName = valueName;
     this.scope = scope;
     this.chartType = chartType;
+    this.data = data;
   }
 
   getObject() {
     return {
       'scenarioName': this.scenarioName,
-      'startDate': this.startDate,
-      'endDate': this.endDate,
+      'year': this.year,
       'valueName': this.valueName,
       'scope': this.scope,
       'chartType': this.chartType
