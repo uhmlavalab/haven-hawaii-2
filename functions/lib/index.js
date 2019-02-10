@@ -21,23 +21,32 @@ exports.capacityData = functions.https.onRequest((req, res) => {
         if (!pgPool) {
             pgPool = new pg.Pool(pgConfig);
         }
-        const query = `SELECT 
+        let scenario = req.query.scenario;
+        let query = `SELECT 
                     lt.id, lt.technology, ltc.year, ltc.value 
                   FROM 
                     loctechs lt, loctech_capacity ltc 
                   WHERE 
-                    lt.id = ltc.loctech;`;
+                    lt.id = ltc.loctech AND ltc.scenario = ${scenario};`;
+        const responseResults = {};
         pgPool.query(query, (err, results) => {
             if (err) {
                 console.error(err);
                 res.status(500).send(err);
             }
             else {
-                const responseResults = {};
                 results.rows.forEach(element => {
-                    const technology = element['technology'];
+                    let technology = element['technology'];
+                    let id = element['id'];
                     const year = element['year'];
                     const value = Number(element['value']);
+                    // TEMP FIX FOR FEBUARY 7th. Fossil/Bio Conversion. NREL DATA EE
+                    if (scenario == 2) {
+                        if (technology == 'fossil' && Number(year) == 2045 && Number(id) != 119) {
+                            technology = 'bio';
+                        }
+                    }
+                    //////////////////////////////////////
                     if (!responseResults[technology]) {
                         responseResults[technology] = {};
                     }
@@ -46,7 +55,90 @@ exports.capacityData = functions.https.onRequest((req, res) => {
                     }
                     responseResults[technology][year] += value;
                 });
-                res.send(JSON.stringify(responseResults));
+                // TEMP FIX FOR FEBUARY 7th. Fossil/Bio Conversion. NREL DATA EE
+                if (scenario == 2) {
+                    scenario = 1;
+                    query = `SELECT 
+                    lt.id, lt.technology, ltc.year, ltc.value 
+                      FROM 
+                    loctechs lt, loctech_capacity ltc 
+                      WHERE 
+                    lt.id = ltc.loctech AND ltc.scenario = ${scenario} AND ltc.year < 2030;`;
+                    pgPool.query(query, (error, rests) => {
+                        if (error) {
+                            console.error(error);
+                            res.status(500).send(error);
+                        }
+                        else {
+                            rests.rows.forEach(element => {
+                                let technology = element['technology'];
+                                const year = element['year'];
+                                const value = Number(element['value']);
+                                if (!responseResults[technology]) {
+                                    responseResults[technology] = {};
+                                }
+                                if (!responseResults[technology][year]) {
+                                    responseResults[technology][year] = 0;
+                                }
+                                responseResults[technology][year] += value;
+                            });
+                            res.send(JSON.stringify(responseResults));
+                        }
+                    });
+                }
+                //////////////////////////////////////
+                else {
+                    res.send(JSON.stringify(responseResults));
+                }
+            }
+        });
+    });
+});
+exports.demandData = functions.https.onRequest((req, res) => {
+    return cors(req, res, () => {
+        if (!pgPool) {
+            pgPool = new pg.Pool(pgConfig);
+        }
+        const year = req.query.year;
+        const scenario = req.query.scenario;
+        const scale = req.query.scale;
+        let scaleQuery = null;
+        let limitYear = '';
+        if (scale == 'years') {
+            scaleQuery = `date_part('year', ltg.datetime) as time, 
+                    SUM(ltg.value)`;
+        }
+        else if (scale == 'months') {
+            scaleQuery = `date_part('months', ltg.datetime) as time, 
+                    SUM(ltg.value)`;
+            limitYear = `AND date_part('year', ltg.datetime) = ${year}`;
+        }
+        else if (scale == 'hours') {
+            scaleQuery = `date_part('hours', ltg.datetime) as time, 
+                    SUM(ltg.value) / 365`;
+            limitYear = `AND date_part('year', ltg.datetime) = ${year}`;
+        }
+        const query = `SELECT 
+                    lt.technology, 
+                    ${scaleQuery}
+                  FROM 
+                    loctechs lt, 
+                    loctech_generation ltg 
+                  WHERE 
+                    lt.technology = 'demand' AND
+                    lt.id = ltg.loctech AND 
+                    ltg.scenario = ${scenario} 
+                    ${limitYear}
+                  GROUP BY 
+                    lt.technology, 
+                    time;`;
+        pgPool.query(query, (err, results) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send(err);
+            }
+            else {
+                res.send(JSON.stringify(results));
             }
         });
     });

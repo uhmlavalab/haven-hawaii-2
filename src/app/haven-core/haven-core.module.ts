@@ -20,6 +20,7 @@ import { ScenariosService } from './services/scenarios/scenarios.service';
 import { SessionsService } from './services/sessions/sessions.service';
 import { LayersService } from './services/layers/layers.service';
 import { HavenWindowService } from './services/windows/haven-window.service';
+import { DatabaseSqlService } from './services/database-sql/database-sql.service';
 
 @NgModule({
   imports: [
@@ -39,6 +40,7 @@ import { HavenWindowService } from './services/windows/haven-window.service';
     LayersService,
     SessionsService,
     HavenWindowService,
+    DatabaseSqlService,
     Globals
   ]
 })

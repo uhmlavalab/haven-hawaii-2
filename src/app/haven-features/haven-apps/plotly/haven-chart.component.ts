@@ -4,6 +4,8 @@ import { HavenApp } from '../shared/haven-app';
 
 import { HavenChartAppInfo } from './shared/haven-chart-app-info';
 
+import { DatabaseSqlService } from '@app/haven-core';
+
 @Component({
   selector: 'app-haven-chart',
   templateUrl: './haven-chart.component.html',
@@ -35,31 +37,37 @@ export class HavenChartComponent implements OnInit {
       disabled: false
     },
     {
-      toolTip: '3D Chart',
-      icon: 'layers',
-      color: 'accent',
-      disabled: true
-    },
-    {
       toolTip: 'Heatmap Chart',
       icon: 'grid_on',
       color: 'warn',
       disabled: false
     },
+    {
+      toolTip: 'List',
+      icon: 'format_list_numbered',
+      color: 'accent',
+      disabled: true
+    },
   ];
 
   scopes = [
     {
-      text: 'Monthly',
-      color: 'primary'
+      text: 'Yearly Total',
+      color: 'primary',
+      toolTip: '',
+      disabled: false
     },
     {
-      text: 'Weekly',
-      color: 'warn'
+      text: 'Monthly Total',
+      color: 'warn',
+      toolTip: '',
+      disabled: false
     },
     {
-      text: 'Daily',
-      color: 'warn'
+      text: 'Daily Average',
+      color: 'warn',
+      toolTip: '',
+      disabled: true
     }
   ];
 
@@ -74,21 +82,45 @@ export class HavenChartComponent implements OnInit {
   intervalPlayer: any;
   title: string;
 
-  constructor(private changeDetector: ChangeDetectorRef) { 
+  constructor(private changeDetector: ChangeDetectorRef, private dbSql: DatabaseSqlService) {
 
   }
 
   ngOnInit() {
-    this.rawData = this.havenApp.appInfo.data;
-    // this.formattedData = this.monthlyFormat(this.rawData);
-    this.formattedData = this.rawData;
-    this.createLineChart();
+    this.loaded = false;
+    this.plotlyInfo = this.havenApp.appInfo;
+    switch (this.plotlyInfo.valueType) {
+      case 'capacity':
+        this.dbSql.getCapactiyData(this.plotlyInfo.scenarioId).then((data) => {
+          console.log(this.plotlyInfo);
+          this.rawData = data;
+          this.formattedData = data;
+          this.createLineChart();
+        })
+        break;
+      case 'demand':
+        this.dbSql.getDemandData(this.plotlyInfo.scenarioId, this.plotlyInfo.year, this.plotlyInfo.scale).then((data) => {
+          this.rawData = data;
+          this.formattedData = data;
+          this.createLineChart();
+        })
+        break;
+      case 'generation':
+        this.dbSql.getGenerationData(this.plotlyInfo.scenarioId, this.plotlyInfo.year, this.plotlyInfo.scale).then((data) => {
+          this.rawData = data;
+          this.formattedData = data;
+          this.createLineChart();
+        })
+        break;
+      default:
+        break;
+    }
   }
 
   monthlyFormat(data: any): any {
     const newData = {};
     console.log(data);
-    Object.keys(data).forEach(el => { 
+    Object.keys(data).forEach(el => {
       if (!newData[el]) newData[el] = [];
       data[el].forEach(el2 => {
         const month = new Date(el2[0]).getMonth();
@@ -100,7 +132,7 @@ export class HavenChartComponent implements OnInit {
           found[1] += value
         }
       })
-      newData[el].sort((a,b) => (a[0] > b[0]) ? 1 : -1);
+      newData[el].sort((a, b) => (a[0] > b[0]) ? 1 : -1);
     });
     Object.keys(newData).forEach(el1 => newData[el1].forEach(el2 => el2[0] = this.monthsOfYear[el2[0]]));
     return newData;
@@ -108,7 +140,7 @@ export class HavenChartComponent implements OnInit {
 
   weeklyFormat(data: any): any {
     const newData = {};
-    Object.keys(data).forEach(el => { 
+    Object.keys(data).forEach(el => {
       if (!newData[el]) newData[el] = [];
       data[el].forEach(el2 => {
         const dayOfWeek = new Date(el2[0]).getDay();
@@ -120,7 +152,7 @@ export class HavenChartComponent implements OnInit {
           found[1] += value
         }
       })
-      newData[el].sort((a,b) => (a[0] > b[0]) ? 1 : -1);
+      newData[el].sort((a, b) => (a[0] > b[0]) ? 1 : -1);
     });
     Object.keys(newData).forEach(el1 => newData[el1].forEach(el2 => el2[0] = this.daysOfWeek[el2[0]]));
     return newData;
@@ -128,7 +160,7 @@ export class HavenChartComponent implements OnInit {
 
   dailyFormat(data: any): any {
     const newData = {};
-    Object.keys(data).forEach(el => { 
+    Object.keys(data).forEach(el => {
       if (!newData[el]) newData[el] = [];
       data[el].forEach(el2 => {
         const hourOfDay = new Date(el2[0]).getUTCHours();
@@ -140,7 +172,7 @@ export class HavenChartComponent implements OnInit {
           found[1] += value
         }
       })
-      newData[el].sort((a,b) => (a[0] > b[0]) ? 1 : -1);
+      newData[el].sort((a, b) => (a[0] > b[0]) ? 1 : -1);
     });
     return newData;
   }
@@ -156,6 +188,7 @@ export class HavenChartComponent implements OnInit {
   }
 
   changeScope(selectedScope: any) {
+    this.loaded = false;
     this.scopes.forEach(el => {
       if (selectedScope.text === el.text) {
         el.color = 'primary';
@@ -166,25 +199,25 @@ export class HavenChartComponent implements OnInit {
     const currentChart = this.typeOfCharts.find(el => el.color == 'primary')
     console.log(selectedScope);
     switch (selectedScope.text) {
-      case 'Monthly': 
+      case 'Monthly':
         this.loaded = false;
         this.formattedData = null;
         this.formattedData = this.monthlyFormat(this.rawData);
         this.changeChart(currentChart);
         break;
-      case 'Weekly': 
+      case 'Weekly':
         this.loaded = false;
         this.formattedData = null;
         this.formattedData = this.weeklyFormat(this.rawData);
         this.changeChart(currentChart);
         break;
-      case 'Daily': 
+      case 'Daily':
         this.loaded = false;
         this.formattedData = null;
         this.formattedData = this.dailyFormat(this.rawData);
         this.changeChart(currentChart);
         break;
-    }  
+    }
   }
 
   changeChart(selectedChart: any) {

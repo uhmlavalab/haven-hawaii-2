@@ -1,36 +1,17 @@
 <mat-sidenav-container class="app-container">
   <mat-sidenav mode="side" class="app-sidenav" opened>
 
-    <mat-chip-list class="mat-chip-list-stacked">
-      <mat-chip *ngFor="let scope of scopes" [color]='scope.color' selected="true" (click)="changeScope(scope)">
-        {{ scope.text }}
-      </mat-chip>
-    </mat-chip-list>
 
-    <br>
+    <li *ngFor="let scope of scopes" style="list-style: none;">
+      <button mat-raised-button (click)="changeScope(scope)" [color]="scope.color" [disabled]="scope.disabled">
+        {{scope.text}}
+      </button>
+    </li>
 
-    <hr>
-    <mat-chip-list class="mat-chip-list-stacked">
-      <mat-chip>
-        Max Solar
-      </mat-chip>
-      <mat-chip>
-        Min Solar
-      </mat-chip>
-      <mat-chip>
-        Max Load
-      </mat-chip>
-      <mat-chip>
-        Min Load
-      </mat-chip>
-    </mat-chip-list>
-    <hr>
-
-    <br>
-
-    <mat-grid-list cols="2" rows="2" style="top: calc(100% - 300px);">
+    <mat-grid-list cols="2" rows="2" style="top: calc(100% - 240px);">
       <mat-grid-tile *ngFor="let chart of typeOfCharts">
-        <button mat-icon-button [matTooltip]="chart.toolTip" [color]="chart.color" (click)="changeChart(chart)" [disabled]="chart.disabled">
+        <button mat-icon-button [matTooltip]="chart.toolTip" [color]="chart.color" (click)="changeChart(chart)"
+          [disabled]="chart.disabled">
           <mat-icon>{{ chart.icon }}</mat-icon>
         </button>
       </mat-grid-tile>

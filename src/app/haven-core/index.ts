@@ -14,3 +14,5 @@ export * from './services/layers/layers.service';
 
 export * from './services/sessions/sessions.service';
 
+export * from './services/database-sql/database-sql.service';
+

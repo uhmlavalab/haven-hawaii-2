@@ -6,6 +6,19 @@ import { HavenWindow, HavenApp, HavenChartAppInfo } from '@app/haven-features';
 import { HttpHeaders } from '@angular/common/http';
 import { Http } from '@angular/http';
 
+/*
+
+battery
+fossil
+bio
+demand
+dgpv
+pv
+offshore wind
+onshore wind 
+
+*/
+
 @Component({
   selector: 'app-haven-sidebar-charts',
   templateUrl: './haven-sidebar-charts.component.html',
@@ -29,7 +42,7 @@ export class HavenSidebarChartsComponent implements OnInit {
   selectedYear: number;
   selectedScenario = '';
   selectedLoad = '';
-  selectedScope = '';
+  selectedScale = '';
   selectedValue = '';
   selectedChart = 'scatter';
 
@@ -39,16 +52,16 @@ export class HavenSidebarChartsComponent implements OnInit {
 
   ngOnInit() { }
 
-  createChartWindow(data: any) {
+  createChartWindow() {
     const appInfo = new HavenChartAppInfo(
       this.scenariosService.getSelectedScenarioName(),
+      this.scenariosService.getSelectScenarioId(),
       this.selShare.year,
       this.selectedValue,
-      this.selectedScope,
-      this.selectedChart,
-      data
+      this.selectedScale,
+      this.selectedChart
     );
-    const title = `${this.selShare.year}`;
+    const title = `${this.selectedValue.toLocaleUpperCase()}`;
     const footer = `${this.scenariosService.getSelectedScenarioName()}`;
     const havenWindow = new HavenWindow(title, footer, 100, 100, 400, 400, false);
     const newApp = new HavenApp(`plotly-chart`, appInfo);
@@ -61,45 +74,20 @@ export class HavenSidebarChartsComponent implements OnInit {
   }
 
   capacityChart() {
-    var req = new XMLHttpRequest();
-    req.onload = () => {
-      const results = JSON.parse(req.responseText) as any;
-      Object.keys(results).forEach(el1 => {
-        const elData = [];
-        Object.keys(results[el1]).forEach(el2 => {
-          elData.push([el2, results[el1][el2]]);
-        })
-        results[el1] = elData;
-      })
-      console.log(results);
-      this.createChartWindow(results);
-    }
-    req.onerror = () => {
-      console.log('There was an error');
-    }
-    req.open('GET', `https://us-central1-haven-hawaii-2.cloudfunctions.net/capacityData`, true);
-    req.send();
+    this.selectedValue = 'capacity';
+    this.createChartWindow();
   }
 
   generationChart() {
-    const req = new XMLHttpRequest();
-    req.onload = () => {
-      const data = {};
-      const results = JSON.parse(req.responseText) as any;
-      console.log(results);
-      results.rows.forEach(el => {
-        if (!data[el.technology]) {
-          data[el.technology] = [];
-        }
-        data[el.technology].push([el['hour'], el['sum']]);
-      })
-      this.createChartWindow(data);
-    }
-    req.onerror = () => {
-      console.log('There was an error');
-    }
-    req.open('GET', `https://us-central1-haven-hawaii-2.cloudfunctions.net/generationData?year=${this.selShare.year}&scenario=${this.scenariosService.getSelectScenarioId()}`, true);
-    req.send();
+    this.selectedValue = 'generation';
+    this.selectedScale = 'months';
+    this.createChartWindow();
+  }
+
+  demandChart() {
+    this.selectedValue = 'demand';
+    this.selectedScale = 'months';
+    this.createChartWindow();
   }
 
 }
