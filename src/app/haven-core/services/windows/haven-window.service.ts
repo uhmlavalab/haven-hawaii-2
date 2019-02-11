@@ -155,22 +155,22 @@ export class HavenWindowService {
     // });
   }
 
-  newPlotlyApp(appInfo: HavenChartAppInfo): HavenChartAppInfo {
-    return new HavenChartAppInfo(
-      appInfo.scenarioName,
-      appInfo.year,
-      appInfo.valueName,
-      appInfo.scope,
-      appInfo.chartType,null);
-  }
+  // newPlotlyApp(appInfo: HavenChartAppInfo): HavenChartAppInfo {
+  //   return new HavenChartAppInfo(
+  //     appInfo.scenarioName,
+  //     appInfo.year,
+  //     appInfo.valueName,
+  //     appInfo.scope,
+  //     appInfo.chartType,null);
+  // }
 
-  newLeafletApp(appInfo: LeafletAppInfo): LeafletAppInfo {
-    return new LeafletAppInfo(
-      appInfo.scenarioName,
-      appInfo.year,
-      appInfo.baseLayerName,
-      appInfo.lat,
-      appInfo.lng,
-      appInfo.zoom);
-  }
+  // newLeafletApp(appInfo: LeafletAppInfo): LeafletAppInfo {
+  //   return new LeafletAppInfo(
+  //     appInfo.scenarioName,
+  //     appInfo.year,
+  //     appInfo.baseLayerName,
+  //     appInfo.lat,
+  //     appInfo.lng,
+  //     appInfo.zoom);
+  // }
 }

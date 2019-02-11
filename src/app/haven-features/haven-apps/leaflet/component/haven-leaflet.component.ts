@@ -4,20 +4,20 @@ import * as L from 'leaflet';
 
 import { isUndefined } from 'util';
 
-import { HavenAppInterface } from '../../shared/haven-app-interface';
 import { HavenApp } from '../../shared/haven-app';
 import { HavenWindow } from '../../../haven-window/shared/haven-window';
 import { LeafletAppInfo } from '../shared/leaflet-app-info';
-import * as LeafletGlobals from '../shared/leaflet-globals';
+import { LayersService, DatabaseSqlService } from '@app/haven-core';
 
 @Component({
   selector: 'app-haven-leaflet',
   templateUrl: './haven-leaflet.component.html',
   styleUrls: ['./haven-leaflet.component.css']
 })
-export class HavenLeafletComponent implements HavenAppInterface, OnInit {
+export class HavenLeafletComponent implements OnInit {
 
   havenWindow: HavenWindow;
+  appInfo: LeafletAppInfo;
   havenApp: HavenApp;
 
   leafletMap: L.Map;
@@ -25,42 +25,118 @@ export class HavenLeafletComponent implements HavenAppInterface, OnInit {
   loaded = false;
 
   layersControl = {
-    baseLayers: LeafletGlobals.BaseLayers,
+    baseLayers: {
+      'Street': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+          maxZoom: 18,
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }),
+      'Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 18,
+          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        }),
+      'Terrain': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        {
+          maxZoom: 18,
+          attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        })
+    },
     overlays: {}
   };
-
+  locations = {
+    'Oahu': {
+      center: new L.LatLng(21.480066, -157.96),
+      zoom: 11,
+    },
+    'Maui': {
+      center: new L.LatLng(21.480066, -157.96),
+      zoom: 11,
+    },
+  };
   options = {
     layers: [
-      LeafletGlobals.BaseLayers.Street
+      this.layersControl.baseLayers.Street
     ],
-    zoom: LeafletGlobals.Locations.Oahu.zoom,
-    center: LeafletGlobals.Locations.Oahu.center
+    zoom: this.locations.Oahu.zoom,
+    center: this.locations.Oahu.center
   };
 
-  super() {
+  colors = {
+    'dod': 'red',
+    'agriculture': 'green',
+    'existing_renewable': 'cyan',
+    'solar': 'orange',
+    'transmission:': 'white'
+  }
+
+
+  constructor(private layersService: LayersService, private dbSql: DatabaseSqlService) {
 
   }
-  constructor () {
 
-  }
+
 
   ngOnInit() {
-    this.options.zoom = this.havenApp.appInfo.zoom;
-    this.options.center = L.latLng(this.havenApp.appInfo.lat, this.havenApp.appInfo.lng);
-    this.loaded = true;
+    this.appInfo = this.havenApp.appInfo;
+    this.options.zoom = this.appInfo.zoom;
+    this.options.center = L.latLng(this.appInfo.lat, this.appInfo.lng);
+    this.layersService.getLayers('deafult').then(data => {
+      this.dbSql.getSolarTotalYear(this.appInfo.scenarioId, this.appInfo.year).then(solarTotal => {
+        data.forEach(layer => {
+          const name = layer.name.split('.')[0];
+          let solarTot = solarTotal;
+          this.layersControl.overlays[name] = L.geoJSON(layer.data, {
+            style: (feature) => {
+              if (name == 'solar') {
+                if (solarTot > 0) {
+                  const cf = feature.properties.cf_1;
+                  const capacity = feature.properties.capacity;
+                  const value = (cf * capacity * 8760);;
+                  solarTot -= value;
+                  return {
+                    color: 'transparent',
+                    fillColor: this.colors[name],
+                    fillOpacity: 0.75
+                  };
+                } else {
+                  return {
+                    color: 'transparent',
+                    fillColor: 'white',
+                    fillOpacity: 0.75
+                  };
+                }
+              } else {
+                return {
+                  color: this.colors[name],
+                  fillColor: this.colors[name]
+                };
+              }
+
+            }
+          });
+        });
+        this.loaded = true;
+      });
+
+    })
+
   }
 
   setMap(leafletMap: L.Map) {
     this.leafletMap = leafletMap;
     this.leafletMap.setView(this.options.center, this.options.zoom);
-    this.leafletMap.addLayer(LeafletGlobals.BaseLayers.Satellite);
+    let startLayer = this.appInfo.baseLayerName as string;
+    startLayer = startLayer.charAt(0).toUpperCase() + startLayer.slice(1);
+    console.log(startLayer);
+    this.leafletMap.addLayer(this.layersControl.baseLayers[startLayer]);
 
     this.leafletMap.on('zoomend', () => {
-      this.havenApp.appInfo.zoom = this.leafletMap.getZoom();
+      this.appInfo.zoom = this.leafletMap.getZoom();
     });
     this.leafletMap.on('moveend', () => {
-      this.havenApp.appInfo.lat = this.leafletMap.getCenter().lat;
-      this.havenApp.appInfo.lng = this.leafletMap.getCenter().lng;
+      this.appInfo.lat = this.leafletMap.getCenter().lat;
+      this.appInfo.lng = this.leafletMap.getCenter().lng;
     });
   }
 

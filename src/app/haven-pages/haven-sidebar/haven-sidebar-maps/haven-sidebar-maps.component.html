@@ -1,3 +1,11 @@
+<mat-form-field>
+  <mat-select placeholder="Year Select" [(value)]="selShare">
+    <mat-option *ngFor="let share of scenariosService.getScenarioSharesList()" [value]="share">
+      {{ share.percent }}% - {{ share.year }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
 <mat-grid-list cols="3" rows="1">
   <mat-grid-tile *ngFor="let style of mapStyles" (click)="setMapStyle(style.name)">
     <img src="{{ style.url }}" class="map-thumbnail" [class.isActive]="style.name == selectedMapStyle">

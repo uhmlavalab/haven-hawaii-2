@@ -3,21 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { HavenWindowService, ScenariosService } from '@app/haven-core';
 
 import { HavenWindow, HavenApp, HavenChartAppInfo } from '@app/haven-features';
-import { HttpHeaders } from '@angular/common/http';
-import { Http } from '@angular/http';
 
-/*
-
-battery
-fossil
-bio
-demand
-dgpv
-pv
-offshore wind
-onshore wind 
-
-*/
 
 @Component({
   selector: 'app-haven-sidebar-charts',
@@ -26,17 +12,11 @@ onshore wind
 })
 export class HavenSidebarChartsComponent implements OnInit {
 
-  valueTypes = [
-    { value: 'capacity', viewValue: 'Capacity' },
-    { value: 'summary', viewValue: 'Summary' },
-    { value: 'storageCapacity', viewValue: 'Storage Capacity' },
-    { value: 'curtailment', viewValue: 'Curtailment' },
-    { value: 'resources', viewValue: 'Resources' },
-    { value: 'power', viewValue: 'Power' },];
-
   scopes = [
-    { value: 'monthly', viewValue: 'Monthly' },
-    { value: 'daily', viewValue: 'Daily' },
+    { value: 'years', viewValue: 'Yearly Total' },
+    { value: 'months', viewValue: 'Monthly Totals' },
+    { value: 'hours', viewValue: 'Daily Averages'}
+
   ];
 
   selectedYear: number;
@@ -44,11 +24,10 @@ export class HavenSidebarChartsComponent implements OnInit {
   selectedLoad = '';
   selectedScale = '';
   selectedValue = '';
-  selectedChart = 'scatter';
-
+  selectedChart = 'line';
   selShare: any;
 
-  constructor(private windowService: HavenWindowService, public scenariosService: ScenariosService, private http: Http) { }
+  constructor(private windowService: HavenWindowService, public scenariosService: ScenariosService) { }
 
   ngOnInit() { }
 
@@ -61,8 +40,8 @@ export class HavenSidebarChartsComponent implements OnInit {
       this.selectedScale,
       this.selectedChart
     );
-    const title = `${this.selectedValue.toLocaleUpperCase()}`;
-    const footer = `${this.scenariosService.getSelectedScenarioName()}`;
+    const title = `${this.scenariosService.getSelectedScenarioName()} - ${this.selectedValue.toLocaleUpperCase()} - ${this.selShare.year}`;
+    const footer = ``;
     const havenWindow = new HavenWindow(title, footer, 100, 100, 400, 400, false);
     const newApp = new HavenApp(`plotly-chart`, appInfo);
     havenWindow.app = newApp;
@@ -75,18 +54,19 @@ export class HavenSidebarChartsComponent implements OnInit {
 
   capacityChart() {
     this.selectedValue = 'capacity';
+    this.selectedScale = 'years';
     this.createChartWindow();
   }
 
   generationChart() {
     this.selectedValue = 'generation';
-    this.selectedScale = 'months';
+    this.selectedScale = 'hours';
     this.createChartWindow();
   }
 
   demandChart() {
     this.selectedValue = 'demand';
-    this.selectedScale = 'months';
+    this.selectedScale = 'hours';
     this.createChartWindow();
   }
 

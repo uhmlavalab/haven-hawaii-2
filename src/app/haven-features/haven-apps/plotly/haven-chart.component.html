@@ -2,16 +2,15 @@
   <mat-sidenav mode="side" class="app-sidenav" opened>
 
 
-    <li *ngFor="let scope of scopes" style="list-style: none;">
-      <button mat-raised-button (click)="changeScope(scope)" [color]="scope.color" [disabled]="scope.disabled">
-        {{scope.text}}
+    <li *ngFor="let scale of scales" style="list-style: none;">
+      <button mat-raised-button [color]="scale.color" [disabled]="scale.disabled" (click)="changeScale(scale)">
+        {{scale.text}}
       </button>
     </li>
 
     <mat-grid-list cols="2" rows="2" style="top: calc(100% - 240px);">
       <mat-grid-tile *ngFor="let chart of typeOfCharts">
-        <button mat-icon-button [matTooltip]="chart.toolTip" [color]="chart.color" (click)="changeChart(chart)"
-          [disabled]="chart.disabled">
+        <button mat-icon-button [matTooltip]="chart.toolTip" [color]="chart.color" (click)="changeChart(chart.value)" [disabled]="chart.disabled">
           <mat-icon>{{ chart.icon }}</mat-icon>
         </button>
       </mat-grid-tile>

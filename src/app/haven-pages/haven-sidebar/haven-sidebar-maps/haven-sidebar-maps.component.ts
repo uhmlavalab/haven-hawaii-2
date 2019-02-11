@@ -30,10 +30,7 @@ export class HavenSidebarMapsComponent {
     }
   ];
 
-  layerColors = {};
-
-  selectedYear: number;
-  selectedScenario = '';
+  selShare: any;
 
   colorUpdateFinished = true;
   layerColorChangeName: string;
@@ -41,13 +38,14 @@ export class HavenSidebarMapsComponent {
   }
 
   createMapWindow() {
-    const title = `Map - ${this.selectedYear}`;
-    const footer = `${this.scenariosService.getSelectedScenarioName()}`;
+    const title = `Map - ${this.scenariosService.getSelectedScenarioName()} - ${this.selShare.year}`;
+    const footer = ``;
     const havenWindow = new HavenWindow(title, footer, 100, 100, 400, 400, false);
     const appInfo = new LeafletAppInfo(
-      this.selectedScenario,
-      this.selectedYear,
-      'street',
+      this.scenariosService.getSelectedScenarioName(),
+      this.scenariosService.getSelectScenarioId(),
+      this.selShare.year,
+      this.selectedMapStyle,
       21.480066,
       -157.96,
       11);

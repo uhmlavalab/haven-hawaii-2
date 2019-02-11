@@ -125,7 +125,7 @@ exports.demandData = functions.https.onRequest((req, res) => {
       limitYear = `AND date_part('year', ltg.datetime) = ${year}`;
     } else if (scale == 'hours') {
       scaleQuery = `date_part('hours', ltg.datetime) as time, 
-                    SUM(ltg.value) / 365`;
+                    SUM(ltg.value) / 365 as sum`;
       limitYear = `AND date_part('year', ltg.datetime) = ${year}`;
     }
 
@@ -163,18 +163,38 @@ exports.generationData = functions.https.onRequest((req, res) => {
     }
     const year = req.query.year;
     const scenario = req.query.scenario;
+    const scale = req.query.scale;
 
+    let scaleQuery = null;
+    let limitYear = '';
+
+    if (scale == 'years') {
+      scaleQuery = `date_part('year', ltg.datetime) as time, 
+                    SUM(ltg.value)`;
+    } else if (scale == 'months') {
+      scaleQuery = `date_part('months', ltg.datetime) as time, 
+                    SUM(ltg.value)`;
+      limitYear = `AND date_part('year', ltg.datetime) = ${year}`;
+    } else if (scale == 'hours') {
+      scaleQuery = `date_part('hours', ltg.datetime) as time, 
+                    SUM(ltg.value) / 365 as sum`;
+      limitYear = `AND date_part('year', ltg.datetime) = ${year}`;
+    }
+    // lt.technology != 'battery' AND
     const query = `SELECT 
-                    lt.technology, ltg.datetime AS hour, SUM(ltg.value)
+                    lt.technology, 
+                    ${scaleQuery}
                   FROM 
-                    loctechs lt, loctech_generation ltg 
+                    loctechs lt, 
+                    loctech_generation ltg 
                   WHERE 
-                    lt.id = ltg.loctech AND
-                    ltg.scenario = ${scenario} AND
-                    ltg.datetime >= '${year}-01-01 00:00:00' AND
-                    ltg.datetime <= '${year}-12-31 23:00:00'
-                  GROUP BY
-                    lt.technology, hour;`;
+                    lt.technology != 'demand' AND
+                    lt.id = ltg.loctech AND 
+                    ltg.scenario = ${scenario} 
+                    ${limitYear}
+                  GROUP BY 
+                    lt.technology, 
+                    time;`;
 
     pgPool.query(query, (err, results) => {
       if (err) {
@@ -187,6 +207,42 @@ exports.generationData = functions.https.onRequest((req, res) => {
     });
   });
 });
+
+exports.solarTotalYear = functions.https.onRequest((req, res) => {
+  return cors(req, res, () => {
+    if (!pgPool) {
+      pgPool = new pg.Pool(pgConfig);
+    }
+
+    const year = req.query.year;
+    const scenario = req.query.scenario;
+
+    const query = `SELECT
+                    lt.technology, sum(ltg.value) 
+                   FROM 
+                    loctechs lt, 
+                    loctech_generation ltg 
+                   WHERE 
+                    lt.technology = 'pv' AND 
+                    lt.id = ltg.loctech AND 
+                    ltg.scenario = ${scenario} AND 
+                    date_part('year', ltg.datetime) = ${year} 
+                  GROUP BY 
+                    lt.technology;
+    `;
+
+    pgPool.query(query, (err, results) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send(err);
+      } else {
+        res.send(JSON.stringify(results));
+      }
+
+    });
+  });
+});
+
 
 exports.scenariosList = functions.https.onRequest((req, res) => {
   return cors(req, res, () => {

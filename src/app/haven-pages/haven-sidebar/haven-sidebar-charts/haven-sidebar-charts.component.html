@@ -1,15 +1,15 @@
 <mat-form-field>
-  <mat-select placeholder="Scenario" [(value)]="selShare">
+  <mat-select placeholder="Year Select" [(value)]="selShare">
     <mat-option *ngFor="let share of scenariosService.getScenarioSharesList()" [value]="share">
       {{ share.percent }}% - {{ share.year }}
     </mat-option>
   </mat-select>
 </mat-form-field>
 
-<mat-grid-list cols="3" rows="2">
+<mat-grid-list cols="2" rows="2">
 
   <mat-grid-tile>
-    <button mat-icon-button  matTooltip="Line Chart" [color]="selectedChart == 'scatter' ? 'primary' : 'warn'" (click)="setSelectedChart('scatter')">
+    <button mat-icon-button  matTooltip="Line Chart" [color]="selectedChart == 'line' ? 'primary' : 'warn'" (click)="setSelectedChart('line')">
       <mat-icon>show_chart</mat-icon>
     </button>
   </mat-grid-tile>
@@ -27,13 +27,7 @@
   </mat-grid-tile>
 
   <mat-grid-tile>
-    <button mat-icon-button matTooltip="3D Surface" [disabled]="selectedValue != 'load'" [color]="selectedChart == 'surface' ? 'primary' : 'warn'" (click)="setSelectedChart('surface')">
-      <mat-icon>layers</mat-icon>
-    </button>
-  </mat-grid-tile>
-
-  <mat-grid-tile>
-    <button mat-icon-button matTooltip="Table" [disabled]="true" [color]="selectedChart == 'table' ? 'accent' : 'accent'">
+    <button mat-icon-button matTooltip="Table" [color]="selectedChart == 'list' ? 'primary' : 'warn'" disabled="true" (click)="setSelectedChart('list')">
       <mat-icon>format_list_numbered</mat-icon>
     </button>
   </mat-grid-tile>

@@ -15,8 +15,8 @@ export class HavenHomeComponent {
   selectedDrawer = 'scenario';
 
   scenarioColor = 'primary';
-  chartColor = 'accent';
-  mapColor = 'accent';
+  chartColor = 'warn';
+  mapColor = 'warn';
 
   mainHeight: SafeStyle;
   sidebarWidth: number;
@@ -39,15 +39,15 @@ export class HavenHomeComponent {
     this.selectedDrawer = selection;
     if (selection === 'scenario') {
       this.scenarioColor = 'primary';
-      this.chartColor = 'accent';
-      this.mapColor = 'accent';
+      this.chartColor = 'warn';
+      this.mapColor = 'warn';
     } else if (selection === 'chart') {
-      this.scenarioColor = 'accent';
+      this.scenarioColor = 'warn';
       this.chartColor = 'primary';
-      this.mapColor = 'accent';
+      this.mapColor = 'warn';
     } else if (selection === 'map') {
-      this.scenarioColor = 'accent';
-      this.chartColor = 'accent';
+      this.scenarioColor = 'warn';
+      this.chartColor = 'warn';
       this.mapColor = 'primary';
     }
   }

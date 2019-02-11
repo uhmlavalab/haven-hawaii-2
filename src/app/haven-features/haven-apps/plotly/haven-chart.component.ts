@@ -28,46 +28,53 @@ export class HavenChartComponent implements OnInit {
       toolTip: 'Line Chart',
       icon: 'show_chart',
       color: 'primary',
+      value: 'line',
       disabled: false
     },
     {
       toolTip: 'Bar Chart',
       icon: 'insert_chart',
       color: 'warn',
+      value: 'bar',
       disabled: false
     },
     {
       toolTip: 'Heatmap Chart',
       icon: 'grid_on',
       color: 'warn',
+      value: 'heat',
       disabled: false
     },
     {
       toolTip: 'List',
       icon: 'format_list_numbered',
       color: 'accent',
+      value: 'list',
       disabled: true
     },
   ];
 
-  scopes = [
+  scales = [
     {
-      text: 'Yearly Total',
+      text: 'Yearly Totals',
+      value: 'years',
       color: 'primary',
       toolTip: '',
       disabled: false
     },
     {
-      text: 'Monthly Total',
+      text: 'Monthly Totals',
+      value: 'months',
       color: 'warn',
       toolTip: '',
       disabled: false
     },
     {
-      text: 'Daily Average',
+      text: 'Daily Averages',
+      value: 'hours',
       color: 'warn',
       toolTip: '',
-      disabled: true
+      disabled: false
     }
   ];
 
@@ -89,10 +96,46 @@ export class HavenChartComponent implements OnInit {
   ngOnInit() {
     this.loaded = false;
     this.plotlyInfo = this.havenApp.appInfo;
+    if (this.plotlyInfo.valueType == 'capacity') { this.scales[1].disabled = true; this.scales[2].disabled = true; }
+    this.scales.forEach(el => { (el.value == this.plotlyInfo.scale) ? el.color = 'primary' : el.color = 'warn' })
     switch (this.plotlyInfo.valueType) {
       case 'capacity':
         this.dbSql.getCapactiyData(this.plotlyInfo.scenarioId).then((data) => {
-          console.log(this.plotlyInfo);
+          this.rawData = data;
+          this.formattedData = data;
+          this.loaded = true;
+          this.changeChart(this.plotlyInfo.chartType);
+        })
+        break;
+      case 'demand':
+        this.dbSql.getDemandData(this.plotlyInfo.scenarioId, this.plotlyInfo.year, this.plotlyInfo.scale).then((data) => {
+          this.rawData = data;
+          this.formattedData = data;
+          this.loaded = true;
+          this.changeChart(this.plotlyInfo.chartType);
+        })
+        break;
+      case 'generation':
+        this.dbSql.getGenerationData(this.plotlyInfo.scenarioId, this.plotlyInfo.year, this.plotlyInfo.scale).then((data) => {
+          this.rawData = data;
+          this.formattedData = data;
+          this.loaded = true;
+          this.changeChart(this.plotlyInfo.chartType);
+        })
+        break;
+      default:
+        break;
+    }
+  }
+
+  changeScale(scale: any) {
+    if (this.plotlyInfo.valueType == 'capacity') return;
+    this.loaded = false;
+    this.plotlyInfo.scale = scale.value;
+    this.scales.forEach(el => { (el.value == this.plotlyInfo.scale) ? el.color = 'primary' : el.color = 'warn' })
+    switch (this.plotlyInfo.valueType) {
+      case 'capacity':
+        this.dbSql.getCapactiyData(this.plotlyInfo.scenarioId).then((data) => {
           this.rawData = data;
           this.formattedData = data;
           this.createLineChart();
@@ -117,65 +160,6 @@ export class HavenChartComponent implements OnInit {
     }
   }
 
-  monthlyFormat(data: any): any {
-    const newData = {};
-    console.log(data);
-    Object.keys(data).forEach(el => {
-      if (!newData[el]) newData[el] = [];
-      data[el].forEach(el2 => {
-        const month = new Date(el2[0]).getMonth();
-        const value = Number(el2[1]);
-        const found = newData[el].find(element => { return element[0] == month })
-        if (!found) {
-          newData[el].push([month, value]);
-        } else {
-          found[1] += value
-        }
-      })
-      newData[el].sort((a, b) => (a[0] > b[0]) ? 1 : -1);
-    });
-    Object.keys(newData).forEach(el1 => newData[el1].forEach(el2 => el2[0] = this.monthsOfYear[el2[0]]));
-    return newData;
-  }
-
-  weeklyFormat(data: any): any {
-    const newData = {};
-    Object.keys(data).forEach(el => {
-      if (!newData[el]) newData[el] = [];
-      data[el].forEach(el2 => {
-        const dayOfWeek = new Date(el2[0]).getDay();
-        const value = Number(el2[1]);
-        const found = newData[el].find(element => { return element[0] == dayOfWeek })
-        if (!found) {
-          newData[el].push([dayOfWeek, value]);
-        } else {
-          found[1] += value
-        }
-      })
-      newData[el].sort((a, b) => (a[0] > b[0]) ? 1 : -1);
-    });
-    Object.keys(newData).forEach(el1 => newData[el1].forEach(el2 => el2[0] = this.daysOfWeek[el2[0]]));
-    return newData;
-  }
-
-  dailyFormat(data: any): any {
-    const newData = {};
-    Object.keys(data).forEach(el => {
-      if (!newData[el]) newData[el] = [];
-      data[el].forEach(el2 => {
-        const hourOfDay = new Date(el2[0]).getUTCHours();
-        const value = Number(el2[1]);
-        const found = newData[el].find(element => { return element[0] == hourOfDay })
-        if (!found) {
-          newData[el].push([hourOfDay, value]);
-        } else {
-          found[1] += value
-        }
-      })
-      newData[el].sort((a, b) => (a[0] > b[0]) ? 1 : -1);
-    });
-    return newData;
-  }
 
   resize() {
     if (this.loaded) {
@@ -187,55 +171,22 @@ export class HavenChartComponent implements OnInit {
     }
   }
 
-  changeScope(selectedScope: any) {
-    this.loaded = false;
-    this.scopes.forEach(el => {
-      if (selectedScope.text === el.text) {
-        el.color = 'primary';
-      } else {
-        el.color = 'warn';
-      }
-    });
-    const currentChart = this.typeOfCharts.find(el => el.color == 'primary')
-    console.log(selectedScope);
-    switch (selectedScope.text) {
-      case 'Monthly':
-        this.loaded = false;
-        this.formattedData = null;
-        this.formattedData = this.monthlyFormat(this.rawData);
-        this.changeChart(currentChart);
-        break;
-      case 'Weekly':
-        this.loaded = false;
-        this.formattedData = null;
-        this.formattedData = this.weeklyFormat(this.rawData);
-        this.changeChart(currentChart);
-        break;
-      case 'Daily':
-        this.loaded = false;
-        this.formattedData = null;
-        this.formattedData = this.dailyFormat(this.rawData);
-        this.changeChart(currentChart);
-        break;
-    }
-  }
-
-  changeChart(selectedChart: any) {
+  changeChart(selectedChart: string) {
     this.typeOfCharts.forEach(el => {
-      if (selectedChart.icon === el.icon) {
+      if (el.value === selectedChart) {
         el.color = 'primary';
       } else {
         el.color = 'warn';
       }
     });
-    switch (selectedChart.icon) {
-      case 'show_chart':
+    switch (selectedChart) {
+      case 'line':
         this.createLineChart();
         break;
-      case 'insert_chart':
+      case 'bar':
         this.createBarChart();
         break;
-      case 'grid_on':
+      case 'heat':
         this.createHeatMap();
         break;
     }
@@ -250,8 +201,9 @@ export class HavenChartComponent implements OnInit {
         mode: 'lines',
         type: 'scatter',
         x: [],
-        y: []
+        y: [],
       };
+      if (this.plotlyInfo.valueType == 'generation') trace['stackgroup'] = 'one';
       this.formattedData[el].forEach(dataPoint => {
         trace.x.push(dataPoint[0]);
         trace.y.push(dataPoint[1]);
@@ -307,6 +259,7 @@ export class HavenChartComponent implements OnInit {
       font: {
         family: 'Roboto, sans-serif',
       },
+      barmode: 'stack'
     };
     Plotly.newPlot(this.chartDiv.nativeElement, traces, layout);
   }
