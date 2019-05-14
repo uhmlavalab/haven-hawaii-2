@@ -46,11 +46,11 @@ export class HavenChartComponent implements OnInit {
       disabled: false
     },
     {
-      toolTip: 'List',
-      icon: 'format_list_numbered',
+      toolTip: '3DChart',
+      icon: 'waves',
       color: 'accent',
-      value: 'list',
-      disabled: true
+      value: '3d',
+      disabled: false
     },
   ];
 
@@ -108,7 +108,7 @@ export class HavenChartComponent implements OnInit {
         })
         break;
       case 'demand':
-        this.dbSql.getDemandData(this.plotlyInfo.scenarioId, this.plotlyInfo.year, this.plotlyInfo.scale).then((data) => {
+        this.dbSql.getDemandData(this.plotlyInfo.scenarioId, this.plotlyInfo.year, this.plotlyInfo.scale, 1).then((data) => {
           this.rawData = data;
           this.formattedData = data;
           this.loaded = true;
@@ -142,7 +142,7 @@ export class HavenChartComponent implements OnInit {
         })
         break;
       case 'demand':
-        this.dbSql.getDemandData(this.plotlyInfo.scenarioId, this.plotlyInfo.year, this.plotlyInfo.scale).then((data) => {
+        this.dbSql.getDemandData(this.plotlyInfo.scenarioId, this.plotlyInfo.year, this.plotlyInfo.scale, 1).then((data) => {
           this.rawData = data;
           this.formattedData = data;
           this.createLineChart();
@@ -188,6 +188,9 @@ export class HavenChartComponent implements OnInit {
         break;
       case 'heat':
         this.createHeatMap();
+        break;
+      case '3d':
+        this.create3DChart();
         break;
     }
   }
@@ -305,4 +308,62 @@ export class HavenChartComponent implements OnInit {
     };
     Plotly.newPlot(this.chartDiv.nativeElement, trace, layout);
   }
+
+  create3DChart() {
+    this.loaded = false;
+    this.dbSql.getDemandData(this.plotlyInfo.scenarioId, this.plotlyInfo.year, this.plotlyInfo.scale, 0).then((data) => {
+      const trace = [
+        {
+          z: [
+            [8.83,8.89,8.81,8.87,8.9,8.87],
+            [8.89,8.94,8.85,8.94,8.96,8.92],
+            [8.84,8.9,8.82,8.92,8.93,8.91],
+            [8.79,8.85,8.79,8.9,8.94,8.92],
+            [8.79,8.88,8.81,8.9,8.95,8.92],
+            [8.8,8.82,8.78,8.91,8.94,8.92],
+            [8.75,8.78,8.77,8.91,8.95,8.92],
+            [8.8,8.8,8.77,8.91,8.95,8.94],
+            [8.74,8.81,8.76,8.93,8.98,8.99],
+            [8.89,8.99,8.92,9.1,9.13,9.11],
+            [8.97,8.97,8.91,9.09,9.11,9.11],
+            [9.04,9.08,9.05,9.25,9.28,9.27],
+            [9,9.01,9,9.2,9.23,9.2],
+            [8.99,8.99,8.98,9.18,9.2,9.19],
+            [8.93,8.97,8.97,9.18,9.2,9.18]
+        ],
+          type: 'surface',
+          colorscale: 'Portland',
+        }
+      ];
+      console.log(data);
+      // Object.keys(data).forEach(el => {
+      //   const vals = [];
+      //   data[el].forEach(dataPoint => {
+      //     vals.push(dataPoint[1]);
+      //   });
+      //   trace[0].z.push(vals);
+      // });
+
+      this.loaded = true;
+      this.changeDetector.detectChanges();
+      const layout = {
+        height: this.chartDiv.nativeElement.getBoundingClientRect().height,
+        width: this.chartDiv.nativeElement.getBoundingClientRect().width,
+        margin: {
+          t: 35,
+          l: 55,
+          r: 20,
+          b: 50,
+        },
+        font: {
+          family: 'Roboto, sans-serif',
+        },
+        hovermode: 'closest',
+      };
+      Plotly.newPlot(this.chartDiv.nativeElement, trace, layout);
+    })
+
+  }
+
+
 }

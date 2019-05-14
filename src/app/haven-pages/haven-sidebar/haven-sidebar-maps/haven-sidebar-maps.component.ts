@@ -13,6 +13,8 @@ import { HavenApp } from '@app/haven-features';
   styleUrls: ['./haven-sidebar-maps.component.css']
 })
 export class HavenSidebarMapsComponent {
+  selectedScenario = '';
+  scenarios = [];
 
   selectedMapStyle = 'street';
   mapStyles = [
@@ -35,6 +37,9 @@ export class HavenSidebarMapsComponent {
   colorUpdateFinished = true;
   layerColorChangeName: string;
   constructor(public dialog: MatDialog, private windowService: HavenWindowService, public layersService: LayersService, public scenariosService: ScenariosService, public layerService: LayersService) {
+    this.scenariosService.getScenariosList().then(scenarios => {
+      this.scenarios = scenarios;
+    });
   }
 
   createMapWindow() {
@@ -56,6 +61,10 @@ export class HavenSidebarMapsComponent {
 
   setMapStyle(styleName: string) {
     this.selectedMapStyle = styleName;
+  }
+
+  setScenario() {
+    this.scenariosService.setScenario(this.selectedScenario);
   }
 
 }

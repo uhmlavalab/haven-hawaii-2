@@ -18,7 +18,7 @@ const router: Routes = [
   },
   {
     path: '',
-    component: HavenHomeComponent
+    component: HavenLoginComponent
   },
   {
     path: '**',

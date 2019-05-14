@@ -1,0 +1,19 @@
+<mat-grid-list cols="1" rowHeight="2:1">
+  <mat-grid-tile>
+    <mat-list>
+      <h3 mat-header>My Scenarios</h3>
+      <mat-divider></mat-divider>
+      <mat-list-item *ngFor="let scenario of myScenarios">
+        <button mat-mini-fab color="warn">
+          <mat-icon aria-label="Add Scenario to Your Collection">remove</mat-icon>
+        </button>
+        <h5 mat-line style="font-weight: bold;">{{scenario.name}}</h5>
+        <h5>{{scenario.description}}</h5>
+        <h5 mat-line>{{scenario.startDate | date:'mediumDate'}} - {{scenario.endDate | date:'mediumDate'}}</h5>
+        <input matInput type="color" [(value)]="scenario.color" (change)="onColorChange($event, scenario.firestore_id)">
+
+      </mat-list-item>
+
+    </mat-list>
+  </mat-grid-tile>
+</mat-grid-list>

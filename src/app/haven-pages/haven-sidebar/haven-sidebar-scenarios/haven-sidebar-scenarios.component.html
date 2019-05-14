@@ -1,14 +1,11 @@
+
+
+<button mat-raised-button color="primary" (click)="newScenario()">New Scenario</button>
+<button mat-raised-button color="primary" (click)="configureScenarios()">Configure Scenarios</button>
+<button mat-raised-button color="primary" (click)="editScenarios()">Edit Scenarios</button>
+
+
 <mat-form-field>
-  <mat-select placeholder="Scenario" [(value)]="selectedScenario">
-    <mat-option *ngFor="let scenario of scenarios" [value]="scenario">
-      {{ scenario.name }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
-<button mat-raised-button color="primary" (click)="loadScenario()">Load Scenario</button>
-
-<!-- <mat-form-field>
   <mat-select placeholder="Session" [(value)]="selectedSession">
     <mat-option *ngFor="let session of sessionsService.getSessionsList() | async" [value]="session">
       {{ session.sessionName }} - {{ session.timestamp  | date:'short'}}
@@ -18,7 +15,7 @@
 
 <button mat-raised-button color="primary" (click)="loadSession()">Load Session</button>
 <button mat-raised-button color="primary" (click)="saveSession()">Save Session</button>
-<button mat-raised-button color="warn" (click)="deleteSession()">Delete Session</button> -->
+<button mat-raised-button color="warn" (click)="deleteSession()">Delete Session</button>
 
 <mat-divider style="margin-top: 8px"></mat-divider>
 

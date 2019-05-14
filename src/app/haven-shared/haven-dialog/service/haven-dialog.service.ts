@@ -5,6 +5,9 @@ import { HavenMessageDialogComponent } from '../components/haven-message-dialog/
 import { HavenConfirmDialogComponent } from '../components/haven-confirm-dialog/haven-confirm-dialog.component';
 import { HavenSavesessionDialogComponent } from '../components/haven-savesession-dialog/haven-savesession-dialog.component';
 import { HavenLoadingDialogComponent } from '../components/haven-loading-dialog/haven-loading-dialog.component';
+import { HavenScenarioConfigComponent } from '../components/haven-scenario-config/haven-scenario-config.component';
+import { HavenScenarioEditComponent } from '../components/haven-scenario-edit/haven-scenario-edit.component';
+
 
 @Injectable()
 export class HavenDialogService {
@@ -13,7 +16,7 @@ export class HavenDialogService {
 
   openErrorDialog(message: string): MatDialogRef<HavenMessageDialogComponent> {
     const dialogRef = this.dialog.open(HavenMessageDialogComponent, {
-      width: '300px',
+      width: '30vw',
       data: { title: 'Error', message: message }
     });
     return dialogRef;
@@ -21,7 +24,7 @@ export class HavenDialogService {
 
   openMessageDialog(message: string): MatDialogRef<HavenMessageDialogComponent> {
     const dialogRef = this.dialog.open(HavenMessageDialogComponent, {
-      width: '300px',
+      width: '30vw',
       data: { title: 'Message', message: message }
     });
     return dialogRef;
@@ -29,7 +32,7 @@ export class HavenDialogService {
 
   openConfirmationMessage(message: string): MatDialogRef<HavenConfirmDialogComponent> {
     const dialogRef = this.dialog.open(HavenConfirmDialogComponent, {
-      width: '300px',
+      width: '30vw',
       data: { title: 'Confirm', message: message }
     });
     return dialogRef;
@@ -37,7 +40,7 @@ export class HavenDialogService {
 
   openLoadingDialog(message: string): MatDialogRef<HavenLoadingDialogComponent> {
     const dialogRef = this.dialog.open(HavenLoadingDialogComponent, {
-      width: '300px',
+      width: '30vw',
       data: { title: 'Loading', message: message }
     });
     return dialogRef;
@@ -45,11 +48,22 @@ export class HavenDialogService {
 
   openSaveSessionDialog() {
     const dialogRef = this.dialog.open(HavenSavesessionDialogComponent, {
-      width: '300px',
+      width: '30vw',
     });
     return dialogRef;
   }
 
+  openScenarioConfigDialog() {
+    const dialogRef = this.dialog.open(HavenScenarioConfigComponent, {
+      width: '80vw',
+    });
+    return dialogRef;
+  }
 
-
+  openScenarioEditDialog() {
+    const dialogRef = this.dialog.open(HavenScenarioEditComponent, {
+      width: '80vw',
+    });
+    return dialogRef;
+  }
 }

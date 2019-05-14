@@ -14,11 +14,13 @@ export class HavenLoginComponent {
   password = '';
   messageText: string;
 
-  constructor(private authService: AuthService, public dialogService: HavenDialogService) { }
+  constructor(private authService: AuthService, public dialogService: HavenDialogService) { 
+    this.login();
+  }
 
   login() {
     // if (this.email && this.password) {
-      this.authService.signinUser('havenhseo@gmail.com', 'havenhaven', 'home');
+      this.authService.signinUser('havenhseo@gmail.com', 'haven1', 'home');
     // }
   }
 

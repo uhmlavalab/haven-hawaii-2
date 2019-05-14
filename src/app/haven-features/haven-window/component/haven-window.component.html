@@ -1,6 +1,6 @@
 <div #windowDiv class="window" style="position:absolute;" appHavenWindowBringforward [havenWindow]="havenWindow">
 
-  <mat-toolbar appHavenWindowDrag [havenWindow]="havenWindow" [windowDiv]="windowDiv" class="window-header" color="primary">
+  <mat-toolbar #windowHeader class="window-header" appHavenWindowDrag [havenWindow]="havenWindow" [windowDiv]="windowDiv" color="primary" >
     <mat-toolbar-row>
       <span>{{ havenWindow.header }} </span>
       <span class="example-spacer"></span>
@@ -25,7 +25,7 @@
     </div>
   </mat-drawer-container>
 
-  <mat-toolbar class="window-footer" color="primary" style="min-height: 20px; height: 20px;">
+  <mat-toolbar #windowFooter class="window-footer" color="primary" style="min-height: 20px; height: 20px;">
     <mat-toolbar-row>
       <span style="font-size: 12px"> {{ havenWindow.footer }} </span>
       <span class="example-spacer"></span>

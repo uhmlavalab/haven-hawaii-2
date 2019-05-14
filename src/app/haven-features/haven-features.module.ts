@@ -42,6 +42,7 @@ import { HavenWindowResizeDirective } from './haven-window/directives/haven-wind
     HavenWindowMaximizeDirective,
     HavenWindowResizeDirective,
 
+
   ],
   exports: [
     // Apps

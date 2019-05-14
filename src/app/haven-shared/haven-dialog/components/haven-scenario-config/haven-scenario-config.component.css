@@ -1,0 +1,36 @@
+.mat-raised-button {
+    width: 100%;
+  }
+
+  .mat-grid-tile {
+    width: 100%;
+  }
+  .mat-list {
+    width: 100%;
+    position: absolute;
+    top: 0px;
+  }
+
+  .mat-list > h3 {
+    margin-top: 0px !important;
+    }
+
+    .example-container {
+      display: flex;
+      flex-direction: column;
+      min-width: 300px;
+    }
+    
+    .example-header {
+      min-height: 64px;
+      padding: 8px 24px 0;
+    }
+    
+    .mat-form-field {
+      font-size: 14px;
+      width: 100%;
+    }
+    
+    .mat-table {
+      height: 60vh;
+    }

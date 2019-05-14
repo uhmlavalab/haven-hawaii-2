@@ -19,8 +19,10 @@ export class HavenSidebarChartsComponent implements OnInit {
 
   ];
 
-  selectedYear: number;
+  scenarios = [];
+
   selectedScenario = '';
+  selectedYear: number;
   selectedLoad = '';
   selectedScale = '';
   selectedValue = '';
@@ -29,7 +31,11 @@ export class HavenSidebarChartsComponent implements OnInit {
 
   constructor(private windowService: HavenWindowService, public scenariosService: ScenariosService) { }
 
-  ngOnInit() { }
+  ngOnInit() { 
+    this.scenariosService.getScenariosList().then(scenarios => {
+      this.scenarios = scenarios;
+    });
+  }
 
   createChartWindow() {
     const appInfo = new HavenChartAppInfo(
@@ -68,6 +74,10 @@ export class HavenSidebarChartsComponent implements OnInit {
     this.selectedValue = 'demand';
     this.selectedScale = 'hours';
     this.createChartWindow();
+  }
+
+  setScenario() {
+    this.scenariosService.setScenario(this.selectedScenario);
   }
 
 }

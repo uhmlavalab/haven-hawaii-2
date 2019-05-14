@@ -7,6 +7,15 @@ import { map } from 'rxjs/operators';
 import { HttpHeaders } from '@angular/common/http';
 import { Http } from '@angular/http';
 
+import { AngularFireAuth } from 'angularfire2/auth';
+
+/*
+254441
+E4572E
+F3A712
+313E50
+21295C
+*/
 
 @Injectable()
 export class ScenariosService {
@@ -15,10 +24,10 @@ export class ScenariosService {
 
   private scenarioShares = [];
 
-  constructor() {}
+  constructor(private auth: AngularFireAuth) { }
 
   public getScenariosList(): Promise<any> {
-    return new Promise(function(resolve) {
+    return new Promise(function (resolve) {
       var req = new XMLHttpRequest();
       req.onload = () => {
         const results = JSON.parse(req.responseText) as any;
@@ -33,16 +42,16 @@ export class ScenariosService {
   }
 
 
-  public setScenario(scenario: any) {
+  public setScenario(scenario: any): Promise<any> {
     this.selectedScenario = scenario;
-    this.getSharesList().then(shares => {
+    return this.getSharesList().then(shares => {
       this.scenarioShares = shares;
-      this.scenarioShares.sort((a,b) => (a.year > b.year) ? 1 : -1);
+      this.scenarioShares.sort((a, b) => (a.year > b.year) ? 1 : -1);
       this.scenarioShares.forEach(element => { element.percent = Number(element.percent * 100).toFixed(2); });
     });
   }
 
-  private getSharesList(): Promise<any>  {
+  private getSharesList(): Promise<any> {
     return new Promise((resolve) => {
       var req = new XMLHttpRequest();
       req.onload = () => {
@@ -68,5 +77,18 @@ export class ScenariosService {
   public getScenarioSharesList() {
     return this.scenarioShares;
   }
+
+  public getScenarioColor(scenarioId: number): Promise<any> {
+    return new Promise((resolve) => {
+      let value = null;
+      firebase.firestore().collection(`${this.auth.auth.currentUser.uid}/data/scenarios`).where("id", "==", scenarioId).get().then(data => {
+        data.forEach(el => {
+          value = el.data().color;
+        })
+        return resolve(value);
+      })
+    });
+  }
+
 
 }

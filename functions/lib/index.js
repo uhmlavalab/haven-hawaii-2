@@ -23,11 +23,15 @@ exports.capacityData = functions.https.onRequest((req, res) => {
         }
         let scenario = req.query.scenario;
         let query = `SELECT 
-                    lt.id, lt.technology, ltc.year, ltc.value 
+                    lt.technology, ltc.year, sum(ltc.value)
                   FROM 
                     loctechs lt, loctech_capacity ltc 
                   WHERE 
-                    lt.id = ltc.loctech AND ltc.scenario = ${scenario};`;
+                    lt.id = ltc.loctech AND ltc.scenario = ${scenario}
+                  GROUP BY 
+                    lt.technology, ltc.year
+                  ORDER BY 
+                    ltc.year ASC;`;
         const responseResults = {};
         pgPool.query(query, (err, results) => {
             if (err) {
@@ -35,61 +39,7 @@ exports.capacityData = functions.https.onRequest((req, res) => {
                 res.status(500).send(err);
             }
             else {
-                results.rows.forEach(element => {
-                    let technology = element['technology'];
-                    let id = element['id'];
-                    const year = element['year'];
-                    const value = Number(element['value']);
-                    // TEMP FIX FOR FEBUARY 7th. Fossil/Bio Conversion. NREL DATA EE
-                    if (scenario == 2) {
-                        if (technology == 'fossil' && Number(year) == 2045 && Number(id) != 119) {
-                            technology = 'bio';
-                        }
-                    }
-                    //////////////////////////////////////
-                    if (!responseResults[technology]) {
-                        responseResults[technology] = {};
-                    }
-                    if (!responseResults[technology][year]) {
-                        responseResults[technology][year] = 0;
-                    }
-                    responseResults[technology][year] += value;
-                });
-                // TEMP FIX FOR FEBUARY 7th. Fossil/Bio Conversion. NREL DATA EE
-                if (scenario == 2) {
-                    scenario = 1;
-                    query = `SELECT 
-                    lt.id, lt.technology, ltc.year, ltc.value 
-                      FROM 
-                    loctechs lt, loctech_capacity ltc 
-                      WHERE 
-                    lt.id = ltc.loctech AND ltc.scenario = ${scenario} AND ltc.year < 2030;`;
-                    pgPool.query(query, (error, rests) => {
-                        if (error) {
-                            console.error(error);
-                            res.status(500).send(error);
-                        }
-                        else {
-                            rests.rows.forEach(element => {
-                                let technology = element['technology'];
-                                const year = element['year'];
-                                const value = Number(element['value']);
-                                if (!responseResults[technology]) {
-                                    responseResults[technology] = {};
-                                }
-                                if (!responseResults[technology][year]) {
-                                    responseResults[technology][year] = 0;
-                                }
-                                responseResults[technology][year] += value;
-                            });
-                            res.send(JSON.stringify(responseResults));
-                        }
-                    });
-                }
-                //////////////////////////////////////
-                else {
-                    res.send(JSON.stringify(responseResults));
-                }
+                res.send(JSON.stringify(results));
             }
         });
     });
@@ -102,36 +52,59 @@ exports.demandData = functions.https.onRequest((req, res) => {
         const year = req.query.year;
         const scenario = req.query.scenario;
         const scale = req.query.scale;
+        const agg = req.query.aggregate;
         let scaleQuery = null;
         let limitYear = '';
-        if (scale == 'years') {
-            scaleQuery = `date_part('year', ltg.datetime) as time, 
+        let query = '';
+        if (agg == 1) {
+            if (scale == 'years') {
+                scaleQuery = `date_part('year', ltg.datetime) as time, 
                     SUM(ltg.value)`;
-        }
-        else if (scale == 'months') {
-            scaleQuery = `date_part('months', ltg.datetime) as time, 
+            }
+            else if (scale == 'months') {
+                scaleQuery = `date_part('months', ltg.datetime) as time, 
                     SUM(ltg.value)`;
-            limitYear = `AND date_part('year', ltg.datetime) = ${year}`;
-        }
-        else if (scale == 'hours') {
-            scaleQuery = `date_part('hours', ltg.datetime) as time, 
+                limitYear = `AND date_part('year', ltg.datetime) = ${year}`;
+            }
+            else if (scale == 'hours') {
+                scaleQuery = `date_part('hours', ltg.datetime) as time, 
                     SUM(ltg.value) / 365 as sum`;
-            limitYear = `AND date_part('year', ltg.datetime) = ${year}`;
+                limitYear = `AND date_part('year', ltg.datetime) = ${year}`;
+            }
+            query = `SELECT 
+                      lt.technology, 
+                      ${scaleQuery}
+                    FROM 
+                      loctechs lt, 
+                      loctech_generation ltg 
+                    WHERE 
+                      lt.technology = 'demand' AND
+                      lt.id = ltg.loctech AND 
+                      ltg.scenario = ${scenario} 
+                      ${limitYear}
+                    GROUP BY 
+                      lt.technology, 
+                      time;`;
         }
-        const query = `SELECT 
-                    lt.technology, 
-                    ${scaleQuery}
-                  FROM 
-                    loctechs lt, 
-                    loctech_generation ltg 
-                  WHERE 
-                    lt.technology = 'demand' AND
-                    lt.id = ltg.loctech AND 
-                    ltg.scenario = ${scenario} 
-                    ${limitYear}
-                  GROUP BY 
-                    lt.technology, 
-                    time;`;
+        else {
+            console.log('Demand Time');
+            query = `SELECT 
+                      lt.technology, 
+                      extract(month from ltg.datetime) as mon,
+                      extract(year from ltg.datetime) as yyyy,
+                      SUM(ltg.value)
+                    FROM 
+                      loctechs lt, 
+                      loctech_generation ltg 
+                    WHERE 
+                      lt.technology = 'demand' AND
+                      lt.id = ltg.loctech AND 
+                      ltg.scenario = ${scenario} 
+                    GROUP BY 
+                      lt.technology, 
+                      mon,
+                      yyyy;`;
+        }
         pgPool.query(query, (err, results) => {
             if (err) {
                 console.error(err);

@@ -1,0 +1,90 @@
+<!-- <mat-grid-list cols="2" rowHeight="2:1">
+  <mat-grid-tile>
+    <mat-list>
+      <h3 mat-header>My Scenarios</h3>
+      <mat-divider></mat-divider>
+      <mat-list-item *ngFor="let scenario of myScenarios">
+        <button mat-mini-fab color="warn">
+          <mat-icon aria-label="Add Scenario to Your Collection">remove</mat-icon>
+        </button>
+        <h5 mat-line style="font-weight: bold;">{{scenario.name}}</h5>
+        <h5>{{scenario.description}}</h5>
+        <h5 mat-line>{{scenario.startDate | date:'mediumDate'}} - {{scenario.endDate | date:'mediumDate'}}</h5>
+        <input matInput type="color" [(value)]="scenario.color" (change)="onColorChange($event, scenario.id)">
+
+      </mat-list-item>
+
+    </mat-list>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-list>
+      <h3 mat-header>Available Scenarios</h3>
+      <mat-divider></mat-divider>
+      <mat-list-item *ngFor="let scenario of scenarios">
+        <button mat-mini-fab color="primary">
+          <mat-icon aria-label="Add Scenario to Your Collection">add</mat-icon>
+        </button>
+        <h4 mat-line style="font-weight: bold;">{{scenario.name}}</h4>
+        <h5 mat-line>{{scenario.description}}</h5>
+      </mat-list-item>
+    </mat-list>
+  </mat-grid-tile>
+</mat-grid-list> -->
+
+
+<div class="example-header">
+  <mat-form-field>
+    <input matInput (keyup)="applyAvailableScenarioFiltr($event.target.value)" placeholder="Filter">
+  </mat-form-field>
+</div>
+
+
+<mat-table *ngIf="loaded" #table [dataSource]="availableScenariosSource">
+
+  <!-- id Column -->
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef> Scenario ID </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.id}} </mat-cell>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+  </ng-container>
+
+  <!-- Location Column -->
+  <ng-container matColumnDef="location">
+    <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.location}} </mat-cell>
+  </ng-container>
+
+  <!-- SubLocation Column -->
+  <ng-container matColumnDef="sublocation">
+      <mat-header-cell *matHeaderCellDef> Sublocation </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.sublocation}} </mat-cell>
+    </ng-container>
+
+  <!-- Descripion Column -->
+  <ng-container matColumnDef="description">
+    <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
+  </ng-container>
+
+  <!-- add Column -->
+  <ng-container matColumnDef="edit">
+    <mat-header-cell *matHeaderCellDef> Edit </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+        <button *ngIf="myScenarios_Ids.includes(element.id)" mat-raised-button color="primary" (click)='addScenario(element)'>Add Scenario</button>
+        <button *ngIf="!myScenarios_Ids.includes(element.id)" mat-raised-button color="warn" (click)='removeScenario(element)'>Remove Scenario</button>
+
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="availableScenariosColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: availableScenariosColumns;"></mat-row>
+</mat-table>
+
+<div mat-dialog-actions>
+  <button mat-raised-button color="warn" (click)="onCloseClick()">Close</button>
+</div>

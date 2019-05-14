@@ -38,6 +38,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatGridListModule } from '@angular/material/grid-list';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven-savesession-dialog/haven-savesession-dialog.component';
+import { HavenScenarioConfigComponent } from './haven-dialog/components/haven-scenario-config/haven-scenario-config.component';
+import { HavenScenarioEditComponent } from './haven-dialog/components/haven-scenario-edit/haven-scenario-edit.component';
 
 
 @NgModule({
@@ -77,6 +79,8 @@ import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven
     HavenConfirmDialogComponent,
     HavenSavesessionDialogComponent,
     HavenLoadingDialogComponent,
+    HavenScenarioConfigComponent,
+    HavenScenarioEditComponent,
   ],
   exports: [
     CommonModule,
@@ -119,7 +123,9 @@ import { HavenSavesessionDialogComponent } from './haven-dialog/components/haven
     HavenMessageDialogComponent,
     HavenConfirmDialogComponent,
     HavenSavesessionDialogComponent,
-    HavenLoadingDialogComponent
+    HavenLoadingDialogComponent,
+    HavenScenarioConfigComponent,
+    HavenScenarioEditComponent
   ]
 })
 export class HavenSharedModule { }

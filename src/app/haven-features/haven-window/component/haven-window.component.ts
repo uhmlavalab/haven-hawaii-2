@@ -1,9 +1,11 @@
-import { Component, AfterContentInit, Input, ViewChild, Renderer } from '@angular/core';
+import { Component, AfterContentInit, ViewChild, Renderer } from '@angular/core';
 
-import { HavenWindowService } from '@app/haven-core';
+import { HavenWindowService, ScenariosService } from '@app/haven-core';
 import { Globals } from '@app/haven-core';
 
 import { HavenWindow } from '../shared/haven-window';
+import { viewClassName } from '@angular/compiler';
+import { MatToolbar } from '@angular/material';
 
 @Component({
   selector: 'app-haven-window',
@@ -14,19 +16,25 @@ import { HavenWindow } from '../shared/haven-window';
 export class HavenWindowComponent implements AfterContentInit {
 
   @ViewChild('windowDiv') windowDiv;
+  @ViewChild('windowHeader') windowHeader: MatToolbar
+  @ViewChild('windowFooter') windowFooter: MatToolbar
   @ViewChild('appRef') appRef;
 
   drawerOpen = false;
 
   havenWindow: HavenWindow;
 
-  constructor(private havenWindowService: HavenWindowService, private _renderer: Renderer, private globals: Globals) { }
+  constructor(private havenWindowService: HavenWindowService, private scenariosService: ScenariosService, private _renderer: Renderer, private globals: Globals) {
+   
+
+  }
 
   ngAfterContentInit() {
     this.setWindowInitialSettings();
     this.havenWindowService.WindowZUpdate.subscribe(windows => {
       this.windowDiv.nativeElement.style.zIndex = windows[this.havenWindow.id];
     });
+
   }
 
   setWindowInitialSettings() {
@@ -35,6 +43,10 @@ export class HavenWindowComponent implements AfterContentInit {
     this.windowDiv.nativeElement.style.left = this.havenWindow.position.left + 'px';
     this.windowDiv.nativeElement.style.top = this.havenWindow.position.top + 'px';
     this.windowDiv.nativeElement.style.zIndex = 100;
+    this.scenariosService.getScenarioColor(this.havenWindow.app.appInfo.scenarioId).then(color => {
+      this.windowHeader._elementRef.nativeElement.style.backgroundColor = color;
+      this.windowFooter._elementRef.nativeElement.style.backgroundColor = color;
+    })
     this.havenWindowService.bringWindowForward(this.havenWindow.id);
   }
 

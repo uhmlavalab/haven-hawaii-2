@@ -12,28 +12,10 @@ import { HavenDialogService } from '@app/haven-shared';
 })
 export class HavenSidebarScenariosComponent {
 
-  selectedScenario: any;
   selectedSession: any;
-  scenarios = [];
 
   constructor(private havenWindowService: HavenWindowService, public scenariosService: ScenariosService, public sessionsService: SessionsService, private dialogService: HavenDialogService, public dialog: MatDialog,  ) { 
-    this.scenariosService.getScenariosList().then(scenarios => {
-      this.scenarios = scenarios;
 
-    });
-  }
-
-  loadScenario() {
-    if (this.selectedScenario) {
-      this.dialogService.openConfirmationMessage(`Are you sure you want to LOAD the ${this.selectedScenario.name} session?`)
-        .afterClosed()
-        .subscribe(result => {
-          if (result) {
-            console.log(this.selectedScenario);
-            this.scenariosService.setScenario(this.selectedScenario);
-          }
-      });
-    }
   }
 
   loadSession() {
@@ -70,5 +52,16 @@ export class HavenSidebarScenariosComponent {
     }
   }
 
+  configureScenarios() {
+    this.dialogService.openScenarioConfigDialog().afterClosed().subscribe(result => {
+      console.log(result);
+    });
+  }
+
+  editScenarios() {
+    this.dialogService.openScenarioEditDialog().afterClosed().subscribe(result => {
+      console.log(result);
+    });
+  }
 
 }
